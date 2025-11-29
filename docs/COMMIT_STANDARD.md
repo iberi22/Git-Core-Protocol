@@ -108,7 +108,7 @@ AI-Context: Uses singleton pattern for DB connection. Config in src/config/db.ts
 
 AI-Context: This is a temporary fix. Proper solution requires #56 to be completed first.
 
-AI-Context: 
+AI-Context:
 - Auth flow: JWT stored in httpOnly cookie
 - Refresh token rotation enabled
 - Session timeout: 15min access, 7d refresh

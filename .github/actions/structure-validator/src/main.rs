@@ -1,5 +1,5 @@
 //! Git-Core Protocol Structure Validator
-//! 
+//!
 //! This tool validates project structure according to Git-Core Protocol rules
 //! and outputs violations that can be auto-fixed by Copilot.
 
@@ -62,7 +62,7 @@ const FORBIDDEN_ROOT_FILES: &[&str] = &[
 
 /// Files that ARE ALLOWED in root
 const ALLOWED_ROOT_MD: &[&str] = &[
-    "README.md", "AGENTS.md", "CHANGELOG.md", 
+    "README.md", "AGENTS.md", "CHANGELOG.md",
     "CONTRIBUTING.md", "LICENSE.md", "CODE_OF_CONDUCT.md",
 ];
 
@@ -194,7 +194,7 @@ fn check_misplaced_files(base_path: &str, violations: &mut Vec<Violation>) {
         .filter_map(|e| e.ok())
     {
         let file_name = entry.file_name().to_string_lossy();
-        
+
         for (pattern, target_dir) in &test_patterns {
             let re = Regex::new(pattern).unwrap();
             if re.is_match(&file_name) {
@@ -223,27 +223,27 @@ fn check_markdown_locations(base_path: &str, violations: &mut Vec<Violation>) {
             if let Some(ext) = path.extension() {
                 if ext == "md" {
                     let file_name = path.file_name().unwrap().to_string_lossy();
-                    
+
                     // Skip allowed files
                     if ALLOWED_ROOT_MD.contains(&file_name.as_ref()) {
                         continue;
                     }
-                    
+
                     // Skip forbidden files (already reported)
                     if FORBIDDEN_ROOT_FILES.contains(&file_name.as_ref()) {
                         continue;
                     }
-                    
+
                     // Check if it matches agent-docs patterns
                     let agent_doc_patterns = vec![
-                        "PROMPT_", "RESEARCH_", "STRATEGY_", "SPEC_", 
+                        "PROMPT_", "RESEARCH_", "STRATEGY_", "SPEC_",
                         "GUIDE_", "REPORT_", "ANALYSIS_",
                     ];
-                    
+
                     let is_agent_doc = agent_doc_patterns
                         .iter()
                         .any(|p| file_name.starts_with(p));
-                    
+
                     if is_agent_doc {
                         violations.push(Violation {
                             violation_type: "MISPLACED_AGENT_DOC".to_string(),

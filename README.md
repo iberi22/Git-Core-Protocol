@@ -115,6 +115,37 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 └─────────────────────────────────────────────────────────┘
 ```
 
+## 📊 Issue Lifecycle & Progress Tracking
+
+**Issues stay OPEN** while they have pending tasks. They **close automatically** when a commit includes `closes #X`.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  OPEN                                                   │
+│  ├── 📋 Backlog: No one assigned, waiting               │
+│  ├── 🔄 In Progress: Someone assigned, working          │
+│  └── ⏸️ Blocked: Waiting for dependency                 │
+└─────────────────────────────────────────────────────────┘
+                         │
+                         │ Commit with "closes #X"
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│  CLOSED                                                 │
+│  └── ✅ Completed: All tasks done                       │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Progress Tracking:** Use an **EPIC issue** with checkboxes to track overall progress. GitHub automatically calculates the percentage. No local files needed!
+
+```markdown
+# Example EPIC Issue
+- [x] Task 1 completed
+- [x] Task 2 completed
+- [ ] Task 3 pending
+- [ ] Task 4 pending
+# GitHub shows: ██████░░░░ 50%
+```
+
 ## 🤖 Compatible AI Agents
 
 ✅ GitHub Copilot | ✅ Cursor | ✅ Windsurf | ✅ Claude | ✅ ChatGPT | ✅ Any LLM with terminal access
@@ -198,6 +229,28 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 | `ai-blocked` | Requiere intervención humana |
 | `in-progress` | Tarea en desarrollo |
 
+## 📊 Ciclo de Vida de Issues y Seguimiento de Progreso
+
+**Los issues permanecen OPEN** mientras tengan tareas pendientes. Se **cierran automáticamente** cuando un commit incluye `closes #X`.
+
+```text
+┌─────────────────────────────────────────────────────────┐
+│  OPEN (Abierto)                                         │
+│  ├── 📋 Backlog: Nadie asignado, esperando              │
+│  ├── 🔄 In Progress: Alguien asignado, trabajando       │
+│  └── ⏸️ Blocked: Esperando dependencia                  │
+└─────────────────────────────────────────────────────────┘
+                         │
+                         │ Commit con "closes #X"
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│  CLOSED (Cerrado)                                       │
+│  └── ✅ Completado: Todas las tareas hechas             │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Seguimiento de Progreso:** Usa un **EPIC issue** con checkboxes para rastrear el progreso general. GitHub calcula el porcentaje automáticamente. ¡No se necesitan archivos locales!
+
 ---
 
 # 🇧🇷 Português
@@ -250,6 +303,12 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 ✅ GitHub Copilot | ✅ Cursor | ✅ Windsurf | ✅ Claude | ✅ ChatGPT
 
+## 📊 Ciclo de Vida de Issues e Acompanhamento de Progresso
+
+**Issues permanecem OPEN** enquanto tiverem tarefas pendentes. São **fechados automaticamente** quando um commit inclui `closes #X`.
+
+**Acompanhamento de Progresso:** Use um **EPIC issue** com checkboxes para rastrear o progresso geral. GitHub calcula a porcentagem automaticamente. Não são necessários arquivos locais!
+
 ---
 
 # 🇩🇪 Deutsch
@@ -299,6 +358,12 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 ## 🤖 Kompatible KI-Agenten
 
 ✅ GitHub Copilot | ✅ Cursor | ✅ Windsurf | ✅ Claude | ✅ ChatGPT
+
+## 📊 Issue-Lebenszyklus & Fortschrittsverfolgung
+
+**Issues bleiben OPEN** solange sie ausstehende Aufgaben haben. Sie werden **automatisch geschlossen** wenn ein Commit `closes #X` enthält.
+
+**Fortschrittsverfolgung:** Verwende ein **EPIC Issue** mit Checkboxen um den Gesamtfortschritt zu verfolgen. GitHub berechnet den Prozentsatz automatisch. Keine lokalen Dateien nötig!
 
 ---
 
@@ -350,6 +415,12 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 ✅ GitHub Copilot | ✅ Cursor | ✅ Windsurf | ✅ Claude | ✅ ChatGPT
 
+## 📊 Cycle de Vie des Issues & Suivi du Progrès
+
+**Les issues restent OPEN** tant qu'elles ont des tâches en attente. Elles sont **fermées automatiquement** quand un commit inclut `closes #X`.
+
+**Suivi du Progrès:** Utilisez un **EPIC issue** avec des checkboxes pour suivre le progrès global. GitHub calcule le pourcentage automatiquement. Pas de fichiers locaux nécessaires!
+
 ---
 
 # 🇯🇵 日本語
@@ -400,6 +471,12 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 ✅ GitHub Copilot | ✅ Cursor | ✅ Windsurf | ✅ Claude | ✅ ChatGPT
 
+## 📊 Issueライフサイクルと進捗追跡
+
+**Issueは未完了タスクがある間OPEN**のままです。コミットに`closes #X`が含まれると**自動的にクローズ**されます。
+
+**進捗追跡:** チェックボックス付きの**EPIC issue**を使用して全体の進捗を追跡します。GitHubが自動的にパーセンテージを計算します。ローカルファイル不要！
+
 ---
 
 # 🇨🇳 中文
@@ -449,6 +526,12 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 ## 🤖 兼容的AI助手
 
 ✅ GitHub Copilot | ✅ Cursor | ✅ Windsurf | ✅ Claude | ✅ ChatGPT
+
+## 📊 Issue生命周期与进度跟踪
+
+**Issue在有待处理任务时保持OPEN**状态。当commit包含`closes #X`时会**自动关闭**。
+
+**进度跟踪:** 使用带有复选框的**EPIC issue**来跟踪整体进度。GitHub自动计算百分比。不需要本地文件！
 
 ---
 

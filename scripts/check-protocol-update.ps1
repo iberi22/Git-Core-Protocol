@@ -73,13 +73,13 @@ Write-Host "`n📦 Applying updates..." -ForegroundColor Cyan
 foreach ($file in $FILES) {
     try {
         $content = (Invoke-WebRequest -Uri "$BASE_URL/$file" -UseBasicParsing).Content
-        
+
         # Ensure parent directory exists
         $dir = Split-Path -Parent $file
         if ($dir -and -not (Test-Path $dir)) {
             New-Item -ItemType Directory -Force -Path $dir | Out-Null
         }
-        
+
         Set-Content -Path $file -Value $content -NoNewline -Encoding UTF8
         Write-Host "   ✓ $file" -ForegroundColor Green
     } catch {

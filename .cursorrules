@@ -30,6 +30,7 @@
 - ✅ `AGENTS.md` (agent configuration ONLY)
 - ✅ `.ai/ARCHITECTURE.md` (system architecture ONLY)
 - ✅ `CONTRIBUTING.md`, `LICENSE.md` (standard repo files)
+- ✅ `docs/agent-docs/*.md` (**ONLY when user explicitly requests**)
 
 **🚨 BEFORE creating ANY document, STOP and ask:**
 > "Can this be a GitHub Issue?" → **YES. Create an issue.**
@@ -90,4 +91,41 @@ When starting any task, follow these steps strictly:
 - ✅ Technical config (docker, CI/CD, linters)
 - ✅ `.ai/ARCHITECTURE.md` (ONLY this file for architecture)
 - ✅ `README.md` (project documentation)
+- ✅ `docs/agent-docs/*.md` (**ONLY when user explicitly requests**)
 - ✅ GitHub Issues for EVERYTHING ELSE
+
+## 6. User-Requested Documents (agent-docs)
+
+When user **EXPLICITLY** requests a persistent document:
+
+```bash
+# Create in docs/agent-docs/ with prefix:
+# PROMPT_, RESEARCH_, STRATEGY_, ANALYSIS_, SPEC_, GUIDE_, REPORT_
+
+docs/agent-docs/PROMPT_JULES_AUTH_SYSTEM.md
+```
+
+**✅ Create file ONLY when user says:**
+
+- "Save this as a document"
+- "Create a prompt file for..."
+- "Document this strategy"
+- "Write a spec for..."
+
+**❌ DO NOT create files, just respond in chat:**
+
+- "Explain how to..."
+- "Summarize this..."
+- "What's the best approach..."
+
+## 7. Extended Commits (AI-Context)
+
+Use AI-Context footer for complex decisions:
+
+```text
+feat(auth): implement OAuth2 login #42
+
+Adds OAuth2 authentication with Google provider.
+
+AI-Context: architecture | Chose passport.js over custom impl for maintainability
+```

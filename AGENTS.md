@@ -130,7 +130,58 @@ gh pr create --fill --base main
 | Config files (docker, CI/CD, linters) | Infrastructure |
 | `.ai/ARCHITECTURE.md` | System architecture (ONLY this file) |
 | `README.md` | Project documentation |
+| `docs/agent-docs/*.md` | **ONLY when user explicitly requests** |
 | GitHub Issues | **EVERYTHING ELSE** |
+
+---
+
+## 📄 User-Requested Documentation (agent-docs)
+
+When the user **explicitly requests** a persistent document (prompt, research, strategy, etc.):
+
+```bash
+# Create in docs/agent-docs/ with proper prefix
+# Prefixes: PROMPT_, RESEARCH_, STRATEGY_, SPEC_, GUIDE_, REPORT_, ANALYSIS_
+
+# Example: User says "Create a prompt for Jules"
+docs/agent-docs/PROMPT_JULES_AUTH_SYSTEM.md
+
+# Commit with docs(agent) scope
+git commit -m "docs(agent): add PROMPT for Jules auth implementation"
+```
+
+**✅ ONLY create files when user says:**
+- "Save this as a document"
+- "Create a prompt file for..."
+- "Document this strategy"
+- "Write a spec for..."
+- "I need this as a reference"
+
+**❌ DO NOT create files, just respond in chat:**
+- "Explain how to..."
+- "Summarize this..."
+- "What's the best approach..."
+
+---
+
+## 📝 Commit Standard
+
+Follow Extended Conventional Commits (see `docs/COMMIT_STANDARD.md`):
+
+```
+<type>(<scope>): <description> #<issue>
+
+[optional body]
+
+[optional AI-Context footer]
+```
+
+**AI-Context Footer** (for complex decisions):
+```
+AI-Context: architecture | Chose event-driven over REST for real-time requirements
+AI-Context: trade-off | Sacrificed DRY for performance in hot path
+AI-Context: dependency | Selected library X over Y due to bundle size
+```
 
 ---
 
@@ -197,14 +248,18 @@ gh pr merge <number>
 
 ## 📁 Project Structure Awareness
 
-```
+```text
 /
 ├── .ai/
 │   ├── ARCHITECTURE.md    # 📖 READ THIS FIRST
 │   └── CONTEXT_LOG.md     # 📝 Session notes only
 ├── .github/
 │   ├── copilot-instructions.md
+│   ├── workflows/         # 🔄 CI/CD automation
 │   └── ISSUE_TEMPLATE/
+├── docs/
+│   ├── agent-docs/        # 📄 User-requested documents ONLY
+│   └── COMMIT_STANDARD.md # 📝 Commit message standard
 ├── scripts/
 │   └── init_project.sh    # 🚀 Bootstrap script
 ├── AGENTS.md              # 📋 YOU ARE HERE
@@ -213,5 +268,5 @@ gh pr merge <number>
 
 ---
 
-*Protocol Version: 1.0.0*
-*Last Updated: 2024*
+*Protocol Version: 1.1.0*
+*Last Updated: 2025*

@@ -66,4 +66,41 @@ Al iniciar cualquier tarea, sigue estos pasos estrictamente:
 - ✅ Configuración técnica (docker, CI/CD, linters)
 - ✅ `.ai/ARCHITECTURE.md` (solo este archivo para arquitectura)
 - ✅ `README.md` (documentación del proyecto)
+- ✅ `docs/agent-docs/*.md` (**SOLO cuando usuario lo solicita explícitamente**)
 - ✅ GitHub Issues para TODO lo demás
+
+## 6. Documentos Solicitados por Usuario (agent-docs)
+
+Cuando el usuario **EXPLÍCITAMENTE** solicita un documento persistente:
+
+```bash
+# Crear en docs/agent-docs/ con prefijo:
+# PROMPT_, RESEARCH_, STRATEGY_, ANALYSIS_, SPEC_, GUIDE_, REPORT_
+
+docs/agent-docs/PROMPT_JULES_AUTH_SYSTEM.md
+```
+
+**✅ Crear archivo SOLO cuando usuario dice:**
+
+- "Guarda esto como documento"
+- "Crea un archivo de prompt para..."
+- "Documenta esta estrategia"
+- "Escribe un spec para..."
+
+**❌ NO crear archivos, solo responder en chat:**
+
+- "Explícame cómo..."
+- "Resume esto..."
+- "¿Cuál es el mejor enfoque..."
+
+## 7. Commits Extendidos (AI-Context)
+
+Usa AI-Context footer para decisiones complejas:
+
+```text
+feat(auth): implement OAuth2 login #42
+
+Adds OAuth2 authentication with Google provider.
+
+AI-Context: architecture | Chose passport.js over custom impl for maintainability
+```

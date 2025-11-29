@@ -100,13 +100,58 @@ gh issue comment <id> --body "Progress: Completed X, working on Y"
 **❌ WRONG:** Creating `PROGRESS.md` or updating a tracking file
 **✅ RIGHT:** Adding comments to the relevant GitHub Issue
 
-### 6. Code Standards
+### 6. User-Requested Documents (agent-docs)
+
+When the user **explicitly requests** a document (prompt, research, strategy, etc.):
+
+```bash
+# Create in docs/agent-docs/ with proper prefix
+# Prefixes: PROMPT_, RESEARCH_, STRATEGY_, SPEC_, GUIDE_, REPORT_, ANALYSIS_
+
+# Example: User says "Create a prompt for Jules"
+docs/agent-docs/PROMPT_JULES_AUTH_SYSTEM.md
+
+# Commit with docs(agent) scope
+git commit -m "docs(agent): add PROMPT for Jules auth implementation"
+```
+
+**✅ ONLY create files when user says:**
+- "Save this as a document"
+- "Create a prompt file for..."
+- "Document this strategy"
+- "Write a spec for..."
+- "I need this as a reference"
+
+**❌ DO NOT create files, just respond in chat:**
+- "Explain how to..."
+- "Summarize this..."
+- "What's the best approach..."
+
+### 7. Extended Commit Messages
+
+Use AI-Context section for complex changes:
+
+```
+feat(auth): implement OAuth2 login #42
+
+Adds OAuth2 authentication with Google and GitHub providers.
+Includes refresh token rotation and session management.
+
+AI-Context: Uses passport.js. Config in src/config/auth.ts.
+Test credentials in .env.example.
+
+Closes #42
+```
+
+### 8. Code Standards
 - Follow existing code style
 - Write tests for new features
-- Use Conventional Commits
+- Use Conventional Commits (see docs/COMMIT_STANDARD.md)
 - Keep PRs focused and small
 
-### 6. Communication
+### 9. Communication
 - Be concise in commit messages
 - Reference issues in all commits
+- Use AI-Context for complex changes
 - Update issue comments for significant progress
+

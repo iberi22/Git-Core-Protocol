@@ -3,6 +3,27 @@
 ## Overview
 This repository follows the **Git-Core Protocol** for AI-assisted development.
 
+---
+
+## ⛔ FORBIDDEN FILES (HARD RULES)
+
+**NEVER create these files under ANY circumstances:**
+
+```
+❌ TODO.md, TASKS.md, BACKLOG.md
+❌ PLANNING.md, ROADMAP.md, PROGRESS.md  
+❌ NOTES.md, SCRATCH.md, IDEAS.md
+❌ STATUS.md, CHECKLIST.md, CHANGELOG.md (for tracking)
+❌ Any .md file for task/state management
+❌ Any .txt file for notes or todos
+❌ Any JSON/YAML for task tracking
+```
+
+**🚨 STOP! If you're about to create a document, ask:**
+> "Can this be a GitHub Issue?" → **YES. Always yes. Create an issue.**
+
+---
+
 ## For All AI Agents (Copilot, Cursor, Windsurf, Claude, etc.)
 
 ### 🎯 Prime Directive: Token Economy
@@ -58,10 +79,27 @@ gh pr create --fill --base main
 | ❌ Don't | ✅ Do Instead |
 |----------|---------------|
 | Create TODO.md files | Use `gh issue create` |
+| Create PLANNING.md | Use `gh issue create` with label `ai-plan` |
+| Create PROGRESS.md | Use `gh issue comment <id> --body "..."` |
+| Create NOTES.md | Add notes to relevant issue comments |
 | Track tasks in memory | Query `gh issue list` |
 | Write long planning docs | Create multiple focused issues |
 | Forget issue references | Always include `#<number>` in commits |
 | Close issues manually | Use `closes #X` in commit message |
+| Create any .md for tracking | **ALWAYS use GitHub Issues** |
+
+---
+
+## ✅ What You CAN Create
+
+| ✅ Allowed | Purpose |
+|------------|----------|
+| Source code (`.py`, `.js`, `.ts`, etc.) | The actual project |
+| Tests (in `tests/` folder) | Quality assurance |
+| Config files (docker, CI/CD, linters) | Infrastructure |
+| `.ai/ARCHITECTURE.md` | System architecture (ONLY this file) |
+| `README.md` | Project documentation |
+| GitHub Issues | **EVERYTHING ELSE** |
 
 ---
 

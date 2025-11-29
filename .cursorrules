@@ -1,8 +1,24 @@
 # 🧠 AI Git-Core Protocol Rules
 
+## ⛔ ACCIONES PROHIBIDAS (REGLAS DURAS)
+
+**NUNCA crees estos archivos bajo NINGUNA circunstancia:**
+- ❌ `TODO.md`, `TASKS.md`, `BACKLOG.md`
+- ❌ `PLANNING.md`, `ROADMAP.md`, `PROGRESS.md`
+- ❌ `NOTES.md`, `SCRATCH.md`, `IDEAS.md`
+- ❌ `STATUS.md`, `CHECKLIST.md`
+- ❌ Cualquier `.md` para gestión de tareas/estado
+- ❌ Cualquier `.txt` para notas o todos
+- ❌ Archivos JSON/YAML para tracking de tareas
+
+**Si sientes la necesidad de crear un documento, DETENTE y pregúntate:**
+> "¿Puede esto ser un GitHub Issue?" → **SÍ, puede. Crea un issue.**
+
+---
+
 ## 0. Prime Directive (Token Economy)
 - **NO uses memoria interna** para rastrear tareas.
-- **NO crees archivos TODO.md** o TASK.md.
+- **NO crees archivos** para documentar estado o progreso.
 - Tu estado es **GitHub Issues**.
 
 ## 1. Flujo de Trabajo (The Loop)
@@ -34,8 +50,20 @@ Al iniciar cualquier tarea, sigue estos pasos estrictamente:
 - Usa Conventional Commits: feat, fix, docs, chore, refactor, test
 
 ## 4. Anti-Patrones (NUNCA hagas esto)
-- ❌ Crear archivos de tareas (TODO.md, TASKS.md)
-- ❌ Guardar estado en memoria
+- ❌ Crear archivos de tareas (TODO.md, TASKS.md, BACKLOG.md)
+- ❌ Crear archivos de planificación (PLANNING.md, ROADMAP.md)
+- ❌ Crear archivos de progreso (PROGRESS.md, STATUS.md)
+- ❌ Crear archivos de notas (NOTES.md, IDEAS.md, SCRATCH.md)
+- ❌ Guardar estado en memoria o archivos locales
 - ❌ Escribir documentos largos de planificación
 - ❌ Olvidar referenciar issues en commits
 - ❌ Cerrar issues manualmente (usa "closes #X" en commits)
+- ❌ Crear cualquier .md que no sea código o documentación técnica real
+
+## 5. Qué SÍ crear
+- ✅ Código fuente (.py, .js, .ts, etc.)
+- ✅ Tests (en carpeta tests/)
+- ✅ Configuración técnica (docker, CI/CD, linters)
+- ✅ `.ai/ARCHITECTURE.md` (solo este archivo para arquitectura)
+- ✅ `README.md` (documentación del proyecto)
+- ✅ GitHub Issues para TODO lo demás

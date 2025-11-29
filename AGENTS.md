@@ -9,18 +9,49 @@ This repository follows the **Git-Core Protocol** for AI-assisted development.
 
 **NEVER create these files under ANY circumstances:**
 
+### Task/State Management:
 ```
 ❌ TODO.md, TASKS.md, BACKLOG.md
 ❌ PLANNING.md, ROADMAP.md, PROGRESS.md
 ❌ NOTES.md, SCRATCH.md, IDEAS.md
 ❌ STATUS.md, CHECKLIST.md, CHANGELOG.md (for tracking)
-❌ Any .md file for task/state management
-❌ Any .txt file for notes or todos
-❌ Any JSON/YAML for task tracking
 ```
 
-**🚨 STOP! If you're about to create a document, ask:**
+### Testing/Implementation Summaries:
+```
+❌ TESTING_CHECKLIST.md, TEST_PLAN.md, TEST_GUI.md
+❌ IMPLEMENTATION_SUMMARY.md, IMPLEMENTATION.md
+❌ SUMMARY.md, OVERVIEW.md, REPORT.md
+```
+
+### Guides/Tutorials:
+```
+❌ GETTING_STARTED.md, GUIDE.md, TUTORIAL.md
+❌ QUICKSTART.md, SETUP.md, HOWTO.md
+❌ INSTRUCTIONS.md, MANUAL.md
+```
+
+### Catch-all:
+```
+❌ ANY .md file for task/state management
+❌ ANY .md file for checklists or summaries
+❌ ANY .md file for guides or tutorials
+❌ ANY .txt file for notes or todos
+❌ ANY JSON/YAML for task tracking
+```
+
+### ✅ ONLY ALLOWED `.md` FILES:
+```
+✅ README.md (project overview ONLY)
+✅ AGENTS.md (agent configuration ONLY)
+✅ .ai/ARCHITECTURE.md (system architecture ONLY)
+✅ CONTRIBUTING.md, LICENSE.md (standard repo files)
+```
+
+**🚨 STOP! Before creating ANY document, ask yourself:**
 > "Can this be a GitHub Issue?" → **YES. Always yes. Create an issue.**
+> "Can this be a comment in an existing issue?" → **YES. Add a comment.**
+> "Is this a summary/checklist/guide?" → **NO. Use GitHub Issues or comments.**
 
 ---
 

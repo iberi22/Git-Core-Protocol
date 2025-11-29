@@ -217,7 +217,7 @@ $SKIP_ISSUES = $false
 if ($existingIssues -and $existingIssues.Count -gt 0) {
     $issueCount = (gh issue list --state all --json number | ConvertFrom-Json).Count
     Write-Host "⚠️  This repository already has $issueCount issue(s)" -ForegroundColor Yellow
-    
+
     if ($Auto) {
         Write-Host "  (Auto mode: skipping issue creation)" -ForegroundColor Cyan
         $SKIP_ISSUES = $true
@@ -232,7 +232,7 @@ if ($existingIssues -and $existingIssues.Count -gt 0) {
 
 if (-not $SKIP_ISSUES) {
     Write-Host "`n📝 Creating initial issues..." -ForegroundColor Yellow
-    
+
     gh issue create `
     --title "🏗️ SETUP: Define Architecture and Tech Stack" `
     --body @"

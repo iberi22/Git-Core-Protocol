@@ -222,7 +222,7 @@ SKIP_ISSUES=false
 if [ "$EXISTING_ISSUES" -gt 0 ]; then
     ISSUE_COUNT=$(gh issue list --state all --json number | grep -c "number" || echo "0")
     echo -e "${YELLOW}⚠️  This repository already has $ISSUE_COUNT issue(s)${NC}"
-    
+
     if [ "$AUTO_MODE" = true ]; then
         echo -e "  ${CYAN}(Auto mode: skipping issue creation)${NC}"
         SKIP_ISSUES=true
@@ -237,7 +237,7 @@ fi
 
 if [ "$SKIP_ISSUES" = false ]; then
     echo -e "\n📝 Creating initial issues..."
-    
+
     gh issue create \
     --title "🏗️ SETUP: Define Architecture and Tech Stack" \
     --body "## Objective

@@ -8,16 +8,40 @@ You are operating under the **Git-Core Protocol**. Your state is GitHub Issues, 
 ## ⛔ FORBIDDEN ACTIONS (HARD RULES)
 
 **NEVER create these files under ANY circumstances:**
+
+### Task/State Management:
 - ❌ `TODO.md`, `TASKS.md`, `BACKLOG.md`
 - ❌ `PLANNING.md`, `ROADMAP.md`, `PROGRESS.md`
 - ❌ `NOTES.md`, `SCRATCH.md`, `IDEAS.md`
-- ❌ `STATUS.md`, `CHANGELOG.md` (for task tracking)
-- ❌ Any `.md` file for task/state management
-- ❌ Any `.txt` file for notes or todos
-- ❌ JSON/YAML files for task tracking
+- ❌ `STATUS.md`, `CHECKLIST.md`, `CHANGELOG.md` (for tracking)
 
-**If you feel the urge to create a document, STOP and ask yourself:**
+### Testing/Implementation Summaries:
+- ❌ `TESTING_CHECKLIST.md`, `TEST_PLAN.md`, `TEST_GUI.md`
+- ❌ `IMPLEMENTATION_SUMMARY.md`, `IMPLEMENTATION.md`
+- ❌ `SUMMARY.md`, `OVERVIEW.md`, `REPORT.md`
+
+### Guides/Tutorials:
+- ❌ `GETTING_STARTED.md`, `GUIDE.md`, `TUTORIAL.md`
+- ❌ `QUICKSTART.md`, `SETUP.md`, `HOWTO.md`
+- ❌ `INSTRUCTIONS.md`, `MANUAL.md`
+
+### Catch-all:
+- ❌ **ANY `.md` file** for task/state management, checklists, summaries, or guides
+- ❌ **ANY `.txt` file** for notes or todos
+- ❌ **ANY JSON/YAML** for task tracking
+
+### ✅ ONLY ALLOWED `.md` FILES:
+- ✅ `README.md` (project overview ONLY)
+- ✅ `AGENTS.md` (agent configuration ONLY)
+- ✅ `.ai/ARCHITECTURE.md` (system architecture ONLY)
+- ✅ `CONTRIBUTING.md`, `LICENSE.md` (standard repo files)
+
+---
+
+**🚨 BEFORE creating ANY document, STOP and ask yourself:**
 > "Can this be a GitHub Issue instead?" → **YES, it can. Create an issue.**
+> "Can this be a comment in an existing issue?" → **YES, it can. Add a comment.**
+> "Is this a summary/checklist/guide?" → **NO. Use GitHub Issues or comments.**
 
 ---
 

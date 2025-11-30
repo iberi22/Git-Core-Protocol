@@ -9,8 +9,14 @@
 #   - strict: Like team, but no bypass allowed except --no-verify
 #
 # Bypass: git commit --no-verify
+#
+# Requirements: Bash 4.0+ (for associative arrays)
 
-set -e
+# Check Bash version (need 4.0+ for associative arrays)
+if ((BASH_VERSINFO[0] < 4)); then
+    echo "Warning: Bash 4.0+ required for full atomicity checking. Skipping validation."
+    exit 0
+fi
 
 # Colors for output
 RED='\033[0;31m'
@@ -310,9 +316,9 @@ validate_atomicity() {
         echo -e "${BOLD}💡 Suggestion:${NC} Consider splitting into smaller commits for better history.\n"
         
         # In interactive mode, ask for confirmation
-        if [ -t 0 ]; then
-            echo -e "${CYAN}¿Continue anyway? [y/N]${NC} "
-            read -r response </dev/tty
+        if [ -t 0 ] && [ -t 1 ] && [ -e /dev/tty ]; then
+            echo -e "${CYAN}Continue anyway? [y/N]${NC} "
+            read -r response </dev/tty 2>/dev/null || response="y"
             case "$response" in
                 [yY]|[yY][eE][sS])
                     echo -e "${GREEN}✅ Proceeding with commit...${NC}"

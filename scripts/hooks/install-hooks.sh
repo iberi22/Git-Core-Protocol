@@ -85,7 +85,7 @@ install_hooks() {
     fi
     
     # Create wrapper script that calls our hook
-    cat > "$GIT_HOOKS_DIR/pre-commit" << 'HOOK_SCRIPT'
+    cat > "$GIT_HOOKS_DIR/pre-commit" << 'EOF'
 #!/bin/bash
 # Git-Core Protocol pre-commit hook (git-core-protocol)
 # This hook validates atomic commits based on .git-atomize.yml configuration
@@ -93,19 +93,19 @@ install_hooks() {
 
 # Get repository root
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-HOOK_SCRIPT="$REPO_ROOT/scripts/hooks/pre-commit"
+ATOMIZE_HOOK="$REPO_ROOT/scripts/hooks/pre-commit"
 
 # Run the hook script if it exists
-if [ -f "$HOOK_SCRIPT" ] && [ -x "$HOOK_SCRIPT" ]; then
-    exec "$HOOK_SCRIPT"
-elif [ -f "$HOOK_SCRIPT" ]; then
-    exec bash "$HOOK_SCRIPT"
+if [ -f "$ATOMIZE_HOOK" ] && [ -x "$ATOMIZE_HOOK" ]; then
+    exec "$ATOMIZE_HOOK"
+elif [ -f "$ATOMIZE_HOOK" ]; then
+    exec bash "$ATOMIZE_HOOK"
 else
     # Hook script not found, skip validation
     echo "Note: scripts/hooks/pre-commit not found, skipping atomicity check"
     exit 0
 fi
-HOOK_SCRIPT
+EOF
     
     chmod +x "$GIT_HOOKS_DIR/pre-commit"
     chmod +x "$SCRIPT_DIR/pre-commit" 2>/dev/null || true

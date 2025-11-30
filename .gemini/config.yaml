@@ -1,0 +1,53 @@
+# Gemini Code Assist Configuration
+# https://developers.google.com/gemini-code-assist/docs/customize-gemini-behavior-github
+#
+# Gemini Code Assist provides on-demand AI code reviews.
+# 100% FREE for all repositories.
+#
+# Commands in PRs:
+#   /gemini review  - Request full code review
+#   /gemini summary - Get PR summary
+#   /gemini help    - Show all commands
+#   @gemini-code-assist - Ask questions in comments
+
+code_review:
+  # Minimum severity level to report
+  # Options: low, medium, high
+  comment_severity: medium
+
+  # Custom style guide for reviews
+  style_guide: |
+    ## Git-Core Protocol Standards
+    
+    ### Commits
+    - Follow Conventional Commits format: type(scope): description
+    - Each commit should be atomic (one logical change)
+    - Always reference GitHub issues: #<number>
+    
+    ### Code Quality
+    - Prefer readability over cleverness
+    - Include error handling
+    - Write self-documenting code
+    
+    ### Documentation
+    - Don't create TODO.md, PROGRESS.md, or tracking files
+    - Use GitHub Issues for task management
+    - Keep inline comments minimal and meaningful
+    
+    ### Cross-Platform
+    - Provide both .sh and .ps1 for scripts
+    - Use forward slashes in paths when possible
+    - Test on Windows and Unix-like systems
+
+  # Focus areas for reviews
+  focus_areas:
+    - security
+    - performance
+    - maintainability
+    - error_handling
+
+# PR summary settings
+summary:
+  enabled: true
+  include_file_changes: true
+  max_length: 500

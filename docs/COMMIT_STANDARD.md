@@ -208,7 +208,7 @@ feat(authentication-system): implement OAuth2 login with Google, Facebook, and G
 1. **Always reference issues** in commits
 2. **Use `Closes #X`** to auto-close issues
 3. **Add AI-Context** for complex changes
-4. **Keep commits atomic** - one logical change per commit
+4. **Keep commits atomic** - one logical change per commit (see [Atomic Commits Guide](./ATOMIC_COMMITS.md))
 5. **Commit often, perfect later, publish once**
 
 ---

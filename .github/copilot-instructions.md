@@ -66,7 +66,19 @@ gh issue list --assignee "@me"
 gh issue list --limit 5
 ```
 
-### 3. Development Flow
+### 3. Architecture First Rule
+Before implementing ANY infrastructure feature:
+1. Run: `grep -A 20 'CRITICAL DECISIONS' .ai/ARCHITECTURE.md`
+2. Check CRITICAL DECISIONS table
+3. If conflict with issue, ARCHITECTURE wins
+
+**Why this matters:** A critical error occurred when Vercel was implemented despite ARCHITECTURE.md specifying GitHub Pages. Issues may mention multiple options, but architecture decisions are final.
+
+**Related Documentation:**
+- `.ai/ARCHITECTURE.md` - CRITICAL DECISIONS table
+- `AGENTS.md` - Architecture Verification Rule
+
+### 4. Development Flow
 ```bash
 # Take a task
 gh issue edit <id> --add-assignee "@me"
@@ -81,7 +93,7 @@ git commit -m "feat: description (closes #<id>)"
 gh pr create --fill
 ```
 
-### 4. Planning Mode
+### 5. Planning Mode
 When asked to plan, generate `gh issue create` commands instead of documents:
 ```bash
 gh issue create --title "TASK: Description" --body "Details..." --label "ai-plan"
@@ -90,7 +102,7 @@ gh issue create --title "TASK: Description" --body "Details..." --label "ai-plan
 **❌ WRONG:** Creating a `PLAN.md` or `ROADMAP.md` file
 **✅ RIGHT:** Running multiple `gh issue create` commands
 
-### 5. Progress Updates
+### 6. Progress Updates
 When you need to document progress:
 ```bash
 # Add comment to existing issue
@@ -100,7 +112,7 @@ gh issue comment <id> --body "Progress: Completed X, working on Y"
 **❌ WRONG:** Creating `PROGRESS.md` or updating a tracking file
 **✅ RIGHT:** Adding comments to the relevant GitHub Issue
 
-### 6. User-Requested Documents (agent-docs)
+### 7. User-Requested Documents (agent-docs)
 
 When the user **explicitly requests** a document (prompt, research, strategy, etc.):
 
@@ -127,7 +139,7 @@ git commit -m "docs(agent): add PROMPT for Jules auth implementation"
 - "Summarize this..."
 - "What's the best approach..."
 
-### 7. YAML Frontmatter Meta Tags (REQUIRED for agent-docs)
+### 8. YAML Frontmatter Meta Tags (REQUIRED for agent-docs)
 
 When creating documents in `docs/agent-docs/`, **ALWAYS** include YAML frontmatter for rapid AI scanning:
 
@@ -161,7 +173,7 @@ complexity: moderate
 
 **Why?** AI agents can read metadata without parsing entire documents. See `docs/agent-docs/README.md` for full spec.
 
-### 8. Extended Commit Messages
+### 9. Extended Commit Messages
 
 Use AI-Context section for complex changes:
 
@@ -177,19 +189,19 @@ Test credentials in .env.example.
 Closes #42
 ```
 
-### 9. Code Standards
+### 10. Code Standards
 - Follow existing code style
 - Write tests for new features
 - Use Conventional Commits (see docs/COMMIT_STANDARD.md)
 - Keep PRs focused and small
 
-### 10. Communication
+### 11. Communication
 - Be concise in commit messages
 - Reference issues in all commits
 - Use AI-Context for complex changes
 - Update issue comments for significant progress
 
-### 11. Codex CLI Integration
+### 12. Codex CLI Integration
 
 **Installation:**
 ```bash
@@ -209,7 +221,7 @@ codex exec "..."           # Headless automation
 - Comment `/codex-review` for on-demand review
 - Comment `/codex-analyze` for codebase analysis
 
-### 12. GitHub Copilot Coding Agent
+### 13. GitHub Copilot Coding Agent
 
 **⚠️ Copilot is GitHub-only - NO CLI available.**
 
@@ -231,7 +243,7 @@ gh issue edit <number> --add-assignee "Copilot"
 gh pr list --head "copilot/"
 ```
 
-### 13. Google Jules Agent
+### 14. Google Jules Agent
 
 **⚠️ Jules has TWO methods: GitHub Label OR CLI. Tags like `@jules-google` do NOT work.**
 
@@ -270,7 +282,7 @@ jules remote pull --session ID  # Get session results
 jules remote pull --session ID --apply  # Pull and apply patch
 ```
 
-### 14. Agent Load Balancing
+### 15. Agent Load Balancing
 
 **Auto-dispatch to available agents:**
 ```bash
@@ -281,7 +293,7 @@ gh issue edit <number> --add-label "ai-agent"
 gh workflow run agent-dispatcher.yml
 ```
 
-### 15. AI Code Review Bots (CodeRabbit + Gemini)
+### 16. AI Code Review Bots (CodeRabbit + Gemini)
 
 **Automated AI reviews on every PR using two complementary bots:**
 
@@ -299,7 +311,7 @@ gh workflow run agent-dispatcher.yml
 - `.coderabbit.yaml` - CodeRabbit rules
 - `.gemini/config.yaml` - Gemini style guide
 
-### 16. Commits Atómicos (OBLIGATORIO)
+### 17. Commits Atómicos (OBLIGATORIO)
 
 **UN commit = UN cambio lógico. NUNCA mezclar concerns.**
 

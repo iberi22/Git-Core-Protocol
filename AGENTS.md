@@ -678,5 +678,5 @@ gh pr merge <number>
 
 ---
 
-*Protocol Version: 1.2.0
+*Protocol Version: 1.4.0*
 *Last Updated: 2025*

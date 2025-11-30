@@ -69,6 +69,26 @@ Your state is GitHub Issues. Not memory. Not files. GitHub Issues.
 
 ---
 
+## 🛡️ Architecture Verification Rule (MANDATORY)
+
+**BEFORE implementing ANY infrastructure/tooling:**
+
+1. Read `.ai/ARCHITECTURE.md` CRITICAL DECISIONS section
+2. Verify your implementation matches the decided stack
+3. If issue mentions alternatives, ARCHITECTURE.md decision wins
+
+### Example of what NOT to do:
+- Issue says: "Deploy to Vercel or GitHub Pages"
+- ARCHITECTURE.md says: "Hosting: GitHub Pages"
+- ❌ WRONG: Implement Vercel because issue mentioned it
+- ✅ CORRECT: Use GitHub Pages (architecture decision)
+
+**Related Documentation:**
+- `.ai/ARCHITECTURE.md` - CRITICAL DECISIONS table
+- `.github/copilot-instructions.md` - Architecture First Rule
+
+---
+
 ## 🔄 The Loop (Workflow)
 
 ### Phase 1: READ (Context Loading)

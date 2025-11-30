@@ -147,7 +147,10 @@ if (Test-Path ".git") {
     }
 } else {
     Write-Host "`n🔧 Initializing Git repository..." -ForegroundColor Yellow
+    # Ensure default branch is 'main' (works with older Git versions)
+    git config --global init.defaultBranch main 2>$null
     git init
+    git branch -M main  # Rename to main if needed (for older Git versions)
     git add .
     git commit -m "feat: 🚀 Initial commit with Git-Core Protocol"
 }

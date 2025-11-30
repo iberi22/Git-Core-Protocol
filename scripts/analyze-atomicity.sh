@@ -11,9 +11,9 @@
 #   ./scripts/analyze-atomicity.sh --json             # Output JSON format
 #
 # Exit codes:
-#   0 - All commits are atomic
-#   1 - Some commits have atomicity issues (warnings)
-#   2 - Critical atomicity issues found (when in error mode)
+#   0 - All commits are atomic, or warning mode with issues (doesn't fail CI)
+#   1 - Error mode with atomicity issues (fails CI)
+#       For single commit mode (--commit): 1 = commit is not atomic
 
 set -e
 
@@ -303,7 +303,7 @@ main() {
     # Exit code based on mode
     if [ "$has_issues" = true ]; then
         if [ "$MODE" = "error" ]; then
-            exit 2
+            exit 1
         else
             exit 0  # Warning mode - don't fail
         fi

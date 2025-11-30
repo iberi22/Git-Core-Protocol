@@ -173,9 +173,8 @@ jobs:
               REPORT="${REPORT}\n| \`${COMMIT:0:8}\` | $COMMIT_MSG | ✅ $CONCERN_LIST |"
             fi
             
-            # Reset concerns array
+            # Reset concerns array for next iteration (required for associative arrays in bash)
             unset CONCERNS
-            declare -A CONCERNS
           done <<< "$COMMITS"
           
           echo ""

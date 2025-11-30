@@ -68,7 +68,7 @@ gh issue list --limit 5
 
 ### 3. Architecture First Rule
 Before implementing ANY infrastructure feature:
-1. Run: `cat .ai/ARCHITECTURE.md | head -50`
+1. Run: `grep -A 20 'CRITICAL DECISIONS' .ai/ARCHITECTURE.md`
 2. Check CRITICAL DECISIONS table
 3. If conflict with issue, ARCHITECTURE wins
 

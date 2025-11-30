@@ -59,7 +59,3 @@
 
 ---
 *Last updated by AI Agent: Never*
-
-## Cross-References
-- See `AGENTS.md` for Architecture Verification Rule
-- See `.github/copilot-instructions.md` for Architecture First Rule

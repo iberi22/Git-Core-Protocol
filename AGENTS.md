@@ -83,6 +83,8 @@ Your state is GitHub Issues. Not memory. Not files. GitHub Issues.
 - ❌ WRONG: Implement Vercel because issue mentioned it
 - ✅ CORRECT: Use GitHub Pages (architecture decision)
 
+**Why?** Architecture decisions are made after careful consideration of project constraints. Issues may present options for discussion, but once a decision is recorded in ARCHITECTURE.md, it is final.
+
 **Related Documentation:**
 - `.ai/ARCHITECTURE.md` - CRITICAL DECISIONS table
 - `.github/copilot-instructions.md` - Architecture First Rule

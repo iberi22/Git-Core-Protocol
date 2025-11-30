@@ -259,93 +259,185 @@ gh issue create --title "TEST: Auth integration tests" \
 | `enhancement` | Feature requests | 🔵 Blue |
 | `blocked` | Waiting on dependencies | ⚫ Gray |
 | `codex-review` | Trigger Codex AI review | 🟣 Purple |
-| `copilot` | Assigned to Copilot Agent | 🔵 Blue |
+| `copilot` | Assigned to GitHub Copilot Agent | 🔵 Blue |
+| `jules` | Assigned to Google Jules Agent | 🟠 Orange |
 
 ---
 
-## 🤖 AI Agent Automation (Codex CLI & Copilot Coding Agent)
+## 🤖 AI Coding Agents (Copilot & Jules)
 
-### Codex CLI - Headless AI Automation
+This protocol supports **two autonomous coding agents** that can work on issues and PRs:
 
-Codex CLI enables AI-powered code operations from the command line.
+| Agent | Provider | Trigger | Branch Pattern |
+|-------|----------|---------|----------------|
+| **Copilot** | GitHub/Microsoft | Label `copilot` or assign "Copilot" | `copilot/*` |
+| **Jules** | Google | Label `jules` (case insensitive) | Creates PR directly |
+
+### Choosing an Agent
+
+You can assign tasks to either agent based on preference or workload:
+
+```bash
+# Assign to GitHub Copilot
+gh issue edit <number> --add-label "copilot"
+# OR
+gh issue edit <number> --add-assignee "Copilot"
+
+# Assign to Google Jules  
+gh issue edit <number> --add-label "jules"
+```
+
+### Load Balancing (Auto-Distribution)
+
+Use the workflow `.github/workflows/agent-dispatcher.yml` to automatically distribute issues:
+
+```bash
+# Manual trigger - dispatches unassigned issues to available agents
+gh workflow run agent-dispatcher.yml
+
+# Or add label to auto-dispatch
+gh issue edit <number> --add-label "ai-agent"
+```
+
+---
+
+### GitHub Copilot Coding Agent
+
+GitHub's autonomous coding agent that works directly on your repository.
+
+**Trigger Methods:**
+
+```bash
+# Method 1: Add label
+gh issue edit <number> --add-label "copilot"
+
+# Method 2: Assign directly
+gh issue edit <number> --add-assignee "Copilot"
+
+# Method 3: Mention in PR comments
+# Comment "@copilot fix this bug" in any PR
+```
+
+**Monitor Copilot:**
+
+```bash
+# List Copilot branches
+gh pr list --head "copilot/"
+
+# Check Copilot's work
+gh pr view <number>
+```
+
+**Environment Setup:**
+The repository includes `.github/copilot-setup-steps.yml` for Copilot sessions.
+
+---
+
+### Google Jules Coding Agent
+
+Google's asynchronous coding agent with CLI and GitHub integration.
 
 **Installation:**
+
+```bash
+# Install Jules CLI
+# Visit: https://jules.google/docs/
+
+# Login
+jules login
+```
+
+**Trigger Methods:**
+
+```bash
+# Method 1: Add label "jules" to any issue (GitHub App required)
+gh issue edit <number> --add-label "jules"
+
+# Method 2: CLI - Create session from issue
+gh issue list --assignee @me --limit 1 --json title | jq -r '.[0].title' | jules new
+
+# Method 3: CLI - Direct task
+jules new "implement user authentication"
+
+# Method 4: CLI - Specific repo
+jules new --repo owner/repo "write unit tests"
+```
+
+**CLI Commands:**
+
+```bash
+# Launch TUI
+jules
+
+# Create new session
+jules new "task description"
+
+# Parallel sessions (same task, multiple approaches)
+jules new --parallel 3 "optimize database queries"
+
+# List sessions
+jules remote list --session
+
+# Pull results
+jules remote pull --session <id>
+
+# Pull and apply patch
+jules remote pull --session <id> --apply
+```
+
+**Monitor Jules:**
+
+```bash
+# List all sessions
+jules remote list --session
+
+# Check specific session
+jules remote pull --session <id>
+```
+
+**Jules Comments:** When Jules finishes, it comments on the issue with a link to the PR.
+
+---
+
+### Advanced: Batch Processing with Jules CLI
+
+```bash
+# Process multiple issues automatically
+gh issue list --label "jules" --json number,title | jq -r '.[] | "\(.number): \(.title)"' | while read line; do
+  jules new "$line"
+done
+
+# Use Gemini to prioritize issues for Jules
+gemini -p "find the most tedious issue:\n$(gh issue list --assignee @me)" | jules new
+```
+
+---
+
+## 🔄 Codex CLI - Code Review Automation
+
+Codex CLI enables AI-powered code reviews and analysis.
+
+**Installation:**
+
 ```bash
 npm i -g @openai/codex
 export OPENAI_API_KEY=your-api-key
 ```
 
-**Interactive Mode:**
+**Usage:**
+
 ```bash
-codex                      # Start interactive session
+codex                      # Interactive mode
 codex "explain this code"  # Quick query
+codex exec "..."           # Headless automation
 ```
 
-**Headless Automation (exec mode):**
-```bash
-# Run automated tasks without human interaction
-codex exec "review the PR diff and suggest improvements"
-codex exec "find security vulnerabilities in src/"
-codex exec "refactor function X to use async/await"
-```
+**GitHub Triggers:**
 
-**GitHub Action Integration:**
-The repository includes `.github/workflows/codex-review.yml` for automated PR reviews:
-- Add label `codex-review` to trigger review
-- Comment `/codex-review` for on-demand review
-- Comment `/codex-analyze` for codebase analysis
-- Comment `/codex-fix` for auto-fix suggestions
-
----
-
-### GitHub Copilot Coding Agent (Jules)
-
-Copilot Coding Agent can autonomously work on issues and PRs.
-
-**Assign Copilot to an Issue:**
-```bash
-# Via GitHub CLI
-gh issue edit <number> --add-assignee "Copilot"
-
-# Or in GitHub UI: Assignees → "Copilot"
-```
-
-**Trigger Copilot in PRs:**
-- Mention `@copilot` in PR comments for specific tasks
-- Copilot creates branches named `copilot/*`
-- Review and merge Copilot's changes
-
-**Best Practices:**
-```bash
-# 1. Create a well-defined issue
-gh issue create --title "FEAT: Add user authentication" \
-  --body "## Requirements
-- OAuth2 with Google
-- JWT tokens
-- Refresh token rotation
-
-## Acceptance Criteria
-- [ ] Login endpoint works
-- [ ] Token refresh works
-- [ ] Tests pass" \
-  --label "enhancement"
-
-# 2. Assign to Copilot
-gh issue edit <number> --add-assignee "Copilot"
-
-# 3. Monitor the copilot/* branch
-gh pr list --head "copilot/"
-
-# 4. Review and merge
-gh pr review <number> --approve
-gh pr merge <number>
-```
-
-**Environment Setup:**
-The repository includes `.github/copilot-setup-steps.yml` for Copilot agent sessions:
-- Installs Node.js, Python, Go
-- Caches dependencies
-- Loads Git-Core Protocol context
+- Add label `codex-review` → automated PR review
+- Comment `/codex-review` → on-demand review
+- Comment `/codex-analyze` → codebase analysis
+- Comment `/codex-fix` → auto-fix suggestions
 
 ---
 

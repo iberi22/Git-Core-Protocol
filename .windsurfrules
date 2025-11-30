@@ -155,12 +155,14 @@ codex exec "..."           # Automatización headless
 - Comenta `/codex-review` para review on-demand
 - Comenta `/codex-analyze` para análisis de codebase
 
-## 10. Copilot Coding Agent (Jules)
+## 10. Copilot Coding Agent
 
 **Asignar issues a Copilot:**
 
 ```bash
 gh issue edit <number> --add-assignee "Copilot"
+# O
+gh issue edit <number> --add-label "copilot"
 ```
 
 **Triggers en PRs:**
@@ -172,4 +174,34 @@ gh issue edit <number> --add-assignee "Copilot"
 
 ```bash
 gh pr list --head "copilot/"
+```
+
+## 11. Google Jules Agent
+
+**Asignar issues a Jules:**
+
+```bash
+# Vía GitHub label (requiere Jules GitHub App)
+gh issue edit <number> --add-label "jules"
+```
+
+**Vía Jules CLI:**
+
+```bash
+jules new "implement feature X"
+jules new --repo owner/repo "write unit tests"
+jules remote list --session
+jules remote pull --session <id> --apply
+```
+
+## 12. Balanceo de Carga de Agentes
+
+**Auto-despachar a agentes disponibles:**
+
+```bash
+# Agregar label ai-agent para distribución automática
+gh issue edit <number> --add-label "ai-agent"
+
+# O trigger workflow manualmente
+gh workflow run agent-dispatcher.yml
 ```

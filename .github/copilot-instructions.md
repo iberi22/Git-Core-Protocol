@@ -225,3 +225,35 @@ gh issue edit <number> --add-assignee "Copilot"
 gh pr list --head "copilot/"
 ```
 
+### 13. Google Jules Agent
+
+**Assign issues to Jules:**
+```bash
+# Via GitHub label (requires Jules GitHub App)
+gh issue edit <number> --add-label "jules"
+```
+
+**Via Jules CLI:**
+```bash
+jules new "implement feature X"
+jules new --repo owner/repo "write unit tests"
+jules new --parallel 3 "optimize queries"
+```
+
+**Monitor Jules sessions:**
+```bash
+jules remote list --session
+jules remote pull --session <id> --apply
+```
+
+### 14. Agent Load Balancing
+
+**Auto-dispatch to available agents:**
+```bash
+# Add ai-agent label for automatic distribution
+gh issue edit <number> --add-label "ai-agent"
+
+# Or trigger workflow manually
+gh workflow run agent-dispatcher.yml
+```
+

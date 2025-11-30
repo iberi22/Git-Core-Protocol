@@ -23,7 +23,7 @@
 
 # 🇺🇸 English
 
-## 🚀 Quick Start - Just Copy This Prompt!
+## 🚀 Quick Start - Just Copy This Prompt
 
 > **Copy this prompt to your AI coding agent (Copilot, Cursor, Claude, etc.) to auto-setup:**
 
@@ -35,6 +35,7 @@ After setup, read .ai/ARCHITECTURE.md and start with the first issue from: gh is
 ```
 
 For Linux/Mac:
+
 ```
 Initialize this project with Git-Core Protocol. Run:
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash -s -- --auto
@@ -58,6 +59,7 @@ After setup, read .ai/ARCHITECTURE.md and start with the first issue from: gh is
 ### Option 1: Remote Installation (⚡ God Mode)
 
 **Windows PowerShell:**
+
 ```powershell
 # In your project folder
 irm https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.ps1 | iex
@@ -67,6 +69,7 @@ $env:GIT_CORE_AUTO = "1"; $env:GIT_CORE_ORGANIZE = "1"; irm https://raw.githubus
 ```
 
 **Linux/Mac:**
+
 ```bash
 # In your project folder
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash
@@ -154,7 +157,7 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 # 🇪🇸 Español
 
-## 🚀 Inicio Rápido - ¡Solo Copia Este Prompt!
+## 🚀 Inicio Rápido - ¡Solo Copia Este Prompt
 
 > **Copia este prompt a tu agente de código IA (Copilot, Cursor, Claude, etc.) para auto-configurar:**
 
@@ -166,6 +169,7 @@ Después del setup, lee .ai/ARCHITECTURE.md y empieza con el primer issue de: gh
 ```
 
 Para Linux/Mac:
+
 ```
 Inicializa este proyecto con Git-Core Protocol. Ejecuta:
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash -s -- --auto
@@ -189,6 +193,7 @@ Después del setup, lee .ai/ARCHITECTURE.md y empieza con el primer issue de: gh
 ### Opción 1: Instalación Remota (⚡ Nivel Dios)
 
 **Windows PowerShell:**
+
 ```powershell
 # En tu carpeta de proyecto
 irm https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.ps1 | iex
@@ -198,6 +203,7 @@ $env:GIT_CORE_AUTO = "1"; $env:GIT_CORE_ORGANIZE = "1"; irm https://raw.githubus
 ```
 
 **Linux/Mac:**
+
 ```bash
 # En tu carpeta de proyecto
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash
@@ -255,7 +261,7 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 # 🇧🇷 Português
 
-## 🚀 Início Rápido - Apenas Copie Este Prompt!
+## 🚀 Início Rápido - Apenas Copie Este Prompt
 
 > **Copie este prompt para seu agente de código IA (Copilot, Cursor, Claude, etc.) para auto-configurar:**
 
@@ -267,6 +273,7 @@ Após o setup, leia .ai/ARCHITECTURE.md e comece com a primeira issue de: gh iss
 ```
 
 Para Linux/Mac:
+
 ```
 Inicialize este projeto com Git-Core Protocol. Execute:
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash -s -- --auto
@@ -290,11 +297,13 @@ Após o setup, leia .ai/ARCHITECTURE.md e comece com a primeira issue de: gh iss
 ### Opção 1: Instalação Remota (⚡ Modo Deus)
 
 **Windows PowerShell:**
+
 ```powershell
 irm https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.ps1 | iex
 ```
 
 **Linux/Mac:**
+
 ```bash
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash
 ```
@@ -313,7 +322,7 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 # 🇩🇪 Deutsch
 
-## 🚀 Schnellstart - Kopiere Einfach Diesen Prompt!
+## 🚀 Schnellstart - Kopiere Einfach Diesen Prompt
 
 > **Kopiere diesen Prompt zu deinem KI-Coding-Agenten (Copilot, Cursor, Claude, etc.) für Auto-Setup:**
 
@@ -325,6 +334,7 @@ Nach dem Setup, lies .ai/ARCHITECTURE.md und beginne mit dem ersten Issue von: g
 ```
 
 Für Linux/Mac:
+
 ```
 Initialisiere dieses Projekt mit Git-Core Protocol. Führe aus:
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash -s -- --auto
@@ -346,11 +356,13 @@ Nach dem Setup, lies .ai/ARCHITECTURE.md und beginne mit dem ersten Issue von: g
 ## 📦 Installationsoptionen
 
 **Windows PowerShell:**
+
 ```powershell
 irm https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.ps1 | iex
 ```
 
 **Linux/Mac:**
+
 ```bash
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash
 ```
@@ -369,7 +381,7 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 # 🇫🇷 Français
 
-## 🚀 Démarrage Rapide - Copiez Simplement Ce Prompt!
+## 🚀 Démarrage Rapide - Copiez Simplement Ce Prompt
 
 > **Copiez ce prompt vers votre agent de code IA (Copilot, Cursor, Claude, etc.) pour auto-configurer:**
 
@@ -381,6 +393,7 @@ Après le setup, lis .ai/ARCHITECTURE.md et commence avec la première issue de:
 ```
 
 Pour Linux/Mac:
+
 ```
 Initialise ce projet avec Git-Core Protocol. Exécute:
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash -s -- --auto
@@ -402,11 +415,13 @@ Après le setup, lis .ai/ARCHITECTURE.md et commence avec la première issue de:
 ## 📦 Options d'Installation
 
 **Windows PowerShell:**
+
 ```powershell
 irm https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.ps1 | iex
 ```
 
 **Linux/Mac:**
+
 ```bash
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash
 ```
@@ -425,7 +440,7 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 # 🇯🇵 日本語
 
-## 🚀 クイックスタート - このプロンプトをコピーするだけ！
+## 🚀 クイックスタート - このプロンプトをコピーするだけ
 
 > **AIコーディングエージェント（Copilot、Cursor、Claudeなど）にこのプロンプトをコピーして自動セットアップ：**
 
@@ -437,6 +452,7 @@ $env:GIT_CORE_AUTO = "1"; irm https://raw.githubusercontent.com/iberi22/ai-git-c
 ```
 
 Linux/Macの場合:
+
 ```
 Git-Core Protocolでこのプロジェクトを初期化してください。実行：
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash -s -- --auto
@@ -458,11 +474,13 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 ## 📦 インストールオプション
 
 **Windows PowerShell:**
+
 ```powershell
 irm https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.ps1 | iex
 ```
 
 **Linux/Mac:**
+
 ```bash
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash
 ```
@@ -481,7 +499,7 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 
 # 🇨🇳 中文
 
-## 🚀 快速开始 - 只需复制这个提示词！
+## 🚀 快速开始 - 只需复制这个提示词
 
 > **将此提示词复制到您的AI编程助手（Copilot、Cursor、Claude等）以自动设置：**
 
@@ -493,6 +511,7 @@ $env:GIT_CORE_AUTO = "1"; irm https://raw.githubusercontent.com/iberi22/ai-git-c
 ```
 
 Linux/Mac:
+
 ```
 使用Git-Core Protocol初始化此项目。执行：
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash -s -- --auto
@@ -514,11 +533,13 @@ curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/ins
 ## 📦 安装选项
 
 **Windows PowerShell:**
+
 ```powershell
 irm https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.ps1 | iex
 ```
 
 **Linux/Mac:**
+
 ```bash
 curl -sL https://raw.githubusercontent.com/iberi22/ai-git-core-template/main/install.sh | bash
 ```

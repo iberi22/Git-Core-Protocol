@@ -258,6 +258,94 @@ gh issue create --title "TEST: Auth integration tests" \
 | `bug` | Bug reports | 🔴 Red |
 | `enhancement` | Feature requests | 🔵 Blue |
 | `blocked` | Waiting on dependencies | ⚫ Gray |
+| `codex-review` | Trigger Codex AI review | 🟣 Purple |
+| `copilot` | Assigned to Copilot Agent | 🔵 Blue |
+
+---
+
+## 🤖 AI Agent Automation (Codex CLI & Copilot Coding Agent)
+
+### Codex CLI - Headless AI Automation
+
+Codex CLI enables AI-powered code operations from the command line.
+
+**Installation:**
+```bash
+npm i -g @openai/codex
+export OPENAI_API_KEY=your-api-key
+```
+
+**Interactive Mode:**
+```bash
+codex                      # Start interactive session
+codex "explain this code"  # Quick query
+```
+
+**Headless Automation (exec mode):**
+```bash
+# Run automated tasks without human interaction
+codex exec "review the PR diff and suggest improvements"
+codex exec "find security vulnerabilities in src/"
+codex exec "refactor function X to use async/await"
+```
+
+**GitHub Action Integration:**
+The repository includes `.github/workflows/codex-review.yml` for automated PR reviews:
+- Add label `codex-review` to trigger review
+- Comment `/codex-review` for on-demand review
+- Comment `/codex-analyze` for codebase analysis
+- Comment `/codex-fix` for auto-fix suggestions
+
+---
+
+### GitHub Copilot Coding Agent (Jules)
+
+Copilot Coding Agent can autonomously work on issues and PRs.
+
+**Assign Copilot to an Issue:**
+```bash
+# Via GitHub CLI
+gh issue edit <number> --add-assignee "Copilot"
+
+# Or in GitHub UI: Assignees → "Copilot"
+```
+
+**Trigger Copilot in PRs:**
+- Mention `@copilot` in PR comments for specific tasks
+- Copilot creates branches named `copilot/*`
+- Review and merge Copilot's changes
+
+**Best Practices:**
+```bash
+# 1. Create a well-defined issue
+gh issue create --title "FEAT: Add user authentication" \
+  --body "## Requirements
+- OAuth2 with Google
+- JWT tokens
+- Refresh token rotation
+
+## Acceptance Criteria
+- [ ] Login endpoint works
+- [ ] Token refresh works
+- [ ] Tests pass" \
+  --label "enhancement"
+
+# 2. Assign to Copilot
+gh issue edit <number> --add-assignee "Copilot"
+
+# 3. Monitor the copilot/* branch
+gh pr list --head "copilot/"
+
+# 4. Review and merge
+gh pr review <number> --approve
+gh pr merge <number>
+```
+
+**Environment Setup:**
+The repository includes `.github/copilot-setup-steps.yml` for Copilot agent sessions:
+- Installs Node.js, Python, Go
+- Caches dependencies
+- Loads Git-Core Protocol context
 
 ---
 

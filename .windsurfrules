@@ -138,3 +138,38 @@ Adds OAuth2 authentication with Google provider.
 
 AI-Context: architecture | Chose passport.js over custom impl for maintainability
 ```
+
+## 9. Integración Codex CLI
+
+**Modos de uso:**
+
+```bash
+codex                      # Modo interactivo
+codex "explain this code"  # Query rápido
+codex exec "..."           # Automatización headless
+```
+
+**Triggers vía GitHub:**
+
+- Agrega label `codex-review` a PR para review automatizado
+- Comenta `/codex-review` para review on-demand
+- Comenta `/codex-analyze` para análisis de codebase
+
+## 10. Copilot Coding Agent (Jules)
+
+**Asignar issues a Copilot:**
+
+```bash
+gh issue edit <number> --add-assignee "Copilot"
+```
+
+**Triggers en PRs:**
+
+- Menciona `@copilot` en comentarios de PR para tareas específicas
+- Copilot crea branches con nombre `copilot/*`
+
+**Monitorear trabajo de Copilot:**
+
+```bash
+gh pr list --head "copilot/"
+```

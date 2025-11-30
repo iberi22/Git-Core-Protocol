@@ -189,3 +189,39 @@ Closes #42
 - Use AI-Context for complex changes
 - Update issue comments for significant progress
 
+### 11. Codex CLI Integration
+
+**Installation:**
+```bash
+npm i -g @openai/codex
+export OPENAI_API_KEY=your-api-key
+```
+
+**Usage modes:**
+```bash
+codex                      # Interactive mode
+codex "explain this code"  # Quick query
+codex exec "..."           # Headless automation
+```
+
+**Trigger via GitHub:**
+- Add label `codex-review` to PR for automated review
+- Comment `/codex-review` for on-demand review
+- Comment `/codex-analyze` for codebase analysis
+
+### 12. Copilot Coding Agent (Jules)
+
+**Assign issues to Copilot:**
+```bash
+gh issue edit <number> --add-assignee "Copilot"
+```
+
+**Trigger in PRs:**
+- Mention `@copilot` in PR comments for specific tasks
+- Copilot creates branches named `copilot/*`
+
+**Monitor Copilot work:**
+```bash
+gh pr list --head "copilot/"
+```
+

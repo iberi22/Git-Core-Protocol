@@ -102,6 +102,30 @@ if ($LASTEXITCODE -ne 0) {
 }
 Write-Host "✓ GitHub CLI authenticated" -ForegroundColor Green
 
+# Check for Codex CLI (optional but recommended)
+if (Get-Command codex -ErrorAction SilentlyContinue) {
+    Write-Host "✓ Codex CLI installed" -ForegroundColor Green
+} else {
+    Write-Host "⚠️  Codex CLI not found (optional)" -ForegroundColor Yellow
+    if (-not $Auto) {
+        $installCodex = Read-Host "  Install Codex CLI for AI automation? (y/N)"
+        if ($installCodex -eq "y" -or $installCodex -eq "Y") {
+            Write-Host "  Installing Codex CLI..." -ForegroundColor Cyan
+            if (Get-Command npm -ErrorAction SilentlyContinue) {
+                npm install -g @openai/codex
+                Write-Host "✓ Codex CLI installed" -ForegroundColor Green
+            } elseif (Get-Command winget -ErrorAction SilentlyContinue) {
+                winget install --id OpenAI.Codex -e
+                Write-Host "✓ Codex CLI installed" -ForegroundColor Green
+            } else {
+                Write-Host "  ⚠️  Please install manually: npm i -g @openai/codex" -ForegroundColor Yellow
+            }
+        }
+    } else {
+        Write-Host "  Install with: npm i -g @openai/codex" -ForegroundColor Cyan
+    }
+}
+
 # 2. Get project name
 $PROJECT_NAME = Split-Path -Leaf (Get-Location)
 Write-Host "`n📁 Project: $PROJECT_NAME" -ForegroundColor Yellow

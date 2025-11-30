@@ -181,10 +181,7 @@ git diff --staged --stat
 ### Paso 2: Si hay muchos archivos, analiza por grupos
 
 ```bash
-# Opción A: Usar git-atomize (si está disponible)
-git-atomize --analyze
-
-# Opción B: Análisis manual por carpeta
+# Análisis manual por carpeta
 git diff --staged --stat | grep "src/auth"
 git diff --staged --stat | grep "src/api"
 git diff --staged --stat | grep "tests/"
@@ -244,7 +241,8 @@ Las reglas de commits atómicos se aplican diferente según el contexto:
 ### Configuración para Teams
 
 ```bash
-# .pre-commit-config.yaml (ejemplo)
+# .pre-commit-config.yaml (ejemplo conceptual)
+# Nota: Requiere crear el script check-atomic-commit.sh según tus reglas
 repos:
   - repo: local
     hooks:
@@ -275,15 +273,17 @@ repos:
 
 ### Análisis Rápido
 
+> **Nota:** Estos comandos funcionan en Linux/Mac. En Windows, usa Git Bash o WSL.
+
 ```bash
-# Ver archivos staged agrupados por carpeta
-git diff --staged --stat | awk -F/ '{print $1}' | sort | uniq -c | sort -rn
-
-# Ver tipos de archivos staged
-git diff --staged --name-only | sed 's/.*\.//' | sort | uniq -c
-
 # Contar archivos staged
 git diff --staged --name-only | wc -l
+
+# Ver archivos staged agrupados por carpeta (primer nivel)
+git diff --staged --name-only | cut -d'/' -f1 | sort | uniq -c | sort -rn
+
+# Ver tipos de archivos staged por extensión
+git diff --staged --name-only | grep -o '\.[^.]*$' | sort | uniq -c
 ```
 
 ### Unstage Selectivo

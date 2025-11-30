@@ -257,3 +257,39 @@ gh issue edit <number> --add-label "ai-agent"
 gh workflow run agent-dispatcher.yml
 ```
 
+### 15. Commits Atómicos (OBLIGATORIO)
+
+**UN commit = UN cambio lógico. NUNCA mezclar concerns.**
+
+#### Antes de hacer `git add .`, pregúntate:
+1. ¿Todos los archivos son del mismo módulo/scope?
+2. ¿Es un solo tipo de cambio (feat/fix/docs/ci)?
+3. ¿Puedo describirlo en < 72 caracteres?
+4. ¿Revertirlo afectaría solo una funcionalidad?
+
+Si alguna respuesta es "NO" → **SEPARAR EN MÚLTIPLES COMMITS**
+
+#### Flujo correcto:
+```bash
+# ❌ NUNCA
+git add .
+git commit -m "feat: big update with everything"
+
+# ✅ SIEMPRE
+git add src/migrations/
+git commit -m "feat(db): add user sessions table"
+
+git add src/api/auth/
+git commit -m "feat(auth): implement session endpoint"
+
+git add docs/
+git commit -m "docs: add authentication guide"
+```
+
+#### Herramientas:
+```bash
+# Si ya tienes muchos archivos staged
+git-atomize --analyze    # Ver sugerencias de separación
+git-atomize --interactive  # Separar interactivamente
+```
+

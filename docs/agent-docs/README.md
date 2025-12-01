@@ -1,3 +1,19 @@
+---
+title: "Agent Documentation System"
+type: DOCUMENTATION
+id: "doc-agent-docs-readme"
+created: 2025-12-01
+updated: 2025-12-01
+agent: copilot
+model: gemini-3-pro
+requested_by: system
+summary: |
+  Documentation for the user-controlled agent documentation system.
+keywords: [agent-docs, documentation, user-controlled]
+tags: ["#documentation", "#agent-docs", "#system"]
+project: Git-Core-Protocol
+---
+
 # 📄 Agent Documentation System
 
 ## Overview
@@ -304,3 +320,4 @@ audience: developers
 ---
 
 *This system allows for persistent, user-requested documentation while maintaining the Git-Core Protocol's principle of using GitHub Issues for task management.*
+

@@ -1,3 +1,19 @@
+---
+title: "Extended Commit Message Standard"
+type: STANDARD
+id: "std-commit-message"
+created: 2025-12-01
+updated: 2025-12-01
+agent: copilot
+model: gemini-3-pro
+requested_by: system
+summary: |
+  Standard for extended conventional commits in AI-assisted development.
+keywords: [git, commits, standard, conventional-commits]
+tags: ["#standard", "#git", "#convention"]
+project: Git-Core-Protocol
+---
+
 # 📝 Extended Commit Message Standard
 
 ## Overview
@@ -240,3 +256,4 @@ This enables AI agents to scan document metadata without reading full content.
 ---
 
 *This standard ensures rich, searchable commit history that benefits both human developers and AI agents.*
+

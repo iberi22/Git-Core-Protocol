@@ -1,3 +1,19 @@
+---
+title: "Guía de Commits Atómicos"
+type: GUIDE
+id: "guide-atomic-commits"
+created: 2025-12-01
+updated: 2025-12-01
+agent: copilot
+model: gemini-3-pro
+requested_by: system
+summary: |
+  Guía práctica para crear commits atómicos, claros y reversibles.
+keywords: [git, commits, atomic, guide]
+tags: ["#guide", "#git", "#best-practices"]
+project: Git-Core-Protocol
+---
+
 # ⚛️ Guía de Commits Atómicos
 
 > Una guía práctica para crear commits que cuenten una historia clara y reversible.
@@ -17,6 +33,7 @@ Un **commit atómico** es un commit que representa **un solo cambio lógico** en
 ### Analogía
 
 Piensa en los commits como **capítulos de un libro**:
+
 - Cada capítulo cuenta una parte específica de la historia
 - Puedes leer un capítulo y entenderlo por sí solo
 - Si necesitas quitar un capítulo, los demás siguen teniendo sentido
@@ -36,6 +53,7 @@ git commit -m "feat: add Jules API Integration with session orchestrator, monito
 ```
 
 **Problemas:**
+
 - Imposible de revertir parcialmente
 - Difícil de revisar en code review
 - Historial de git ilegible
@@ -72,6 +90,7 @@ git commit -m "changes"
 ### Caso Práctico: Integración de API Jules
 
 Supongamos que necesitas agregar una integración con la API de Jules que incluye:
+
 - Tablas de base de datos
 - Lógica del orquestador
 - Componente de UI
@@ -368,3 +387,4 @@ Closes #15"
 ---
 
 *Esta guía es parte del Git-Core Protocol. Para más información, consulta el [README principal](../README.md).*
+

@@ -31,7 +31,7 @@ pub async fn generate_report(output_path: &Path, deps: &[Dependency], insights: 
 
     // 2. Intelligent Insights
     content.push_str("## 🧠 Intelligent Patterns & Anomalies\n\n");
-    content.push_str("> Analyzed by **Gemini 3 Pro** - Google's most intelligent model.\n\n");
+    content.push_str("> Analyzed by **Gemini 2.5 Flash** - Best balance of intelligence and free tier limits.\n\n");
 
     if insights.is_empty() {
         content.push_str("*No specific anomalies detected for the current stack versions.*\n");

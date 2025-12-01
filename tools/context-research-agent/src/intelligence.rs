@@ -155,9 +155,10 @@ async fn call_gemini(client: &Client, api_key: &str, prompt: &str) -> Result<Str
         }],
     };
 
-    // Use Gemini 3 Pro Preview (latest and most intelligent)
+    // Use Gemini 2.5 Flash - Best free tier limits (1500 req/day, 15 req/min)
+    // gemini-3-pro-preview has more restrictive quotas in free tier
     let url = format!(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key={}",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={}",
         api_key
     );
 

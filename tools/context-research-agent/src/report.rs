@@ -1,12 +1,31 @@
 use anyhow::Result;
 use crate::context::Dependency;
-use crate::intelligence::Insight;
+use crate::intelligence::{Insight, AIProviderInfo};
 use std::path::Path;
 use tokio::fs;
-use chrono::Local;
+use chrono::{Local, Utc, Duration, NaiveDate};
 
-pub async fn generate_report(output_path: &Path, deps: &[Dependency], insights: &[Insight]) -> Result<()> {
+/// Quarantine threshold in days (14 days as per Git-Core Protocol)
+const QUARANTINE_DAYS: i64 = 14;
+
+#[derive(Debug, Clone)]
+pub struct QuarantineStatus {
+    pub dependency_name: String,
+    pub version: String,
+    pub release_date: Option<NaiveDate>,
+    pub days_in_quarantine: i64,
+    pub is_quarantined: bool,
+}
+
+pub async fn generate_report(
+    output_path: &Path,
+    deps: &[Dependency],
+    insights: &[Insight],
+    ai_provider: &AIProviderInfo,
+    quarantine_deps: &[QuarantineStatus],
+) -> Result<()> {
     let mut content = String::new();
+    let now = Utc::now();
 
     // YAML Frontmatter
     content.push_str("---\n");
@@ -14,6 +33,9 @@ pub async fn generate_report(output_path: &Path, deps: &[Dependency], insights: 
     content.push_str("type: RESEARCH\n");
     content.push_str("agent: context-research-agent\n");
     content.push_str(&format!("updated: {}\n", Local::now().format("%Y-%m-%d")));
+    content.push_str(&format!("ai_provider: \"{}\"\n", ai_provider.name));
+    content.push_str(&format!("ai_model: \"{}\"\n", ai_provider.model));
+    content.push_str(&format!("quarantine_threshold_days: {}\n", QUARANTINE_DAYS));
     content.push_str("---\n\n");
 
     content.push_str("# 🧠 Living Research Context\n\n");
@@ -22,21 +44,40 @@ pub async fn generate_report(output_path: &Path, deps: &[Dependency], insights: 
 
     // 1. Current Stack
     content.push_str("## 📦 Current Stack\n\n");
-    content.push_str("| Dependency | Version | Ecosystem |\n");
-    content.push_str("|------------|---------|-----------|\n");
+    content.push_str("| Dependency | Version | Ecosystem | Status |\n");
+    content.push_str("|------------|---------|-----------|--------|\n");
     for dep in deps {
-        content.push_str(&format!("| **{}** | `{}` | {:?} |\n", dep.name, dep.version, dep.ecosystem));
+        let status = quarantine_deps.iter()
+            .find(|q| q.dependency_name == dep.name)
+            .map(|q| if q.is_quarantined { "🔒 Quarantine" } else { "✅ Stable" })
+            .unwrap_or("✅ Stable");
+        content.push_str(&format!("| **{}** | `{}` | {:?} | {} |\n",
+            dep.name, dep.version, dep.ecosystem, status));
     }
     content.push_str("\n");
 
     // 2. Intelligent Insights
     content.push_str("## 🧠 Intelligent Patterns & Anomalies\n\n");
-    content.push_str("> Analyzed by **GitHub Models (Llama 3.3)** via `gh models run`.\n");
-    content.push_str("> Requires Copilot subscription for AI analysis.\n\n");
+
+    // Dynamic AI provider display
+    if ai_provider.available {
+        content.push_str(&format!("> Analyzed by **{} ({})** via `{}`.\n",
+            ai_provider.name, ai_provider.model, ai_provider.command));
+        if !ai_provider.notes.is_empty() {
+            content.push_str(&format!("> {}\n\n", ai_provider.notes));
+        } else {
+            content.push_str("\n");
+        }
+    } else {
+        content.push_str("> ⚠️ **No AI provider available.** Analysis skipped.\n");
+        content.push_str("> To enable, install: `npm i -g @google/gemini-cli && gemini login`\n\n");
+    }
 
     if insights.is_empty() {
         content.push_str("*No specific anomalies detected for the current stack versions.*\n\n");
-        content.push_str("*AI analysis skipped (no issues found or GitHub Models unavailable).*\n");
+        if !ai_provider.available {
+            content.push_str("*AI analysis skipped (no provider available).*\n\n");
+        }
     } else {
         for insight in insights {
             content.push_str(&format!("### {} ({})\n\n", insight.dependency_name, insight.version));
@@ -45,12 +86,82 @@ pub async fn generate_report(output_path: &Path, deps: &[Dependency], insights: 
         }
     }
 
+    // 3. Quarantine Status Section
+    content.push_str("## 🚧 Quarantine Status\n\n");
+    content.push_str(&format!(
+        "Dependencies currently in quarantine (<{} days since release):\n\n",
+        QUARANTINE_DAYS
+    ));
+
+    let quarantined: Vec<_> = quarantine_deps.iter().filter(|q| q.is_quarantined).collect();
+
+    if quarantined.is_empty() {
+        content.push_str("*No dependencies in quarantine.*\n\n");
+    } else {
+        content.push_str("| Dependency | Version | Release Date | Days Remaining |\n");
+        content.push_str("|------------|---------|--------------|----------------|\n");
+        for q in &quarantined {
+            let release_str = q.release_date
+                .map(|d| d.format("%Y-%m-%d").to_string())
+                .unwrap_or_else(|| "Unknown".to_string());
+            let days_remaining = QUARANTINE_DAYS - q.days_in_quarantine;
+            content.push_str(&format!("| **{}** | `{}` | {} | {} days |\n",
+                q.dependency_name, q.version, release_str, days_remaining.max(0)));
+        }
+        content.push_str("\n");
+        content.push_str("> ⚠️ **Warning:** Quarantined dependencies should not be used in production.\n");
+        content.push_str("> Wait for the quarantine period to complete before upgrading.\n\n");
+    }
+
+    // 4. Ready to Adopt Section
+    let ready_to_adopt: Vec<_> = quarantine_deps.iter()
+        .filter(|q| !q.is_quarantined && q.days_in_quarantine > 0)
+        .collect();
+
+    if !ready_to_adopt.is_empty() {
+        content.push_str("## ✅ Ready to Adopt\n\n");
+        content.push_str("Dependencies that have passed quarantine and are safe to upgrade:\n\n");
+        content.push_str("| Dependency | Version | Days Since Release |\n");
+        content.push_str("|------------|---------|-------------------|\n");
+        for q in &ready_to_adopt {
+            content.push_str(&format!("| **{}** | `{}` | {} days |\n",
+                q.dependency_name, q.version, q.days_in_quarantine));
+        }
+        content.push_str("\n");
+    }
+
     // Ensure directory exists
     if let Some(parent) = output_path.parent() {
         fs::create_dir_all(parent).await?;
     }
 
+    // 5. Footer with timestamp
+    content.push_str("---\n");
+    content.push_str(&format!("*Last updated: {} UTC*\n", now.format("%Y-%m-%d %H:%M:%S")));
+
     fs::write(output_path, content).await?;
 
     Ok(())
+}
+
+/// Check if a dependency is in quarantine based on release date
+pub fn check_quarantine_status(
+    dependency_name: &str,
+    version: &str,
+    release_date: Option<NaiveDate>,
+) -> QuarantineStatus {
+    let days_since_release = release_date
+        .map(|date| {
+            let today = Utc::now().date_naive();
+            (today - date).num_days()
+        })
+        .unwrap_or(QUARANTINE_DAYS + 1); // If unknown, assume stable
+
+    QuarantineStatus {
+        dependency_name: dependency_name.to_string(),
+        version: version.to_string(),
+        release_date,
+        days_in_quarantine: days_since_release,
+        is_quarantined: days_since_release < QUARANTINE_DAYS,
+    }
 }

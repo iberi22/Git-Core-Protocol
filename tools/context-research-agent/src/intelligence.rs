@@ -13,6 +13,28 @@ pub struct Insight {
     pub analysis: String,
 }
 
+/// Information about the AI provider used for analysis
+#[derive(Debug, Clone)]
+pub struct AIProviderInfo {
+    pub name: String,
+    pub model: String,
+    pub command: String,
+    pub available: bool,
+    pub notes: String,
+}
+
+impl Default for AIProviderInfo {
+    fn default() -> Self {
+        Self {
+            name: "None".to_string(),
+            model: "N/A".to_string(),
+            command: "N/A".to_string(),
+            available: false,
+            notes: String::new(),
+        }
+    }
+}
+
 // ============== CONFIGURATION ==============
 // Priority: Gemini CLI (local OAuth) > GitHub Models (gh CLI) > No analysis
 //
@@ -32,6 +54,8 @@ const BATCH_SIZE: usize = 5; // Dependencies per batch
 
 // Store the detected gemini command for reuse
 static GEMINI_COMMAND: OnceLock<String> = OnceLock::new();
+// Store detected provider info for report generation
+static DETECTED_PROVIDER: OnceLock<AIProviderInfo> = OnceLock::new();
 
 #[derive(Debug, Clone, PartialEq)]
 enum AIProvider {
@@ -45,22 +69,35 @@ struct GeminiResponse {
     response: String,
 }
 
+/// Get the detected AI provider info (for report generation)
+pub fn get_provider_info() -> AIProviderInfo {
+    DETECTED_PROVIDER.get().cloned().unwrap_or_default()
+}
+
 fn detect_available_provider() -> AIProvider {
     // Check Gemini CLI first (preferred - uses local OAuth)
     // Try multiple ways to find gemini (PATH might vary on Windows/Linux/Mac)
     let gemini_commands = ["gemini", "gemini.cmd", "gemini.exe", "gemini.bat"];
-    
+
     for cmd in gemini_commands {
         let gemini_check = Command::new(cmd)
             .args(["--version"])
             .output();
-        
+
         match gemini_check {
             Ok(output) if output.status.success() => {
                 let version = String::from_utf8_lossy(&output.stdout);
                 println!("✅ Gemini CLI v{} detected (cmd: {}) - using local OAuth credentials", version.trim(), cmd);
                 // Store the working command for later use
                 let _ = GEMINI_COMMAND.set(cmd.to_string());
+                // Store provider info
+                let _ = DETECTED_PROVIDER.set(AIProviderInfo {
+                    name: "Gemini CLI".to_string(),
+                    model: GEMINI_MODEL.to_string(),
+                    command: format!("{} -m {}", cmd, GEMINI_MODEL),
+                    available: true,
+                    notes: "Local OAuth credentials (no API key needed)".to_string(),
+                });
                 return AIProvider::GeminiCli;
             }
             _ => continue,
@@ -71,12 +108,21 @@ fn detect_available_provider() -> AIProvider {
     let gh_check = Command::new("gh")
         .args(["models", "list"])
         .output();
-    
+
     if gh_check.map(|o| o.status.success()).unwrap_or(false) {
         println!("✅ GitHub Models detected - using gh CLI");
+        let _ = DETECTED_PROVIDER.set(AIProviderInfo {
+            name: "GitHub Models".to_string(),
+            model: GH_MODEL.to_string(),
+            command: format!("gh models run {}", GH_MODEL),
+            available: true,
+            notes: "Requires Copilot subscription".to_string(),
+        });
         return AIProvider::GitHubModels;
     }
 
+    // No provider available
+    let _ = DETECTED_PROVIDER.set(AIProviderInfo::default());
     AIProvider::None
 }
 
@@ -186,9 +232,9 @@ async fn call_gemini_cli(prompt: &str) -> Result<String> {
     let gemini_cmd = GEMINI_COMMAND.get()
         .map(|s| s.as_str())
         .unwrap_or("gemini");
-    
+
     println!("  🔷 Calling Gemini CLI ({}) via '{}'...", GEMINI_MODEL, gemini_cmd);
-    
+
     // Gemini CLI syntax: gemini -m model -o json "prompt"
     let output = Command::new(gemini_cmd)
         .args([
@@ -201,11 +247,11 @@ async fn call_gemini_cli(prompt: &str) -> Result<String> {
 
     if output.status.success() {
         let stdout = String::from_utf8_lossy(&output.stdout);
-        
+
         // Parse JSON response - response is in "response" field
         let response: GeminiResponse = serde_json::from_str(&stdout)
             .map_err(|e| anyhow::anyhow!("Failed to parse Gemini JSON: {}", e))?;
-        
+
         // Clean up markdown code blocks if present
         let cleaned = response.response
             .trim()
@@ -214,11 +260,11 @@ async fn call_gemini_cli(prompt: &str) -> Result<String> {
             .trim_end_matches("```")
             .trim()
             .to_string();
-        
+
         if cleaned.is_empty() {
             return Err(anyhow::anyhow!("Empty response from Gemini"));
         }
-        
+
         Ok(cleaned)
     } else {
         let stderr = String::from_utf8_lossy(&output.stderr);
@@ -235,7 +281,7 @@ async fn call_gemini_cli(prompt: &str) -> Result<String> {
 /// Call GitHub Models via gh CLI (fallback)
 async fn call_gh_models(prompt: &str) -> Result<String> {
     println!("  🔷 Calling GitHub Models ({})...", GH_MODEL);
-    
+
     let output = Command::new("gh")
         .args([
             "models",

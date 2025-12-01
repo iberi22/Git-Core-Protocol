@@ -18,6 +18,10 @@ struct Args {
     /// Path to the workspace root
     #[arg(short, long, default_value = ".")]
     workspace: PathBuf,
+
+    /// Check quarantine status for dependencies
+    #[arg(long, default_value = "true")]
+    check_quarantine: bool,
 }
 
 #[tokio::main]
@@ -38,14 +42,31 @@ async fn main() -> Result<()> {
     let search_results = search::gather_context(&dependencies).await?;
     println!("✅ Gathered context for {} items.", search_results.len());
 
-    // 3. Analyze with Intelligence (Gemini)
-    println!("🧠 Analyzing anomalies and patterns with Gemini...");
+    // 3. Analyze with Intelligence (Gemini or GitHub Models)
+    println!("🧠 Analyzing anomalies and patterns...");
     let insights = intelligence::analyze_findings(search_results).await?;
     println!("✅ Generated {} insights.", insights.len());
 
-    // 4. Generate Report
+    // 4. Get AI Provider Info (for dynamic report)
+    let ai_provider = intelligence::get_provider_info();
+    println!("📊 AI Provider: {} ({})", ai_provider.name, ai_provider.model);
+
+    // 5. Check Quarantine Status
+    println!("🚧 Checking quarantine status...");
+    let quarantine_deps: Vec<report::QuarantineStatus> = dependencies.iter()
+        .map(|dep| {
+            // For now, we assume all dependencies are stable (release date unknown)
+            // In production, this would fetch from crates.io/npm/pypi APIs
+            report::check_quarantine_status(&dep.name, &dep.version, None)
+        })
+        .collect();
+
+    let quarantined_count = quarantine_deps.iter().filter(|q| q.is_quarantined).count();
+    println!("✅ Quarantine check complete. {} in quarantine.", quarantined_count);
+
+    // 6. Generate Report
     println!("📝 Generating Living Context Report...");
-    report::generate_report(&args.output, &dependencies, &insights).await?;
+    report::generate_report(&args.output, &dependencies, &insights, &ai_provider, &quarantine_deps).await?;
     println!("✅ Report saved to {:?}", args.output);
 
     Ok(())

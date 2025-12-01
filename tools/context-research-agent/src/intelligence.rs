@@ -3,6 +3,8 @@ use crate::search::SearchResult;
 use std::process::Command;
 use std::time::Duration;
 use tokio::time::sleep;
+use serde::Deserialize;
+use std::sync::OnceLock;
 
 #[derive(Debug, Clone)]
 pub struct Insight {
@@ -12,31 +14,80 @@ pub struct Insight {
 }
 
 // ============== CONFIGURATION ==============
-// Using GitHub Models via `gh models run` - FREE tier (requires Copilot subscription)
-// Fallback: Skip analysis if gh models is not available
-// Model options:
-//   - openai/gpt-4o-mini (fast, good quality)
-//   - meta/llama-3.3-70b-instruct (free for everyone)
-const MODEL: &str = "meta/llama-3.3-70b-instruct"; // More accessible in free tier
-const RATE_LIMIT_DELAY_MS: u64 = 3000; // 3 seconds between calls
-const BATCH_SIZE: usize = 5; // Smaller batches for better analysis
+// Priority: Gemini CLI (local OAuth) > GitHub Models (gh CLI) > No analysis
+//
+// Gemini CLI: Uses local OAuth2 credentials (no API key needed)
+//   - Install: npm install -g @google/gemini-cli
+//   - Login: gemini login
+//   - Models: gemini-2.5-flash (default), gemini-2.5-pro, gemini-3-pro-preview
+//
+// GitHub Models: Uses gh CLI with Copilot subscription
+//   - Install: gh extension install github/gh-models
+//   - Models: meta/llama-3.3-70b-instruct (free tier)
 
-pub async fn analyze_findings(results: Vec<SearchResult>) -> Result<Vec<Insight>> {
-    // Check if gh models extension is available and working
-    let gh_models_check = Command::new("gh")
+const GEMINI_MODEL: &str = "gemini-2.5-flash"; // Fast, reliable, free tier friendly
+const GH_MODEL: &str = "meta/llama-3.3-70b-instruct"; // Fallback model
+const RATE_LIMIT_DELAY_MS: u64 = 3000; // 3 seconds between calls
+const BATCH_SIZE: usize = 5; // Dependencies per batch
+
+// Store the detected gemini command for reuse
+static GEMINI_COMMAND: OnceLock<String> = OnceLock::new();
+
+#[derive(Debug, Clone, PartialEq)]
+enum AIProvider {
+    GeminiCli,
+    GitHubModels,
+    None,
+}
+
+#[derive(Debug, Deserialize)]
+struct GeminiResponse {
+    response: String,
+}
+
+fn detect_available_provider() -> AIProvider {
+    // Check Gemini CLI first (preferred - uses local OAuth)
+    // Try multiple ways to find gemini (PATH might vary on Windows/Linux/Mac)
+    let gemini_commands = ["gemini", "gemini.cmd", "gemini.exe", "gemini.bat"];
+    
+    for cmd in gemini_commands {
+        let gemini_check = Command::new(cmd)
+            .args(["--version"])
+            .output();
+        
+        match gemini_check {
+            Ok(output) if output.status.success() => {
+                let version = String::from_utf8_lossy(&output.stdout);
+                println!("✅ Gemini CLI v{} detected (cmd: {}) - using local OAuth credentials", version.trim(), cmd);
+                // Store the working command for later use
+                let _ = GEMINI_COMMAND.set(cmd.to_string());
+                return AIProvider::GeminiCli;
+            }
+            _ => continue,
+        }
+    }
+
+    // Fallback to GitHub Models
+    let gh_check = Command::new("gh")
         .args(["models", "list"])
         .output();
     
-    let gh_available = match gh_models_check {
-        Ok(output) => output.status.success(),
-        Err(_) => false,
-    };
+    if gh_check.map(|o| o.status.success()).unwrap_or(false) {
+        println!("✅ GitHub Models detected - using gh CLI");
+        return AIProvider::GitHubModels;
+    }
 
-    if !gh_available {
-        println!("⚠️ GitHub Models not available. Generating report without AI analysis.");
-        println!("   To enable AI analysis:");
-        println!("   1. Install gh-models: gh extension install github/gh-models");
-        println!("   2. Ensure you have Copilot subscription (free tier has models)");
+    AIProvider::None
+}
+
+pub async fn analyze_findings(results: Vec<SearchResult>) -> Result<Vec<Insight>> {
+    let provider = detect_available_provider();
+
+    if provider == AIProvider::None {
+        println!("⚠️ No AI provider available. Generating report without analysis.");
+        println!("   To enable AI analysis, install ONE of:");
+        println!("   1. Gemini CLI: npm install -g @google/gemini-cli && gemini login");
+        println!("   2. GitHub Models: gh extension install github/gh-models");
         return Ok(Vec::new());
     }
 
@@ -51,7 +102,12 @@ pub async fn analyze_findings(results: Vec<SearchResult>) -> Result<Vec<Insight>
         return Ok(Vec::new());
     }
 
-    println!("🧠 Analyzing {} dependencies with issues using GitHub Models ({})...", total, MODEL);
+    let model_name = match provider {
+        AIProvider::GeminiCli => GEMINI_MODEL,
+        AIProvider::GitHubModels => GH_MODEL,
+        AIProvider::None => unreachable!(),
+    };
+    println!("🧠 Analyzing {} dependencies using {:?} ({})...", total, provider, model_name);
 
     // Batch dependencies for analysis
     let batches: Vec<Vec<&SearchResult>> = relevant.chunks(BATCH_SIZE).map(|c| c.iter().collect()).collect();
@@ -62,26 +118,24 @@ pub async fn analyze_findings(results: Vec<SearchResult>) -> Result<Vec<Insight>
     for (batch_idx, batch) in batches.iter().enumerate() {
         println!("\n📦 Batch {}/{} ({} deps)...", batch_idx + 1, total_batches, batch.len());
 
-        // Build combined prompt for the batch
         let batch_prompt = build_batch_prompt(&batch);
 
-        // Call GitHub Models via gh CLI
-        println!("  🔷 Calling GitHub Models ({})...", MODEL);
-        let result = call_gh_models(&batch_prompt).await;
+        let result = match provider {
+            AIProvider::GeminiCli => call_gemini_cli(&batch_prompt).await,
+            AIProvider::GitHubModels => call_gh_models(&batch_prompt).await,
+            AIProvider::None => unreachable!(),
+        };
 
         match &result {
-            Ok(text) => {
-                println!("  ✅ Success! ({} chars)", text.len());
-            }
+            Ok(text) => println!("  ✅ Success! ({} chars)", text.len()),
             Err(e) => {
                 println!("  ⚠️ Error: {}", e);
                 println!("  ℹ️ Continuing without AI analysis for this batch...");
             }
         }
 
-        // Store results for each dep in batch
         let analysis_text = result.unwrap_or_else(|_| {
-            "AI analysis unavailable. Check GitHub Models access.".to_string()
+            "AI analysis unavailable for this batch.".to_string()
         });
 
         for dep in batch {
@@ -126,13 +180,67 @@ fn build_batch_prompt(batch: &[&SearchResult]) -> String {
     prompt
 }
 
+/// Call Gemini CLI (local OAuth - preferred method)
+async fn call_gemini_cli(prompt: &str) -> Result<String> {
+    // Get the command that was detected during provider detection
+    let gemini_cmd = GEMINI_COMMAND.get()
+        .map(|s| s.as_str())
+        .unwrap_or("gemini");
+    
+    println!("  🔷 Calling Gemini CLI ({}) via '{}'...", GEMINI_MODEL, gemini_cmd);
+    
+    // Gemini CLI syntax: gemini -m model -o json "prompt"
+    let output = Command::new(gemini_cmd)
+        .args([
+            "-m", GEMINI_MODEL,
+            "-o", "json",
+            "--sandbox=false",  // Disable sandbox for non-interactive
+            prompt,
+        ])
+        .output()?;
+
+    if output.status.success() {
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        
+        // Parse JSON response - response is in "response" field
+        let response: GeminiResponse = serde_json::from_str(&stdout)
+            .map_err(|e| anyhow::anyhow!("Failed to parse Gemini JSON: {}", e))?;
+        
+        // Clean up markdown code blocks if present
+        let cleaned = response.response
+            .trim()
+            .trim_start_matches("```json")
+            .trim_start_matches("```")
+            .trim_end_matches("```")
+            .trim()
+            .to_string();
+        
+        if cleaned.is_empty() {
+            return Err(anyhow::anyhow!("Empty response from Gemini"));
+        }
+        
+        Ok(cleaned)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        if stderr.contains("429") || stderr.contains("rate") {
+            return Err(anyhow::anyhow!("Rate limit hit. Try again later."));
+        }
+        if stderr.contains("auth") || stderr.contains("login") {
+            return Err(anyhow::anyhow!("Not authenticated. Run: gemini login"));
+        }
+        Err(anyhow::anyhow!("Gemini CLI error: {}", stderr))
+    }
+}
+
+/// Call GitHub Models via gh CLI (fallback)
 async fn call_gh_models(prompt: &str) -> Result<String> {
-    // Use gh models run with the prompt
+    println!("  🔷 Calling GitHub Models ({})...", GH_MODEL);
+    
     let output = Command::new("gh")
         .args([
             "models",
             "run",
-            MODEL,
+            GH_MODEL,
             prompt,
             "--max-tokens", "2048",
         ])
@@ -146,7 +254,6 @@ async fn call_gh_models(prompt: &str) -> Result<String> {
         Ok(response)
     } else {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        // Check for common errors
         if stderr.contains("403") || stderr.contains("no_access") {
             return Err(anyhow::anyhow!("No access to model. Ensure you have Copilot subscription."));
         }

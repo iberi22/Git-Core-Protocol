@@ -60,18 +60,33 @@ Before any task:
 # 1. Check the Agent Index to see if you need a specific Role
 cat .✨/AGENT_INDEX.md
 
-# 2. If a Role fits the task, EQUIP IT:
+# 2. Read Living Research Context (CRITICAL for dependencies)
+cat docs/agent-docs/RESEARCH_STACK_CONTEXT.md
+
+# 3. If a Role fits the task, EQUIP IT:
 # ./scripts/equip-agent.ps1 -Role "RoleName"
 # cat .✨/CURRENT_CONTEXT.md
 
-# 3. Read architecture
+# 4. Read architecture
 cat .✨/ARCHITECTURE.md
 
-# 4. Check your assigned issues
+# 5. Check your assigned issues
 gh issue list --assignee "@me"
 ```
 
-### 3. Architecture First Rule
+### 3. Dependency Quarantine Rule (NEW)
+When working with dependencies:
+1. **Check quarantine status**: `gh pr list --label "quarantine"`
+2. **Never use bleeding-edge**: Versions < 2 weeks old are in quarantine
+3. **Check RESEARCH_STACK_CONTEXT.md**: Contains known issues for current versions
+4. **Prefer stable patterns**: Use the "Intelligent Patterns" section, not latest docs
+
+**Workflow Integration:**
+- Dependabot creates PRs → Auto-labeled "quarantine"
+- After 14 days → Auto-promoted to "ready-to-adopt"
+- On merge → Context Research Agent updates documentation
+
+### 4. Architecture First Rule
 Before implementing ANY infrastructure feature:
 1. Run: `grep -A 20 'CRITICAL DECISIONS' .✨/ARCHITECTURE.md`
 2. Check CRITICAL DECISIONS table
@@ -84,7 +99,7 @@ Before implementing ANY infrastructure feature:
 - `.✨/AGENT_INDEX.md` - Agent roles and routing
 - `AGENTS.md` - Architecture Verification Rule
 
-### 4. Development Flow
+### 5. Development Flow
 ```bash
 # Take a task
 gh issue edit <id> --add-assignee "@me"

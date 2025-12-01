@@ -63,5 +63,32 @@ tone_instructions: |
   - Conventional commits compliance
   - Code maintainability
   - Security considerations
+  - Living Context accuracy (for docs/agent-docs/ PRs)
   
   Be constructive and provide actionable suggestions.
+  
+  For Living Context PRs (branch: living-context/*):
+  - Verify dependency version accuracy
+  - Check for known CVEs in listed versions
+  - Validate intelligent patterns are actionable
+  - Ensure quarantine dates follow 14-day rule
+
+# Knowledge base for context
+knowledge_base:
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  jira:
+    project_keys: []
+  linear:
+    team_keys: []
+
+# Label configuration for Living Context
+labels:
+  - name: "living-context"
+    description: "Living Context Protocol updates"
+  - name: "ai-review-requested"
+    description: "AI agents should review this PR"
+  - name: "dependency-intelligence"
+    description: "Contains dependency analysis"

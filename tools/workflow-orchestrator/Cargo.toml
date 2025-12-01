@@ -1,0 +1,64 @@
+[package]
+name = "workflow-orchestrator"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance workflow orchestrator for Git-Core Protocol"
+authors = ["Git-Core Protocol"]
+license = "MIT"
+
+[dependencies]
+# Async runtime with full features
+tokio = { version = "1.40", features = ["full", "parking_lot"] }
+
+# HTTP client for GitHub API
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "2.0"
+
+# CLI
+clap = { version = "4.5", features = ["derive", "env"] }
+
+# Async utilities
+futures = "0.3"
+async-trait = "0.1"
+
+# Time and dates
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Process execution
+tokio-process = "0.2"
+
+# Parallel iterators (for CPU-bound tasks)
+rayon = "1.10"
+
+# Rate limiting
+governor = "0.7"
+
+# Retry logic
+tokio-retry = "0.3"
+
+# Environment
+dotenv = "0.15"
+
+# Markdown generation
+pulldown-cmark = "0.12"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 1

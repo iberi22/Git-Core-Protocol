@@ -72,15 +72,15 @@ function Backup-UserFiles {
     New-Item -ItemType Directory -Force -Path $BACKUP_DIR | Out-Null
     
     # Backup ARCHITECTURE.md
-    if (Test-Path ".ai/ARCHITECTURE.md") {
-        Copy-Item ".ai/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
-        Write-Host "  ✓ .ai/ARCHITECTURE.md backed up" -ForegroundColor Green
+    if (Test-Path ".✨/ARCHITECTURE.md") {
+        Copy-Item ".✨/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
+        Write-Host "  ✓ .✨/ARCHITECTURE.md backed up" -ForegroundColor Green
     }
     
     # Backup CONTEXT_LOG.md
-    if (Test-Path ".ai/CONTEXT_LOG.md") {
-        Copy-Item ".ai/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
-        Write-Host "  ✓ .ai/CONTEXT_LOG.md backed up" -ForegroundColor Green
+    if (Test-Path ".✨/CONTEXT_LOG.md") {
+        Copy-Item ".✨/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
+        Write-Host "  ✓ .✨/CONTEXT_LOG.md backed up" -ForegroundColor Green
     }
     
     # Backup custom workflows
@@ -103,14 +103,14 @@ function Restore-UserFiles {
     
     # Restore ARCHITECTURE.md (unless force mode)
     if (-not $ForceMode -and (Test-Path "$BACKUP_DIR/ARCHITECTURE.md")) {
-        Copy-Item "$BACKUP_DIR/ARCHITECTURE.md" ".ai/ARCHITECTURE.md" -Force
-        Write-Host "  ✓ .ai/ARCHITECTURE.md restored" -ForegroundColor Green
+        Copy-Item "$BACKUP_DIR/ARCHITECTURE.md" ".✨/ARCHITECTURE.md" -Force
+        Write-Host "  ✓ .✨/ARCHITECTURE.md restored" -ForegroundColor Green
     }
     
     # Always restore CONTEXT_LOG.md
     if (Test-Path "$BACKUP_DIR/CONTEXT_LOG.md") {
-        Copy-Item "$BACKUP_DIR/CONTEXT_LOG.md" ".ai/CONTEXT_LOG.md" -Force
-        Write-Host "  ✓ .ai/CONTEXT_LOG.md restored" -ForegroundColor Green
+        Copy-Item "$BACKUP_DIR/CONTEXT_LOG.md" ".✨/CONTEXT_LOG.md" -Force
+        Write-Host "  ✓ .✨/CONTEXT_LOG.md restored" -ForegroundColor Green
     }
     
     # Restore custom workflows
@@ -209,15 +209,15 @@ if (Test-Path "$TEMP_DIR/.ai") {
             Remove-Item -Recurse -Force ".ai"
         }
         Copy-Item -Recurse "$TEMP_DIR/.ai" .
-        Write-Host "  ✓ .ai/ (upgraded)" -ForegroundColor Green
+        Write-Host "  ✓ .✨/ (upgraded)" -ForegroundColor Green
     } elseif (-not (Test-Path ".ai")) {
         Copy-Item -Recurse "$TEMP_DIR/.ai" .
-        Write-Host "  ✓ .ai/" -ForegroundColor Green
+        Write-Host "  ✓ .✨/" -ForegroundColor Green
     } else {
-        Write-Host "  ~ .ai/ (exists, merging new files)" -ForegroundColor Yellow
+        Write-Host "  ~ .✨/ (exists, merging new files)" -ForegroundColor Yellow
         Get-ChildItem "$TEMP_DIR/.ai" | ForEach-Object {
-            if (-not (Test-Path ".ai/$($_.Name)")) {
-                Copy-Item $_.FullName ".ai/"
+            if (-not (Test-Path ".✨/$($_.Name)")) {
+                Copy-Item $_.FullName ".✨/"
                 Write-Host "    + $($_.Name)" -ForegroundColor Green
             }
         }
@@ -295,7 +295,7 @@ if ($UpgradeMode) {
     }
 } else {
     Write-Host "📋 Files installed:"
-    Write-Host "   .ai/ARCHITECTURE.md    - Document your architecture here"
+    Write-Host "   .✨/ARCHITECTURE.md    - Document your architecture here"
     Write-Host "   .github/               - Copilot rules + workflows"
     Write-Host "   scripts/               - Init and update scripts"
     Write-Host "   AGENTS.md              - Rules for all AI agents"
@@ -309,3 +309,4 @@ Write-Host "💡 Commands:" -ForegroundColor Cyan
 Write-Host '   Safe upgrade:  $env:GIT_CORE_UPGRADE = "1"; irm .../install.ps1 | iex'
 Write-Host '   Full reset:    $env:GIT_CORE_FORCE = "1"; irm .../install.ps1 | iex'
 Write-Host "   Check updates: .\scripts\check-protocol-update.ps1"
+

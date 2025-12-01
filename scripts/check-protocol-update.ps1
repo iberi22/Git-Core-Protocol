@@ -14,7 +14,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 # Config
-$TEMPLATE_REPO = "iberi22/ai-git-core-template"
+$TEMPLATE_REPO = "iberi22/Git-Core-Protocol"
 $BASE_URL = "https://raw.githubusercontent.com/$TEMPLATE_REPO/main"
 $VERSION_FILE = ".git-core-protocol-version"
 

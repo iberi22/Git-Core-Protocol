@@ -377,7 +377,7 @@ jobs:
     
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: e2e-*
           merge-multiple: true

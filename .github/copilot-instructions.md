@@ -46,6 +46,83 @@ You are operating under the **Git-Core Protocol**. Your state is GitHub Issues, 
 
 ---
 
+## 🎯 Intent Detection - Issue Creation Flow
+
+**When user says ANY of these (or similar), trigger the Issue Creation Flow:**
+
+| User Intent | Trigger Phrases | Action |
+|-------------|-----------------|--------|
+| New task | "necesito", "hay que", "deberíamos", "want to", "need to" | → Create issue file |
+| Bug report | "bug", "error", "falla", "no funciona", "broken" | → Create `BUG_*.md` |
+| Feature request | "agregar", "nueva funcionalidad", "add feature" | → Create `FEAT_*.md` |
+| Planning | "planear", "plan", "roadmap", "siguiente paso" | → Create multiple issue files |
+| Task tracking | "tarea", "task", "todo", "pendiente" | → Create `TASK_*.md` |
+
+### Issue Creation Flow (MANDATORY)
+
+When you detect issue-creation intent:
+
+```
+1. ANNOUNCE: "Voy a crear un issue para trackear esto."
+
+2. ASK (if unclear):
+   - "¿Qué título le ponemos al issue?"
+   - "¿Alguna etiqueta específica? (bug, enhancement, ai-plan)"
+
+3. CREATE FILE in `.github/issues/`:
+   - Format: `{TYPE}_{descripcion-corta}.md`
+   - Types: FEAT, BUG, TASK, DOCS, REFACTOR, TEST, CHORE
+
+4. SHOW the user what you created:
+   "✅ Issue creado: `.github/issues/FEAT_nueva-funcionalidad.md`
+    Se sincronizará con GitHub automáticamente en el próximo push,
+    o ejecuta: `./scripts/sync-issues.ps1`"
+```
+
+### Example Interaction
+
+**User:** "Necesito agregar autenticación OAuth"
+
+**Agent Response:**
+```
+Voy a crear un issue para trackear esto.
+
+📝 Creando: `.github/issues/FEAT_oauth-authentication.md`
+
+---
+title: "Implementar autenticación OAuth"
+labels:
+  - enhancement
+  - auth
+assignees: []
+---
+
+## Descripción
+Agregar autenticación OAuth al sistema.
+
+## Tareas
+- [ ] Configurar proveedor OAuth
+- [ ] Implementar flujo de login
+- [ ] Agregar tests
+
+---
+
+✅ Issue creado. Se sincronizará automáticamente o ejecuta:
+`./scripts/sync-issues.ps1`
+
+¿Quieres que empiece a trabajar en esto ahora?
+```
+
+### DO NOT Skip This Flow
+
+❌ **WRONG:** Start coding immediately without creating an issue
+❌ **WRONG:** Create a TODO.md or TASKS.md file
+❌ **WRONG:** Just acknowledge and forget
+
+✅ **RIGHT:** Always create an issue file first, then work on it
+
+---
+
 ## Key Rules
 
 ### 1. Token Economy

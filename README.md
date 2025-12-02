@@ -45,19 +45,34 @@ project: Git-Core-Protocol
 > **Copy this prompt to your AI coding agent (Copilot, Cursor, Claude, etc.) to auto-setup:**
 
 ```
-Initialize this project with Git-Core Protocol. Run:
+Initialize this project with Git-Core Protocol. 
+
+# Method 1: Shell Scripts (transparent, visible code)
+# Linux/macOS
+curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash
+
+# Windows
+irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
+
+# Method 2: CLI (if available)
+git-core init
+git-core check
+
+After setup, read .✨/ARCHITECTURE.md and start with: gh issue list
+```
+
+**For AI Agents (auto mode):**
+
+For Windows:
+```
 $env:GIT_CORE_AUTO = "1"; irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
 Then execute: .\scripts\init_project.ps1 -Auto
-After setup, read .✨/ARCHITECTURE.md and start with the first issue from: gh issue list
 ```
 
 For Linux/Mac:
-
 ```
-Initialize this project with Git-Core Protocol. Run:
-curl -sL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash -s -- --auto
+curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash -s -- --auto
 Then execute: ./scripts/init_project.sh
-After setup, read .✨/ARCHITECTURE.md and start with the first issue from: gh issue list
 ```
 
 ---
@@ -94,33 +109,75 @@ The system automatically:
 
 ## 📦 Installation Options
 
-### Option 1: Remote Installation (⚡ God Mode)
+**🔐 Trust & Transparency:** Before installing, read [docs/CLI_TRUST.md](docs/CLI_TRUST.md) to understand exactly what each method does.
 
-**Windows PowerShell:**
+### Option 1: Shell Scripts (🚀 Transparent - Recommended)
 
-```powershell
-# In your project folder
-irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
-
-# Auto mode (for AI Agents)
-$env:GIT_CORE_AUTO = "1"; $env:GIT_CORE_ORGANIZE = "1"; irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
-```
-
-**Linux/Mac:**
+Los scripts son **código visible** que puedes leer antes de ejecutar:
 
 ```bash
-# In your project folder
-curl -sL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash
+# Ver el código ANTES de ejecutar:
+curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh
 
-# Auto mode (for AI Agents)
-curl -sL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash -s -- --auto --organize
+# Linux/macOS - Si confías, ejecuta:
+curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash
+
+# Windows - Ver código primero:
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1" | Select-Object -ExpandProperty Content
+
+# Windows - Luego ejecutar:
+irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
 ```
 
-### Option 2: Use as Template
+### Option 2: Git-Core CLI (🦀 Full Features)
+
+The official CLI provides the best management experience:
+
+```bash
+# 🦀 Cargo (compila desde código fuente en TU máquina)
+# Antes de instalar, lee: docs/CLI_TRUST.md
+# Código fuente: https://github.com/iberi22/Git-Core-Protocol/tree/main/tools/git-core-cli
+cargo install git-core-cli
+
+# 🔨 O build from source (máxima confianza)
+git clone https://github.com/iberi22/Git-Core-Protocol
+cd Git-Core-Protocol/tools/git-core-cli
+cargo build --release
+./target/release/git-core install
+```
+
+**CLI Commands:**
+
+```bash
+# Install protocol in current project
+git-core install
+
+# Initialize a new project
+git-core init my-project
+
+# Upgrade existing installation
+git-core upgrade
+
+# Check protocol integrity
+git-core check
+
+# Migrate from .ai/ to .✨/
+git-core migrate
+```
+
+### Option 3: Use as Template
 
 1. Click **"Use this template"** above
 2. Clone your new repository
-3. Run: `./scripts/init_project.sh` or `.\scripts\init_project.ps1`
+3. Run: `curl -fsSL .../install.sh | bash` or `git-core install`
+
+**Comparación de métodos:**
+| Método | Confianza | Velocidad | Funcionalidades |
+|--------|-----------|-----------|-----------------|
+| Shell Scripts | ⭐⭐⭐⭐⭐ (código visible) | Rápido | Básico |
+| Cargo install | ⭐⭐⭐⭐ (compila local) | Medio | Completo |
+| Build from source | ⭐⭐⭐⭐⭐ (máximo control) | Lento | Completo |
+| Pre-built binary | ⭐⭐⭐ (verificar checksum) | Muy rápido | Completo |
 
 ## 📂 Structure
 
@@ -128,13 +185,18 @@ curl -sL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/instal
 /
 ├── .✨/
 │   ├── ARCHITECTURE.md       # 📖 System context
+│   ├── AGENT_INDEX.md        # 🎭 Agent roles and routing
 │   └── CONTEXT_LOG.md        # 📝 Ephemeral session notes
 ├── .github/
 │   ├── copilot-instructions.md  # 🤖 GitHub Copilot rules
 │   └── ISSUE_TEMPLATE/       # 📋 Issue templates
 ├── scripts/
 │   ├── init_project.sh       # 🐧 Linux/Mac initializer
-│   └── init_project.ps1      # 🪟 Windows initializer
+│   ├── init_project.ps1      # 🪟 Windows initializer
+│   ├── install-cli.sh        # 🛠️ CLI installer (Linux/macOS)
+│   └── install-cli.ps1       # 🛠️ CLI installer (Windows)
+├── tools/
+│   └── git-core-cli/         # 🦀 Official Rust CLI source
 ├── AGENTS.md                 # 🤖 All AI agents config
 ├── .cursorrules              # 🎯 Cursor rules
 └── .windsurfrules            # 🌊 Windsurf rules

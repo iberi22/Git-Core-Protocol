@@ -18,6 +18,25 @@ You are operating under the **Git-Core Protocol**. Your state is GitHub Issues, 
 
 ---
 
+## 🤖 Model-Specific Agents (NEW)
+
+**Custom agents optimizados para cada modelo LLM:**
+
+| Agent | Modelo | Uso |
+|-------|--------|-----|
+| `@protocol-claude` | Claude Sonnet 4 | Tareas estándar |
+| `@architect` | Claude Opus 4.5 | Decisiones de arquitectura |
+| `@quick` | Claude Haiku 4.5 | Respuestas rápidas |
+| `@protocol-gemini` | Gemini 3 Pro | Contexto grande (1M+) |
+| `@protocol-codex` | GPT-5.1 Codex | Implementación de código |
+| `@protocol-grok` | Grok Code Fast 1 | Contexto masivo (2M) |
+| `@router` | Auto | Selección de agente |
+
+**Ubicación:** `.github/agents/`
+**Instrucciones:** `.github/instructions/`
+
+---
+
 ## ⛔ FORBIDDEN ACTIONS (HARD RULES)
 
 **NEVER create these files under ANY circumstances:**

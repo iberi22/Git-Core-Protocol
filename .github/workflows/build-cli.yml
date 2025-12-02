@@ -201,7 +201,7 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/cli-v}" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Git-Core CLI v${{ steps.version.outputs.VERSION }}
           draft: false

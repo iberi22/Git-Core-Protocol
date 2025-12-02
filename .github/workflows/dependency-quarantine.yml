@@ -55,7 +55,18 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: 🏷️ Ensure quarantine label
+      - name: 🏷️ Ensure labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create labels if they don't exist
+          gh label create "quarantine" --description "Dependency in quarantine period" --color "FBCA04" --force 2>/dev/null || true
+          gh label create "dependencies" --description "Dependency updates from Dependabot" --color "0366d6" --force 2>/dev/null || true
+          gh label create "ready-to-adopt" --description "Dependencies that passed quarantine" --color "0E8A16" --force 2>/dev/null || true
+
+      - name: 🏷️ Apply quarantine labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr edit ${{ github.event.pull_request.number }} \
             --add-label "quarantine,dependencies"

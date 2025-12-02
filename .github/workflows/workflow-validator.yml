@@ -133,13 +133,14 @@ jobs:
           # Use Rust orchestrator if available, fallback to shell
           if [ -f "./bin/workflow-orchestrator" ]; then
             echo "🦀 Using Rust orchestrator..."
+            # Note: redirect stderr to /dev/null, only capture stdout JSON
             ./bin/workflow-orchestrator analyze \
               --repo "$GITHUB_REPOSITORY" \
               --token "$GITHUB_TOKEN" \
               --output json \
-              --max-parallel 10 > analysis.json 2>&1 || true
+              --max-parallel 10 > analysis.json 2>/dev/null || true
 
-            if [ -f "analysis.json" ]; then
+            if [ -f "analysis.json" ] && jq -e . analysis.json >/dev/null 2>&1; then
               HAS_ERRORS=$(jq -r '.errors // 0' analysis.json)
               PERF_SCORE=$(jq -r '.performance_score // 0' analysis.json)
             fi

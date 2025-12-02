@@ -76,9 +76,9 @@ jobs:
           MAX_CONCERNS: ${{ steps.config.outputs.max_concerns }}
         run: |
           # Make script executable
-          chmod +x scripts/analyze-atomicity.sh
+          chmod +x scripts/analyze-atomicity.sh 2>/dev/null || true
           
-          # Initialize counters
+          # Initialize counters (using : to avoid arithmetic exit code issues)
           TOTAL_COMMITS=0
           ATOMIC_COMMITS=0
           NON_ATOMIC_COMMITS=0
@@ -86,8 +86,8 @@ jobs:
           HAS_ISSUES="false"
           REPORT=""
           
-          # Bot patterns
-          BOT_PATTERNS="github-actions|dependabot|copilot|jules|renovate|\[bot\]"
+          # Bot patterns (include common bot suffixes)
+          BOT_PATTERNS="github-actions|dependabot|copilot|jules|renovate|bot$|\[bot\]"
           
           echo "🔍 Analyzing commits in PR..."
           echo ""
@@ -104,11 +104,11 @@ jobs:
           
           while IFS=' ' read -r COMMIT AUTHOR; do
             [ -z "$COMMIT" ] && continue
-            ((TOTAL_COMMITS++))
+            TOTAL_COMMITS=$((TOTAL_COMMITS + 1))
             
-            # Check if bot author
+            # Check if bot author (case insensitive)
             if [ "$IGNORE_BOTS" = "true" ] && echo "$AUTHOR" | grep -qiE "$BOT_PATTERNS"; then
-              ((SKIPPED_BOTS++))
+              SKIPPED_BOTS=$((SKIPPED_BOTS + 1))
               echo "○ ${COMMIT:0:8}: Skipped (bot: $AUTHOR)"
               continue
             fi
@@ -162,13 +162,13 @@ jobs:
             
             if [ "$CONCERN_COUNT" -gt "$MAX_CONCERNS" ]; then
               HAS_ISSUES="true"
-              ((NON_ATOMIC_COMMITS++))
+              NON_ATOMIC_COMMITS=$((NON_ATOMIC_COMMITS + 1))
               echo "⚠️ ${COMMIT:0:8}: $COMMIT_MSG"
               echo "   └─ Mixes $CONCERN_COUNT concerns: $CONCERN_LIST"
               echo "::warning file=.github/workflows/commit-atomicity.yml::Commit ${COMMIT:0:8} mixes $CONCERN_COUNT concerns: $CONCERN_LIST"
               REPORT="${REPORT}\n| \`${COMMIT:0:8}\` | $COMMIT_MSG | ⚠️ $CONCERN_LIST |"
             else
-              ((ATOMIC_COMMITS++))
+              ATOMIC_COMMITS=$((ATOMIC_COMMITS + 1))
               echo "✅ ${COMMIT:0:8}: $COMMIT_MSG ($CONCERN_LIST)"
               REPORT="${REPORT}\n| \`${COMMIT:0:8}\` | $COMMIT_MSG | ✅ $CONCERN_LIST |"
             fi

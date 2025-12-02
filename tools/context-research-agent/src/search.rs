@@ -1,5 +1,5 @@
 use anyhow::Result;
-use crate::context::{Dependency, Ecosystem};
+use crate::context::Dependency;
 use reqwest::Client;
 use serde::Deserialize;
 use std::env;

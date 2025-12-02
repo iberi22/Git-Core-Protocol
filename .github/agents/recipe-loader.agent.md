@@ -1,12 +1,9 @@
 ---
-name: Recipe Loader
+name: recipe-loader
 description: Load specialized agent roles from the recipe repository
 model: Claude Sonnet 4
 tools:
-  - search
-  - fetch
-  - runCommand
-  - terminalLastCommand
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🔧 Engineering Roles
     agent: recipe-loader

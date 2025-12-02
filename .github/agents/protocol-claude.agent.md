@@ -1,18 +1,9 @@
 ---
-name: Git-Core Protocol (Claude)
+name: protocol-claude
 description: AI assistant optimized for Claude models following Git-Core Protocol
 model: Claude Sonnet 4
 tools:
-  - search
-  - fetch
-  - githubRepo
-  - usages
-  - problems
-  - terminalLastCommand
-  - runCommand
-  - editFiles
-  - createFiles
-  - github/*
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🔍 Discover Context
     agent: context-loader

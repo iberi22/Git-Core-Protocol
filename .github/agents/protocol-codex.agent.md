@@ -1,19 +1,9 @@
 ---
-name: Git-Core Protocol (GPT Codex)
+name: protocol-codex
 description: Implementation agent optimized for GPT-5.1 Codex agentic coding
 model: GPT-5.1-Codex (Preview)
 tools:
-  - search
-  - fetch
-  - githubRepo
-  - usages
-  - problems
-  - terminalLastCommand
-  - runCommand
-  - editFiles
-  - createFiles
-  - testFailure
-  - github/*
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🔍 Discover Context
     agent: context-loader

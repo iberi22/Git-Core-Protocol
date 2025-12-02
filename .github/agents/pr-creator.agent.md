@@ -1,13 +1,9 @@
 ---
-name: PR Creator
+name: pr-creator
 description: Create well-formatted pull requests with proper descriptions
 model: Claude Sonnet 4
 tools:
-  - runCommand
-  - terminalLastCommand
-  - githubRepo
-  - search
-  - fetch
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🔍 Request AI Review
     agent: code-review

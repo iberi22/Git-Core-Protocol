@@ -1,11 +1,9 @@
 ---
-name: Protocol Router
+name: protocol-router
 description: Automatically routes requests to the optimal agent based on task type
 model: Auto
 tools:
-  - search
-  - problems
-  - references
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🎯 Use Claude (Standard)
     agent: protocol-claude
@@ -43,6 +41,10 @@ handoffs:
     agent: recipe-loader
     prompt: I need a specialized role.
     send: false
+  - label: 🗂️ Workspace Projects
+    agent: workspace-hub
+    prompt: Show me the projects in my workspace.
+    send: false
 ---
 # Protocol Router Agent
 
@@ -63,6 +65,7 @@ Analyze the user's request and recommend the best agent:
 | Workflows | `workflow-manager` | Orchestration |
 | Code review | `code-review` | Thorough analysis |
 | Specialized tasks | `recipe-loader` | Domain expertise |
+| Multi-project | `workspace-hub` | Project navigation |
 
 ## Decision Framework
 
@@ -99,7 +102,7 @@ cat .✨/AGENT_INDEX.md
 
 ### When to Recommend Recipes
 - Security analysis → SecurityReviewer
-- Performance tuning → PerformanceOptimizer  
+- Performance tuning → PerformanceOptimizer
 - API design → APIDesigner
 - Database work → DatabaseExpert
 - Testing strategy → TestingSpecialist

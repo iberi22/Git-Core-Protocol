@@ -1,13 +1,9 @@
 ---
-name: Code Review
+name: code-review
 description: Deep code review using Claude Opus for thorough analysis
 model: Claude Opus 4.5 (Preview)
 tools:
-  - search
-  - problems
-  - usages
-  - githubRepo
-  - fetch
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: ✅ Approve & Commit
     agent: commit-helper
@@ -92,7 +88,7 @@ Look for:
 ### ⚠️ Issues Found
 1. **[MEDIUM]** Missing error handling in `login.ts:42`
    - Suggestion: Add try/catch block
-   
+
 2. **[LOW]** Could split into 2 commits
    - Auth logic (feat)
    - Helper function (refactor)

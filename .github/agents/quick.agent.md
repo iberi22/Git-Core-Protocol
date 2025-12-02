@@ -1,12 +1,9 @@
 ---
-name: Quick Response
+name: quick
 description: Fast responses using Claude Haiku for simple queries
 model: Claude Haiku 4.5
 tools:
-  - search
-  - problems
-  - references
-  - terminalLastCommand
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🔄 Switch to Claude (More Detail)
     agent: protocol-claude

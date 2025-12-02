@@ -1,18 +1,9 @@
 ---
-name: Git-Core Protocol (Gemini)
+name: protocol-gemini
 description: AI assistant optimized for Gemini models with 1M+ context and multi-modal
 model: Gemini 3 Pro (Preview)
 tools:
-  - search
-  - fetch
-  - githubRepo
-  - usages
-  - problems
-  - terminalLastCommand
-  - runCommand
-  - editFiles
-  - createFiles
-  - github/*
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🔍 Discover Context
     agent: context-loader

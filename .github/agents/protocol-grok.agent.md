@@ -1,20 +1,9 @@
 ---
-name: Git-Core Protocol (Grok)
+name: protocol-grok
 description: Agent optimized for Grok's 2M context window and fast tool execution
 model: xAI: Grok Code Fast 1
 tools:
-  - search
-  - codebase
-  - fetch
-  - githubRepo
-  - usages
-  - problems
-  - terminalLastCommand
-  - runCommand
-  - editFiles
-  - createFile
-  - changes
-  - references
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🏗️ Switch to Architect (Opus)
     agent: architect

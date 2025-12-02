@@ -1,13 +1,9 @@
 ---
-name: Workflow Manager
+name: workflow-manager
 description: Orchestrate development workflows and guide you to the right agent
 model: Claude Sonnet 4
 tools:
-  - search
-  - fetch
-  - githubRepo
-  - problems
-  - runCommand
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🆕 New Feature
     agent: architect

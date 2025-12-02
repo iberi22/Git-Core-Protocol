@@ -1,14 +1,9 @@
 ---
-name: Context Loader
+name: context-loader
 description: Auto-discover project state and suggest next actions. Start here to resume work.
 model: Claude Sonnet 4
 tools:
-  - terminalLastCommand
-  - runCommand
-  - search
-  - problems
-  - githubRepo
-  - fetch
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 🔄 Continue Working
     agent: workflow-manager

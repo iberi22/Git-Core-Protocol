@@ -1,17 +1,9 @@
 ---
-name: Protocol Architect
+name: architect
 description: Deep architecture analysis using Claude Opus for complex decisions
 model: Claude Opus 4.5 (Preview)
 tools:
-  - search
-  - codebase
-  - fetch
-  - githubRepo
-  - usages
-  - problems
-  - references
-  - editFiles
-  - createFile
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 📋 Switch to Claude (Planning)
     agent: protocol-claude

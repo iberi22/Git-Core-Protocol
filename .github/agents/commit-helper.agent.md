@@ -1,11 +1,9 @@
 ---
-name: Commit Helper
+name: commit-helper
 description: Fast atomic commit creation using Claude Haiku
 model: Claude Haiku 4.5
 tools:
-  - runCommand
-  - terminalLastCommand
-  - problems
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:
   - label: 📤 Create PR
     agent: pr-creator

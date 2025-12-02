@@ -67,12 +67,14 @@ After setup, read .✨/ARCHITECTURE.md and start with: gh issue list
 **For AI Agents (auto mode):**
 
 For Windows:
+
 ```
 $env:GIT_CORE_AUTO = "1"; irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
 Then execute: .\scripts\init_project.ps1 -Auto
 ```
 
 For Linux/Mac:
+
 ```
 curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash -s -- --auto
 Then execute: ./scripts/init_project.sh
@@ -84,7 +86,8 @@ Then execute: ./scripts/init_project.sh
 
 This protocol now includes a dynamic system to "equip" your AI agent with specific roles (Backend Architect, UX Researcher, etc.) on demand.
 
-### How it works:
+### How it works
+
 1. **Index:** Check `.✨/AGENT_INDEX.md` to see available roles.
 2. **Equip:** Run the script to download and load the persona.
 3. **Act:** The agent reads the generated context and behaves like an expert.
@@ -95,6 +98,7 @@ This protocol now includes a dynamic system to "equip" your AI agent with specif
 ```
 
 The system automatically:
+
 - ⬇️ Downloads the latest recipe from `agents-flows-recipes`.
 - 🛡️ Injects mandatory protocol skills (Atomic Commits, Architecture First).
 - 🧠 Generates a `.✨/CURRENT_CONTEXT.md` file for the agent.
@@ -116,6 +120,7 @@ Custom VS Code Copilot agents optimized for different LLM models:
 | `@router` | Auto | Agent selection helper | - |
 
 ### Usage in VS Code
+
 ```
 # In Copilot Chat, select agent from dropdown
 # Or reference directly:
@@ -125,6 +130,7 @@ Custom VS Code Copilot agents optimized for different LLM models:
 ```
 
 ### Cross-Model Fallback System
+
 Agents include fallback mappings for cross-model compatibility. Use `@protocol-grok` instructions with Claude - it adapts automatically!
 
 ---
@@ -143,6 +149,7 @@ Intelligent workflow management that replaces static planning tools:
 | `@recipe-loader` | Loads specialized roles | Any |
 
 ### Workflow Panel Concept
+
 Instead of Excalidraw-style planning panels, use intelligent agents:
 
 ```
@@ -154,11 +161,59 @@ Creating PR?    → @pr-creator (formats everything)
 ```
 
 ### Agent Handoffs
+
 All agents can hand off to each other with context-aware prompts. Click the handoff buttons to switch seamlessly.
 
 ---
 
-##  Why This Approach?
+## 🤖 AI Report Generation (New in v1.5!)
+
+Automated PR analysis using multiple AI models:
+
+| Tool | Model | Purpose |
+|------|-------|---------|
+| **Gemini CLI** | Gemini 3 Pro | Technical analysis, impact assessment |
+| **Copilot CLI** | Claude Sonnet 4.5 | Deep code review, recommendations |
+
+### Usage
+
+```powershell
+# Full report (Gemini + Copilot)
+./scripts/ai-report.ps1 -PrNumber 42
+
+# Copilot only with Opus for deeper analysis
+./scripts/ai-report.ps1 -ReportType copilot -Model claude-opus-4.5
+
+# Gemini only
+./scripts/ai-report.ps1 -ReportType gemini
+
+# Preview without posting
+./scripts/ai-report.ps1 -DryRun
+```
+
+### Available Models for Copilot CLI
+
+| Model | Best For |
+|-------|----------|
+| `claude-sonnet-4.5` | Balanced analysis (default) |
+| `claude-opus-4.5` | Deep technical review |
+| `claude-haiku-4.5` | Quick checks |
+| `gpt-5.1` / `gpt-5.1-codex` | Alternative perspectives |
+
+### Report Contents
+
+The AI report includes:
+- 🔍 **Summary of Changes** (bullet points)
+- 📊 **Impact Analysis** (High/Medium/Low with justification)
+- ⚠️ **Potential Risks**
+- ✅ **Recommendations** for reviewer
+- 🏷️ **Suggested Labels**
+
+Reports are automatically posted as PR comments.
+
+---
+
+## Why This Approach?
 
 | Problem | Git-Core Solution |
 |---------|-------------------|
@@ -232,6 +287,7 @@ git-core migrate
 3. Run: `curl -fsSL .../install.sh | bash` or `git-core install`
 
 **Method Comparison:**
+
 | Method | Trust Level | Speed | Features |
 |--------|-------------|-------|----------|
 | Shell Scripts | ⭐⭐⭐⭐⭐ (visible code) | Fast | Basic |
@@ -433,6 +489,53 @@ curl -sL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/instal
 ```
 
 **Seguimiento de Progreso:** Usa un **EPIC issue** con checkboxes para rastrear el progreso general. GitHub calcula el porcentaje automáticamente. ¡No se necesitan archivos locales!
+
+---
+
+## 🤖 Generación de Reportes AI (Nuevo en v1.5!)
+
+Análisis automatizado de PRs usando múltiples modelos de IA:
+
+| Herramienta | Modelo | Propósito |
+|-------------|--------|-----------|
+| **Gemini CLI** | Gemini 3 Pro | Análisis técnico, evaluación de impacto |
+| **Copilot CLI** | Claude Sonnet 4.5 | Revisión profunda, recomendaciones |
+
+### Uso
+
+```powershell
+# Reporte completo (Gemini + Copilot)
+./scripts/ai-report.ps1 -PrNumber 42
+
+# Solo Copilot con Opus para análisis profundo
+./scripts/ai-report.ps1 -ReportType copilot -Model claude-opus-4.5
+
+# Solo Gemini
+./scripts/ai-report.ps1 -ReportType gemini
+
+# Preview sin publicar
+./scripts/ai-report.ps1 -DryRun
+```
+
+### Modelos Disponibles para Copilot CLI
+
+| Modelo | Mejor Para |
+|--------|------------|
+| `claude-sonnet-4.5` | Análisis balanceado (default) |
+| `claude-opus-4.5` | Revisión técnica profunda |
+| `claude-haiku-4.5` | Verificaciones rápidas |
+| `gpt-5.1` / `gpt-5.1-codex` | Perspectivas alternativas |
+
+### Contenido del Reporte
+
+El reporte AI incluye:
+- 🔍 **Resumen de Cambios** (puntos clave)
+- 📊 **Análisis de Impacto** (Alto/Medio/Bajo con justificación)
+- ⚠️ **Posibles Riesgos**
+- ✅ **Recomendaciones** para el reviewer
+- 🏷️ **Etiquetas Sugeridas**
+
+Los reportes se publican automáticamente como comentarios en el PR.
 
 ---
 
@@ -745,22 +848,22 @@ curl -sL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/instal
 **CC BY-NC-SA 4.0** - Attribution-NonCommercial-ShareAlike
 
 ✅ **You CAN:**
+
 - Use it for personal/educational projects
 - Modify and adapt it
 - Share it with attribution
 
 ❌ **You CANNOT:**
+
 - Sell it or use it commercially without permission
 - Remove attribution to Git-Core Protocol
 
 **Attribution Required:** "This project uses Git-Core Protocol by @iberi22"
 
-For commercial use, contact: https://github.com/iberi22
+For commercial use, contact: <https://github.com/iberi22>
 
 Full license: [LICENSE](LICENSE)
 
 ---
 
 **Created with 🧠 by [@iberi22](https://github.com/iberi22)**
-
-

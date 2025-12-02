@@ -70,11 +70,11 @@ if ($CurrentVersion -ne "0.0.0") {
 function Invoke-Migration {
     if (Test-Path ".ai") {
         Write-Host "🔄 Detected legacy .ai/ directory..." -ForegroundColor Yellow
-        
+
         if (-not (Test-Path ".✨")) {
             New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
         }
-        
+
         # Copy all files from .ai/ to .✨/
         Get-ChildItem ".ai" -Recurse | ForEach-Object {
             $destPath = $_.FullName -replace [regex]::Escape(".ai"), ".✨"
@@ -84,7 +84,7 @@ function Invoke-Migration {
                 Copy-Item $_.FullName $destPath -Force
             }
         }
-        
+
         Write-Host "  ✓ Migrated .ai/ → .✨/" -ForegroundColor Green
         Write-Host "  ℹ️  You can safely delete .ai/ after verifying" -ForegroundColor Cyan
         return $true
@@ -96,27 +96,27 @@ function Invoke-Migration {
 function Backup-UserFiles {
     Write-Host "💾 Backing up user files..." -ForegroundColor Cyan
     New-Item -ItemType Directory -Force -Path $BACKUP_DIR | Out-Null
-    
+
     # Check both .✨/ and .ai/ for backwards compatibility
     $aiDir = if (Test-Path ".✨") { ".✨" } elseif (Test-Path ".ai") { ".ai" } else { $null }
-    
+
     # Backup ARCHITECTURE.md
     if ($aiDir -and (Test-Path "$aiDir/ARCHITECTURE.md")) {
         Copy-Item "$aiDir/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
         Write-Host "  ✓ $aiDir/ARCHITECTURE.md backed up" -ForegroundColor Green
     }
-    
+
     # Backup CONTEXT_LOG.md
     if ($aiDir -and (Test-Path "$aiDir/CONTEXT_LOG.md")) {
         Copy-Item "$aiDir/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
         Write-Host "  ✓ $aiDir/CONTEXT_LOG.md backed up" -ForegroundColor Green
     }
-    
+
     # Backup custom workflows
     if (Test-Path ".github/workflows") {
         New-Item -ItemType Directory -Force -Path "$BACKUP_DIR/workflows" | Out-Null
         $protocolWorkflows = @("update-protocol.yml", "structure-validator.yml", "codex-review.yml", "agent-dispatcher.yml")
-        
+
         Get-ChildItem ".github/workflows/*.yml" -ErrorAction SilentlyContinue | ForEach-Object {
             if ($_.Name -notin $protocolWorkflows) {
                 Copy-Item $_.FullName "$BACKUP_DIR/workflows/"
@@ -129,24 +129,24 @@ function Backup-UserFiles {
 # Function to restore user files
 function Restore-UserFiles {
     Write-Host "📥 Restoring user files..." -ForegroundColor Cyan
-    
+
     # Ensure .✨ directory exists for restoration
     if (-not (Test-Path ".✨")) {
         New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
     }
-    
+
     # Restore ARCHITECTURE.md (unless force mode)
     if (-not $ForceMode -and (Test-Path "$BACKUP_DIR/ARCHITECTURE.md")) {
         Copy-Item "$BACKUP_DIR/ARCHITECTURE.md" ".✨/ARCHITECTURE.md" -Force
         Write-Host "  ✓ .✨/ARCHITECTURE.md restored" -ForegroundColor Green
     }
-    
+
     # Always restore CONTEXT_LOG.md
     if (Test-Path "$BACKUP_DIR/CONTEXT_LOG.md") {
         Copy-Item "$BACKUP_DIR/CONTEXT_LOG.md" ".✨/CONTEXT_LOG.md" -Force
         Write-Host "  ✓ .✨/CONTEXT_LOG.md restored" -ForegroundColor Green
     }
-    
+
     # Restore custom workflows
     if (Test-Path "$BACKUP_DIR/workflows") {
         Get-ChildItem "$BACKUP_DIR/workflows/*.yml" -ErrorAction SilentlyContinue | ForEach-Object {
@@ -154,7 +154,7 @@ function Restore-UserFiles {
             Write-Host "  ✓ Custom workflow restored: $($_.Name)" -ForegroundColor Green
         }
     }
-    
+
     # Cleanup backup
     Remove-Item -Recurse -Force $BACKUP_DIR -ErrorAction SilentlyContinue
 }
@@ -247,7 +247,7 @@ if ($templateAiDir) {
         # Remove old directories
         if (Test-Path ".✨") { Remove-Item -Recurse -Force ".✨" }
         if (Test-Path ".ai") { Remove-Item -Recurse -Force ".ai" }
-        
+
         # Copy to .✨
         New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
         Copy-Item -Recurse "$templateAiDir/*" ".✨/"
@@ -304,6 +304,50 @@ foreach ($file in $protocolFiles) {
         } else {
             Write-Host "  ~ $file (exists)" -ForegroundColor Yellow
         }
+    }
+}
+
+# Antigravity IDE support - integrate, don't overwrite
+if (Test-Path ".agent/rules") {
+    Write-Host ""
+    Write-Host "🔮 Detected Antigravity IDE configuration" -ForegroundColor Magenta
+    
+    # Check if already integrated
+    $ruleFile = Get-ChildItem ".agent/rules/rule-*.md" -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($ruleFile) {
+        $content = Get-Content $ruleFile.FullName -Raw
+        if ($content -notmatch "Git-Core Protocol Integration") {
+            # Add protocol integration to existing rules
+            $protocolSection = @"
+
+---
+
+## 🔗 Git-Core Protocol Integration
+
+> This project follows the Git-Core Protocol. See root-level files for full configuration.
+
+### Quick Reference
+- **Architecture Decisions:** ``.✨/ARCHITECTURE.md``
+- **Agent Rules:** ``AGENTS.md``
+- **Issues:** ``.github/issues/`` or ``gh issue list``
+
+### Protocol Rules Apply
+1. State = GitHub Issues (not memory, not files)
+2. No TODO.md, PLANNING.md, etc.
+3. Use ``gh issue create`` or ``.github/issues/*.md``
+4. Commits reference issues: ``feat(scope): description #123``
+
+"@
+            Add-Content -Path $ruleFile.FullName -Value $protocolSection
+            Write-Host "  ✓ Updated $($ruleFile.Name) with protocol integration" -ForegroundColor Green
+        } else {
+            Write-Host "  ~ $($ruleFile.Name) already integrated" -ForegroundColor Yellow
+        }
+    }
+    
+    # Run migration script if available
+    if (Test-Path "scripts/migrate-ide-rules.ps1") {
+        Write-Host "  ℹ️  Run './scripts/migrate-ide-rules.ps1 -DryRun' to migrate rules" -ForegroundColor Cyan
     }
 }
 

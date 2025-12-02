@@ -3,20 +3,21 @@ title: "Git-Core Protocol - README"
 type: DOCUMENTATION
 id: "doc-readme"
 created: 2025-12-01
-updated: 2025-12-01
+updated: 2025-12-02
 agent: copilot
-model: gemini-3-pro
+model: claude-opus-4
 requested_by: system
 summary: |
   Project overview, quick start guide, and core principles of the Git-Core Protocol.
-keywords: [git-core, protocol, ai-agent, template]
+  Now includes model-specific agents and workflow orchestration.
+keywords: [git-core, protocol, ai-agent, template, llm, copilot, claude, gemini, grok]
 tags: ["#documentation", "#readme", "#core"]
 project: Git-Core-Protocol
 ---
 
 # 🧠 Git-Core Protocol
 
-> **AI-Driven Project Management Template** | Plantilla de Gestión de Proyectos con IA
+> **AI-Driven Project Management Template** — *By Devs, For Devs*
 
 [![Use this template](https://img.shields.io/badge/Use%20this-template-blue?style=for-the-badge)](https://github.com/iberi22/Git-Core-Protocol/generate)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
@@ -98,7 +99,64 @@ The system automatically:
 
 ---
 
-## 🤔 Why This Approach?
+## 🧠 Model-Specific Agents (New in v1.4!)
+
+Custom VS Code Copilot agents optimized for different LLM models:
+
+| Agent | Model | Best For | Context |
+|-------|-------|----------|---------|
+| `@protocol-claude` | Claude Sonnet 4 | Standard tasks, reasoning | 200K |
+| `@architect` | Claude Opus 4.5 | Architecture decisions | 200K |
+| `@quick` | Claude Haiku 4.5 | Fast responses | 200K |
+| `@protocol-gemini` | Gemini 3 Pro | Large context, multi-modal | 1M+ |
+| `@protocol-codex` | GPT-5.1 Codex | Implementation, coding | - |
+| `@protocol-grok` | Grok Code Fast 1 | Massive codebase analysis | **2M** |
+| `@router` | Auto | Agent selection helper | - |
+
+### Usage in VS Code
+```
+# In Copilot Chat, select agent from dropdown
+# Or reference directly:
+@protocol-claude analyze this code
+@architect should we use microservices?
+@quick what's the syntax for...?
+```
+
+### Cross-Model Fallback System
+Agents include fallback mappings for cross-model compatibility. Use `@protocol-grok` instructions with Claude - it adapts automatically!
+
+---
+
+## 🔄 Workflow Orchestration Agents (New in v1.4!)
+
+Intelligent workflow management that replaces static planning tools:
+
+| Agent | Purpose | Model |
+|-------|---------|-------|
+| `@context-loader` | Auto-discovers project state | Any |
+| `@workflow-manager` | Orchestrates multi-step workflows | Sonnet |
+| `@code-review` | Thorough code review | Opus |
+| `@commit-helper` | Fast atomic commits | Haiku |
+| `@pr-creator` | Creates well-formatted PRs | Sonnet |
+| `@recipe-loader` | Loads specialized roles | Any |
+
+### Workflow Panel Concept
+Instead of Excalidraw-style planning panels, use intelligent agents:
+
+```
+Starting fresh? → @context-loader (discovers what you were working on)
+Need guidance?  → @workflow-manager (suggests next steps)
+Ready to commit? → @commit-helper (ensures atomic commits)
+Need review?    → @code-review (thorough analysis)
+Creating PR?    → @pr-creator (formats everything)
+```
+
+### Agent Handoffs
+All agents can hand off to each other with context-aware prompts. Click the handoff buttons to switch seamlessly.
+
+---
+
+##  Why This Approach?
 
 | Problem | Git-Core Solution |
 |---------|-------------------|
@@ -113,19 +171,19 @@ The system automatically:
 
 ### Option 1: Shell Scripts (🚀 Transparent - Recommended)
 
-Los scripts son **código visible** que puedes leer antes de ejecutar:
+Scripts are **visible code** you can read before running:
 
 ```bash
-# Ver el código ANTES de ejecutar:
+# View the code BEFORE running:
 curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh
 
-# Linux/macOS - Si confías, ejecuta:
+# Linux/macOS - If you trust it, run:
 curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash
 
-# Windows - Ver código primero:
+# Windows - View code first:
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1" | Select-Object -ExpandProperty Content
 
-# Windows - Luego ejecutar:
+# Windows - Then run:
 irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
 ```
 
@@ -134,12 +192,12 @@ irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1
 The official CLI provides the best management experience:
 
 ```bash
-# 🦀 Cargo (compila desde código fuente en TU máquina)
-# Antes de instalar, lee: docs/CLI_TRUST.md
-# Código fuente: https://github.com/iberi22/Git-Core-Protocol/tree/main/tools/git-core-cli
+# 🦀 Cargo (compiles from source on YOUR machine)
+# Before installing, read: docs/CLI_TRUST.md
+# Source code: https://github.com/iberi22/Git-Core-Protocol/tree/main/tools/git-core-cli
 cargo install git-core-cli
 
-# 🔨 O build from source (máxima confianza)
+# 🔨 Or build from source (maximum trust)
 git clone https://github.com/iberi22/Git-Core-Protocol
 cd Git-Core-Protocol/tools/git-core-cli
 cargo build --release
@@ -171,13 +229,13 @@ git-core migrate
 2. Clone your new repository
 3. Run: `curl -fsSL .../install.sh | bash` or `git-core install`
 
-**Comparación de métodos:**
-| Método | Confianza | Velocidad | Funcionalidades |
-|--------|-----------|-----------|-----------------|
-| Shell Scripts | ⭐⭐⭐⭐⭐ (código visible) | Rápido | Básico |
-| Cargo install | ⭐⭐⭐⭐ (compila local) | Medio | Completo |
-| Build from source | ⭐⭐⭐⭐⭐ (máximo control) | Lento | Completo |
-| Pre-built binary | ⭐⭐⭐ (verificar checksum) | Muy rápido | Completo |
+**Method Comparison:**
+| Method | Trust Level | Speed | Features |
+|--------|-------------|-------|----------|
+| Shell Scripts | ⭐⭐⭐⭐⭐ (visible code) | Fast | Basic |
+| Cargo install | ⭐⭐⭐⭐ (compiles locally) | Medium | Full |
+| Build from source | ⭐⭐⭐⭐⭐ (maximum control) | Slow | Full |
+| Pre-built binary | ⭐⭐⭐ (verify checksum) | Very Fast | Full |
 
 ## 📂 Structure
 
@@ -188,11 +246,28 @@ git-core migrate
 │   ├── AGENT_INDEX.md        # 🎭 Agent roles and routing
 │   └── CONTEXT_LOG.md        # 📝 Ephemeral session notes
 ├── .github/
+│   ├── agents/               # 🤖 Model-specific agents (NEW!)
+│   │   ├── protocol-claude.agent.md
+│   │   ├── protocol-gemini.agent.md
+│   │   ├── protocol-codex.agent.md
+│   │   ├── protocol-grok.agent.md
+│   │   ├── architect.agent.md
+│   │   ├── quick.agent.md
+│   │   ├── router.agent.md
+│   │   └── workflow-*.agent.md  # Workflow agents
+│   ├── instructions/         # 📋 Model-specific instructions
+│   │   ├── claude-tools.instructions.md
+│   │   ├── gemini-tools.instructions.md
+│   │   ├── codex-tools.instructions.md
+│   │   ├── grok-tools.instructions.md
+│   │   └── fallback-system.instructions.md
 │   ├── copilot-instructions.md  # 🤖 GitHub Copilot rules
 │   └── ISSUE_TEMPLATE/       # 📋 Issue templates
 ├── scripts/
 │   ├── init_project.sh       # 🐧 Linux/Mac initializer
 │   ├── init_project.ps1      # 🪟 Windows initializer
+│   ├── equip-agent.ps1       # 🎭 Recipe loader (Windows)
+│   ├── equip-agent.sh        # 🎭 Recipe loader (Linux/Mac)
 │   ├── install-cli.sh        # 🛠️ CLI installer (Linux/macOS)
 │   └── install-cli.ps1       # 🛠️ CLI installer (Windows)
 ├── tools/

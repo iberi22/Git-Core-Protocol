@@ -1,4 +1,5 @@
 ---
+github_issue: 33
 title: "Implement ModelProvider trait with Gemini, Bedrock, CopilotCLI"
 labels:
   - ai-plan
@@ -34,3 +35,4 @@ pub trait ModelProvider {
 - [ ] Implementación para Bedrock
 - [ ] Implementación para CopilotCLI
 - [ ] Tests de integración
+

@@ -1,4 +1,5 @@
 ---
+github_issue: 35
 title: "Setup research-god-agent Rust project structure"
 labels:
   - ai-plan
@@ -23,3 +24,4 @@ El agente debe poder:
 1. Conectarse a múltiples proveedores de LLM
 2. Mantener contexto de investigación
 3. Generar reportes estructurados
+

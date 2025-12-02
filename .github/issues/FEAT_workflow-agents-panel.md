@@ -36,13 +36,13 @@ graph TD
     A[context-loader] -->|Uncommitted changes| B[code-review]
     A -->|Commits unpushed| C[pr-creator]
     A -->|Clean state| D[workflow-manager]
-    
+
     D -->|New feature| E[architect]
     D -->|Bug fix| F[protocol-codex]
-    
+
     B -->|Approved| G[commit-helper]
     B -->|Issues found| F
-    
+
     G -->|More work| A
     G -->|Ready for PR| C
 ```

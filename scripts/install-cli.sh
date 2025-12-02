@@ -67,11 +67,11 @@ else
     # Try GitHub releases
     echo "Checking GitHub releases..."
     LATEST_RELEASE=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || true)
-    
+
     if [ -n "$LATEST_RELEASE" ]; then
         echo -e "Latest release: ${GREEN}$LATEST_RELEASE${NC}"
         DOWNLOAD_URL="https://github.com/$REPO/releases/download/$LATEST_RELEASE/${BINARY_NAME}-${TARGET}"
-        
+
         echo "Downloading from release..."
         curl -fsSL "$DOWNLOAD_URL" -o "$INSTALL_DIR/$BINARY_NAME"
         chmod +x "$INSTALL_DIR/$BINARY_NAME"
@@ -79,13 +79,13 @@ else
     else
         # Fall back to cargo
         echo -e "${YELLOW}No pre-built binary found. Installing from source...${NC}"
-        
+
         if ! command -v cargo &> /dev/null; then
             echo -e "${RED}Cargo not found. Please install Rust first:${NC}"
             echo "  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
             exit 1
         fi
-        
+
         cargo install --git "https://github.com/$REPO" --root ~/.local git-core-cli
         echo -e "${GREEN}✅ Installed via cargo${NC}"
     fi

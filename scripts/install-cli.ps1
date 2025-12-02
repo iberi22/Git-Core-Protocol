@@ -46,11 +46,11 @@ try {
     try {
         $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$REPO/releases/latest" -ErrorAction SilentlyContinue
         $LATEST_RELEASE = $release.tag_name
-        
+
         if ($LATEST_RELEASE) {
             Write-Host "Latest release: $LATEST_RELEASE" -ForegroundColor Green
             $DOWNLOAD_URL = "https://github.com/$REPO/releases/download/$LATEST_RELEASE/${BINARY_NAME}-${TARGET}.exe"
-            
+
             Write-Host "Downloading from release..."
             Invoke-WebRequest -Uri $DOWNLOAD_URL -OutFile $BINARY_PATH -UseBasicParsing
             Write-Host "✅ Installed from release" -ForegroundColor Green
@@ -58,13 +58,13 @@ try {
     } catch {
         # Fall back to cargo
         Write-Host "No pre-built binary found. Installing from source..." -ForegroundColor Yellow
-        
+
         if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
             Write-Host "❌ Cargo not found. Please install Rust first:" -ForegroundColor Red
             Write-Host "   https://rustup.rs/"
             exit 1
         }
-        
+
         cargo install --git "https://github.com/$REPO" git-core-cli
         Write-Host "✅ Installed via cargo" -ForegroundColor Green
     }

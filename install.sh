@@ -105,12 +105,12 @@ fi
 migrate_ai_directory() {
     if [ -d ".ai" ]; then
         echo -e "${YELLOW}🔄 Detected legacy .ai/ directory...${NC}"
-        
+
         mkdir -p ".✨"
-        
+
         # Copy all files from .ai/ to .✨/
         cp -r .ai/* .✨/ 2>/dev/null || true
-        
+
         echo -e "  ${GREEN}✓ Migrated .ai/ → .✨/${NC}"
         echo -e "  ${CYAN}ℹ️  You can safely delete .ai/ after verifying${NC}"
         return 0
@@ -122,7 +122,7 @@ migrate_ai_directory() {
 backup_user_files() {
     echo -e "${CYAN}💾 Backing up user files...${NC}"
     mkdir -p "$BACKUP_DIR"
-    
+
     # Check both .✨/ and .ai/ for backwards compatibility
     AI_DIR=""
     if [ -d ".✨" ]; then
@@ -130,19 +130,19 @@ backup_user_files() {
     elif [ -d ".ai" ]; then
         AI_DIR=".ai"
     fi
-    
+
     # Backup ARCHITECTURE.md if it exists
     if [ -n "$AI_DIR" ] && [ -f "$AI_DIR/ARCHITECTURE.md" ]; then
         cp "$AI_DIR/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
         echo -e "  ${GREEN}✓ $AI_DIR/ARCHITECTURE.md backed up${NC}"
     fi
-    
+
     # Backup CONTEXT_LOG.md if it exists
     if [ -n "$AI_DIR" ] && [ -f "$AI_DIR/CONTEXT_LOG.md" ]; then
         cp "$AI_DIR/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
         echo -e "  ${GREEN}✓ $AI_DIR/CONTEXT_LOG.md backed up${NC}"
     fi
-    
+
     # Backup custom workflows
     if [ -d ".github/workflows" ]; then
         mkdir -p "$BACKUP_DIR/workflows"
@@ -167,22 +167,22 @@ backup_user_files() {
 # Function to restore user files
 restore_user_files() {
     echo -e "${CYAN}📥 Restoring user files...${NC}"
-    
+
     # Ensure .✨ directory exists for restoration
     mkdir -p ".✨"
-    
+
     # Restore ARCHITECTURE.md (unless force mode)
     if [ "$FORCE_MODE" != true ] && [ -f "$BACKUP_DIR/ARCHITECTURE.md" ]; then
         cp "$BACKUP_DIR/ARCHITECTURE.md" ".✨/ARCHITECTURE.md"
         echo -e "  ${GREEN}✓ .✨/ARCHITECTURE.md restored${NC}"
     fi
-    
+
     # Always restore CONTEXT_LOG.md
     if [ -f "$BACKUP_DIR/CONTEXT_LOG.md" ]; then
         cp "$BACKUP_DIR/CONTEXT_LOG.md" ".✨/CONTEXT_LOG.md"
         echo -e "  ${GREEN}✓ .✨/CONTEXT_LOG.md restored${NC}"
     fi
-    
+
     # Restore custom workflows
     if [ -d "$BACKUP_DIR/workflows" ]; then
         for file in "$BACKUP_DIR/workflows"/*.yml; do
@@ -192,7 +192,7 @@ restore_user_files() {
             fi
         done
     fi
-    
+
     # Cleanup backup
     rm -rf "$BACKUP_DIR"
 }
@@ -285,7 +285,7 @@ if [ -n "$TEMPLATE_AI_DIR" ]; then
     if [ "$UPGRADE_MODE" = true ]; then
         # Remove old directories
         rm -rf .✨ .ai 2>/dev/null || true
-        
+
         # Copy to .✨
         mkdir -p ".✨"
         cp -r "$TEMPLATE_AI_DIR"/* .✨/

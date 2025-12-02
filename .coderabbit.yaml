@@ -72,12 +72,3 @@ knowledge_base:
     project_keys: []
   linear:
     team_keys: []
-
-# Label configuration for Living Context
-labels:
-  - name: "living-context"
-    description: "Living Context Protocol updates"
-  - name: "ai-review-requested"
-    description: "AI agents should review this PR"
-  - name: "dependency-intelligence"
-    description: "Contains dependency analysis"

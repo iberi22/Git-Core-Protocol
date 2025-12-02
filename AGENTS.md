@@ -16,7 +16,10 @@ project: Git-Core-Protocol
 
 # 🤖 AGENTS.md - AI Agent Configuration
 
+> **"Inteligente, sofisticada pero minimalista en complejidad"**
+
 ## Overview
+
 This repository follows the **Git-Core Protocol** for AI-assisted development.
 
 ---
@@ -25,7 +28,8 @@ This repository follows the **Git-Core Protocol** for AI-assisted development.
 
 **NEVER create these files under ANY circumstances:**
 
-### Task/State Management:
+### Task/State Management
+
 ```
 ❌ TODO.md, TASKS.md, BACKLOG.md
 ❌ PLANNING.md, ROADMAP.md, PROGRESS.md
@@ -33,21 +37,24 @@ This repository follows the **Git-Core Protocol** for AI-assisted development.
 ❌ STATUS.md, CHECKLIST.md, CHANGELOG.md (for tracking)
 ```
 
-### Testing/Implementation Summaries:
+### Testing/Implementation Summaries
+
 ```
 ❌ TESTING_CHECKLIST.md, TEST_PLAN.md, TEST_GUI.md
 ❌ IMPLEMENTATION_SUMMARY.md, IMPLEMENTATION.md
 ❌ SUMMARY.md, OVERVIEW.md, REPORT.md
 ```
 
-### Guides/Tutorials:
+### Guides/Tutorials
+
 ```
 ❌ GETTING_STARTED.md, GUIDE.md, TUTORIAL.md
 ❌ QUICKSTART.md, SETUP.md, HOWTO.md
 ❌ INSTRUCTIONS.md, MANUAL.md
 ```
 
-### Catch-all:
+### Catch-all
+
 ```
 ❌ ANY .md file for task/state management
 ❌ ANY .md file for checklists or summaries
@@ -56,7 +63,8 @@ This repository follows the **Git-Core Protocol** for AI-assisted development.
 ❌ ANY JSON/YAML for task tracking
 ```
 
-### ✅ ONLY ALLOWED `.md` FILES:
+### ✅ ONLY ALLOWED `.md` FILES
+
 ```
 ✅ README.md (project overview ONLY)
 ✅ AGENTS.md (agent configuration ONLY)
@@ -74,11 +82,13 @@ This repository follows the **Git-Core Protocol** for AI-assisted development.
 ## For All AI Agents (Copilot, Cursor, Windsurf, Claude, etc.)
 
 ### 🎯 Prime Directive: Token Economy
+
 ```
 Your state is GitHub Issues. Not memory. Not files. GitHub Issues.
 ```
 
 ### 📖 Required Reading Before Any Task
+
 1. `.✨/ARCHITECTURE.md` - Understand the system
 2. `gh issue list --assignee "@me"` - Your current task
 3. `gh issue list --limit 5` - Available backlog
@@ -93,7 +103,8 @@ Your state is GitHub Issues. Not memory. Not files. GitHub Issues.
 2. Verify your implementation matches the decided stack
 3. If issue mentions alternatives, ARCHITECTURE.md decision wins
 
-### Example of what NOT to do:
+### Example of what NOT to do
+
 - Issue says: "Deploy to Vercel or GitHub Pages"
 - ARCHITECTURE.md says: "Hosting: GitHub Pages"
 - ❌ WRONG: Implement Vercel because issue mentioned it
@@ -102,6 +113,7 @@ Your state is GitHub Issues. Not memory. Not files. GitHub Issues.
 **Why?** Architecture decisions are made after careful consideration of project constraints. Issues may present options for discussion, but once a decision is recorded in ARCHITECTURE.md, it is final.
 
 **Related Documentation:**
+
 - `.✨/ARCHITECTURE.md` - CRITICAL DECISIONS table
 - `.github/copilot-instructions.md` - Architecture First Rule
 
@@ -110,6 +122,7 @@ Your state is GitHub Issues. Not memory. Not files. GitHub Issues.
 ## 🔄 The Loop (Workflow)
 
 ### Phase 1: READ (Context Loading)
+
 ```bash
 # Always start here
 cat .✨/ARCHITECTURE.md
@@ -117,6 +130,7 @@ gh issue list --assignee "@me" --state open
 ```
 
 ### Phase 2: ACT (Development)
+
 ```bash
 # Claim a task
 gh issue edit <ISSUE_NUMBER> --add-assignee "@me"
@@ -133,13 +147,72 @@ git commit -m "feat(scope): description (closes #<ISSUE_NUMBER>)"
 ```
 
 ### Phase 3: UPDATE (Close the Loop)
+
 ```bash
 # Push and create PR
 git push -u origin HEAD
 gh pr create --fill --base main
 
+# Generate AI Report (NUEVO)
+./scripts/ai-report.ps1  # Windows
+./scripts/ai-report.sh   # Linux/macOS
+
 # DO NOT manually close issues - let Git do it via commit message
 ```
+
+---
+
+## 🚀 Proactive Execution Protocol (NUEVO)
+
+> **"No sugerir, HACER"**
+
+El agente debe **EJECUTAR** el ciclo de vida completo, no solo sugerirlo.
+
+### Ciclo de Vida Automático
+
+```mermaid
+graph LR
+    A[Detectar Intent] --> B[Crear Issue]
+    B --> C[Implementar]
+    C --> D[Test/Verify]
+    D --> E[Commit Atómico]
+    E --> F[PR + AI Report]
+    F --> G[Verificar Cierre]
+```
+
+### Reglas de Ejecución Proactiva
+
+| Situación | Acción (NO sugerir) |
+|-----------|---------------------|
+| Usuario describe problema | → Crear issue + branch + fix |
+| Usuario pide feature | → Crear issue + implementar + PR |
+| Usuario menciona bug | → Crear BUG issue + hotfix |
+| Test falla | → Analizar + fix + re-run |
+| PR creado | → Ejecutar AI report |
+
+### AI Report al Final de Tarea
+
+Al completar un PR, ejecutar automáticamente:
+
+```powershell
+# Generar análisis con Gemini y Copilot
+./scripts/ai-report.ps1 -PrNumber <N>
+
+# Solo Gemini
+./scripts/ai-report.ps1 -ReportType gemini
+
+# Preview sin publicar
+./scripts/ai-report.ps1 -DryRun
+```
+
+### Anti-Patterns de Ejecución
+
+| ❌ NO hacer | ✅ SÍ hacer |
+|-------------|-------------|
+| "¿Quieres que cree un issue?" | → Crear el issue directamente |
+| "Deberías ejecutar los tests" | → Ejecutar los tests |
+| "Puedes crear un PR con..." | → Crear el PR |
+| "Te sugiero agregar..." | → Agregar el código |
 
 ---
 
@@ -148,6 +221,7 @@ gh pr create --fill --base main
 **Alternativa a `gh issue create`: Crea issues usando archivos .md**
 
 ### Ubicación
+
 ```
 .github/issues/
 ├── _TEMPLATE.md              # Template para nuevos issues
@@ -218,6 +292,7 @@ Contenido del issue...
 ### Auto-Limpieza
 
 Cuando un issue se **cierra** en GitHub:
+
 1. El workflow detecta el cierre
 2. Elimina el archivo `.md` correspondiente
 3. Actualiza el mapeo
@@ -349,7 +424,7 @@ AI-Context: dependency | Selected library X over Y due to bundle size
 
 **UN commit = UN cambio lógico. NUNCA mezclar concerns.**
 
-### Antes de hacer `git add .`, pregúntate:
+### Antes de hacer `git add .`, pregúntate
 
 1. ¿Todos los archivos son del mismo módulo/scope?
 2. ¿Es un solo tipo de cambio (feat/fix/docs/ci)?
@@ -358,7 +433,7 @@ AI-Context: dependency | Selected library X over Y due to bundle size
 
 Si alguna respuesta es "NO" → **SEPARAR EN MÚLTIPLES COMMITS**
 
-### Flujo correcto:
+### Flujo correcto
 
 ```bash
 # ❌ NUNCA
@@ -376,7 +451,7 @@ git add docs/
 git commit -m "docs: add authentication guide"
 ```
 
-### Herramientas:
+### Herramientas
 
 ```bash
 # Si ya tienes muchos archivos staged
@@ -436,6 +511,7 @@ cargo build --release
 ### AI Agent Usage
 
 **When bootstrapping a new project:**
+
 ```bash
 # Step 1: Install protocol (scripts are visible and auditable)
 curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash
@@ -448,6 +524,7 @@ git-core check
 ```
 
 **When upgrading existing project:**
+
 ```bash
 # Safe upgrade (preserves your ARCHITECTURE.md)
 git-core upgrade
@@ -457,6 +534,7 @@ git-core status
 ```
 
 **When troubleshooting:**
+
 ```bash
 # Check integrity
 git-core check
@@ -487,6 +565,7 @@ irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1
 ```
 
 **Comparación de métodos:**
+
 | Método | Confianza | Velocidad | Funcionalidades |
 |--------|-----------|-----------|-----------------|
 | Shell Scripts | ⭐⭐⭐⭐⭐ (código visible) | Rápido | Básico |
@@ -699,6 +778,7 @@ done
 #### Jules AGENTS.md Support
 
 Jules automatically reads `AGENTS.md` from your repo root to understand:
+
 - Project conventions
 - Code style preferences
 - Agent-specific instructions
@@ -745,6 +825,7 @@ This protocol supports **automated AI code reviews** on every Pull Request using
 Automatic AI code reviews with PR summaries and line-by-line suggestions.
 
 **Installation:**
+
 1. Go to [github.com/marketplace/coderabbit](https://github.com/marketplace/coderabbit)
 2. Install on your repository
 3. Add `.coderabbit.yaml` (optional):
@@ -763,6 +844,7 @@ reviews:
 ```
 
 **Features:**
+
 - ✅ Automatic PR summaries
 - ✅ Line-by-line code suggestions
 - ✅ Security vulnerability detection
@@ -775,6 +857,7 @@ reviews:
 Google's AI assistant with interactive commands in PRs.
 
 **Installation:**
+
 1. Go to [github.com/marketplace/gemini-code-assist](https://github.com/marketplace/gemini-code-assist)
 2. Install on your repository
 3. Create `.gemini/` folder for customization (optional)
@@ -865,6 +948,84 @@ gh pr merge <number>
 
 ---
 
+## 🧠 Model-Specific Agents (NEW in v1.4.0)
+
+Git-Core Protocol includes specialized agents optimized for different LLM models. Each agent leverages the unique strengths of its target model.
+
+### Available Agents
+
+| Agent | Model | Best For | Location |
+|-------|-------|----------|----------|
+| `protocol-claude` | Claude Sonnet 4 | General tasks, reasoning | `.github/agents/` |
+| `architect` | Claude Opus 4.5 | Architecture decisions | `.github/agents/` |
+| `quick` | Claude Haiku 4.5 | Fast responses | `.github/agents/` |
+| `protocol-gemini` | Gemini 3 Pro | Large context, multi-modal | `.github/agents/` |
+| `protocol-codex` | GPT-5.1 Codex | Implementation, coding | `.github/agents/` |
+| `protocol-grok` | Grok Code Fast 1 | 2M context, large codebases | `.github/agents/` |
+| `router` | Auto | Agent selection help | `.github/agents/` |
+
+### Model Capabilities Comparison
+
+| Feature | Claude 4.5 | Gemini 3 Pro | GPT Codex | Grok Fast |
+|---------|------------|--------------|-----------|-----------|
+| **Context** | 200K | 1M+ | - | **2M** |
+| **Tool Format** | input_schema | parameters | OpenAI | OpenAI |
+| **Strength** | Reasoning | Multi-modal | Agentic | Speed |
+| **Cost** | $3/$15 MTok | $1.25/$5 MTok | Variable | Variable |
+
+### Selecting an Agent
+
+Use the **router agent** or choose manually:
+
+```
+📊 Task Complexity:
+- Simple questions → quick (Haiku)
+- Standard tasks → protocol-claude (Sonnet)
+- Architecture → architect (Opus)
+
+📚 Context Size:
+- Small (<50K) → Any model
+- Medium (50K-200K) → Claude or Gemini
+- Large (200K-1M) → Gemini
+- Massive (1M+) → Grok
+
+💻 Task Type:
+- Analysis → architect
+- Implementation → protocol-codex
+- Large codebase → protocol-grok
+```
+
+### Agent Handoffs
+
+Agents can hand off to each other for workflow continuity:
+
+```mermaid
+graph LR
+    A[router] --> B[quick]
+    A --> C[protocol-claude]
+    A --> D[architect]
+    C --> E[protocol-codex]
+    D --> E
+    D --> F[protocol-grok]
+```
+
+### Using Custom Agents in VS Code
+
+1. Select agent from dropdown in Chat view
+2. Or reference with `@agent-name` in chat
+3. Or create prompt file with `agent: protocol-claude`
+
+### Model-Specific Instructions
+
+Located in `.github/instructions/`:
+
+- `claude-tools.instructions.md` - Claude tool calling patterns
+- `gemini-tools.instructions.md` - Gemini tool calling patterns
+- `codex-tools.instructions.md` - GPT Codex patterns
+- `grok-tools.instructions.md` - Grok patterns
+
+---
+
 ## 🖥️ Multi-IDE Support
 
 Git-Core Protocol supports multiple IDEs. Each IDE has its own rules file format, but all follow the same protocol.
@@ -898,6 +1059,7 @@ Antigravity stores rules in `.agent/rules/`. When installing Git-Core Protocol:
 | Secrets/Credentials | **NEVER in repo** → `.env.local` |
 
 **Migration Script:**
+
 ```powershell
 # Analyze what would be migrated (dry run)
 ./scripts/migrate-ide-rules.ps1 -ProjectPath "." -DryRun
@@ -915,6 +1077,7 @@ AGENTS.md                  → Protocol rules (all projects)
 ```
 
 **The agent reads ALL files**, so:
+
 - Keep project-specific patterns in IDE rules
 - Keep protocol rules in AGENTS.md
 - Keep decisions in ARCHITECTURE.md
@@ -950,4 +1113,3 @@ AGENTS.md                  → Protocol rules (all projects)
 
 *Protocol Version: 1.4.0*
 *Last Updated: 2025*
-

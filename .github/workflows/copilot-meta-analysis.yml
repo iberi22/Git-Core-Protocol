@@ -61,26 +61,31 @@ jobs:
             --json number,comments,createdAt \
             --jq '.')
 
+          # Use temp file to avoid subshell issue with while loop
           READY_PRS="[]"
+          TMP_FILE=$(mktemp)
+          echo "[]" > "$TMP_FILE"
 
-          echo "$VALIDATION_PRS" | jq -c '.[]' | while read -r pr; do
-            PR_NUM=$(echo "$pr" | jq -r '.number')
-
+          # Process each PR
+          for pr in $(echo "$VALIDATION_PRS" | jq -r '.[].number'); do
             # Check if both bots have commented
-            COMMENTS=$(gh pr view "$PR_NUM" --json comments --jq '.comments[].author.login')
+            COMMENTS=$(gh pr view "$pr" --json comments --jq '.comments[].author.login' 2>/dev/null || echo "")
 
             HAS_CODERABBIT=$(echo "$COMMENTS" | grep -c "coderabbitai" || echo "0")
             HAS_GEMINI=$(echo "$COMMENTS" | grep -c "gemini-code-assist" || echo "0")
 
             # Check if already processed by Copilot
-            HAS_COPILOT_META=$(gh pr view "$PR_NUM" --json comments \
-              --jq '.comments[] | select(.body | contains("Meta-Analysis Complete"))' | wc -l)
+            HAS_COPILOT_META=$(gh pr view "$pr" --json comments \
+              --jq '.comments[] | select(.body | contains("Meta-Analysis Complete"))' 2>/dev/null | wc -l || echo "0")
 
             if [ "$HAS_CODERABBIT" -gt 0 ] && [ "$HAS_GEMINI" -gt 0 ] && [ "$HAS_COPILOT_META" -eq 0 ]; then
-              echo "✅ PR #$PR_NUM ready for Copilot meta-analysis"
-              READY_PRS=$(echo "$READY_PRS" | jq ". + [{\"number\": $PR_NUM}]")
+              echo "✅ PR #$pr ready for Copilot meta-analysis"
+              jq ". + [{\"number\": $pr}]" "$TMP_FILE" > "${TMP_FILE}.new" && mv "${TMP_FILE}.new" "$TMP_FILE"
             fi
           done
+
+          READY_PRS=$(cat "$TMP_FILE")
+          rm -f "$TMP_FILE"
 
           if [ "$(echo "$READY_PRS" | jq 'length')" -gt 0 ]; then
             echo "ready_prs=$READY_PRS" >> $GITHUB_OUTPUT

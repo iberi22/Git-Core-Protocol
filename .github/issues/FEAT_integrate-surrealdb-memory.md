@@ -1,4 +1,5 @@
 ---
+github_issue: 34
 title: "Integrate SurrealDB as unified memory system (vectors + graphs)"
 labels:
   - ai-plan
@@ -44,3 +45,4 @@ SurrealDB ofrece:
 - [ ] Definir schema para grafos
 - [ ] Implementar queries híbridas
 - [ ] Tests de rendimiento
+

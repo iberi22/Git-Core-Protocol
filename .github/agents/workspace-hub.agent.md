@@ -21,7 +21,7 @@ handoffs:
     agent: workspace-hub
     prompt: Help me find a project by technology, name, or purpose.
     send: false
-  
+
   # ═══════════════════════════════════════════════════════════════
   # 📁 CORE PROJECTS
   # ═══════════════════════════════════════════════════════════════
@@ -33,7 +33,7 @@ handoffs:
       Load: cat ".✨/ARCHITECTURE.md"
       Then: gh issue list --assignee "@me"
     send: false
-    
+
   - label: 🏭 Software Factory
     agent: protocol-claude
     prompt: |
@@ -42,7 +42,7 @@ handoffs:
       Load: cat ".✨/ARCHITECTURE.md"
       Then: gh issue list --assignee "@me"
     send: false
-    
+
   - label: 🏫 CGP-Colegios
     agent: protocol-claude
     prompt: |
@@ -51,7 +51,7 @@ handoffs:
       Load: cat ".✨/ARCHITECTURE.md"
       Then: gh issue list --assignee "@me"
     send: false
-    
+
   - label: 💊 OrionHealth
     agent: protocol-claude
     prompt: |
@@ -60,7 +60,7 @@ handoffs:
       Load: cat ".✨/ARCHITECTURE.md"
       Then: gh issue list --assignee "@me"
     send: false
-    
+
   - label: 🔗 SYN Orchestrator
     agent: workspace-hub
     prompt: |
@@ -68,7 +68,7 @@ handoffs:
       Path: e:\scripts-python\syn
       This is the workspace hub itself.
     send: false
-    
+
   - label: 🖥️ cpanel4agents
     agent: protocol-claude
     prompt: |
@@ -77,7 +77,7 @@ handoffs:
       Load: cat "AGENTS.md"
       Then: gh issue list --assignee "@me"
     send: false
-    
+
   - label: 🧠 MCP/Cerebro
     agent: protocol-grok
     prompt: |
@@ -86,7 +86,7 @@ handoffs:
       Large codebase - using Grok for 2M context.
       Load: cat "AGENTS.md"
     send: false
-    
+
   - label: 📱 Cerebro Flutter
     agent: protocol-claude
     prompt: |
@@ -94,7 +94,7 @@ handoffs:
       Path: e:\scripts-python\cerebro-flutter
       Load: cat "AGENTS.md"
     send: false
-    
+
   - label: 🍳 Cooktie
     agent: protocol-claude
     prompt: |
@@ -102,7 +102,7 @@ handoffs:
       Path: e:\scripts-python\cooktie
       Load: cat "AGENTS.md"
     send: false
-    
+
   - label: 📊 JamStack Admin
     agent: protocol-claude
     prompt: |
@@ -156,7 +156,7 @@ handoffs:
 
 # 🏠 Workspace Hub Agent
 
-> **Multi-Project Orchestrator**  
+> **Multi-Project Orchestrator**
 > **34 Projects** | **Git-Core Protocol Enabled**
 
 You are the **Workspace Hub** - the central orchestrator for this multi-project development environment.

@@ -66,21 +66,50 @@ if ($CurrentVersion -ne "0.0.0") {
     Write-Host ""
 }
 
+# Function to migrate from .ai/ to .✨/
+function Invoke-Migration {
+    if (Test-Path ".ai") {
+        Write-Host "🔄 Detected legacy .ai/ directory..." -ForegroundColor Yellow
+        
+        if (-not (Test-Path ".✨")) {
+            New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
+        }
+        
+        # Copy all files from .ai/ to .✨/
+        Get-ChildItem ".ai" -Recurse | ForEach-Object {
+            $destPath = $_.FullName -replace [regex]::Escape(".ai"), ".✨"
+            if ($_.PSIsContainer) {
+                New-Item -ItemType Directory -Force -Path $destPath | Out-Null
+            } else {
+                Copy-Item $_.FullName $destPath -Force
+            }
+        }
+        
+        Write-Host "  ✓ Migrated .ai/ → .✨/" -ForegroundColor Green
+        Write-Host "  ℹ️  You can safely delete .ai/ after verifying" -ForegroundColor Cyan
+        return $true
+    }
+    return $false
+}
+
 # Function to backup user files
 function Backup-UserFiles {
     Write-Host "💾 Backing up user files..." -ForegroundColor Cyan
     New-Item -ItemType Directory -Force -Path $BACKUP_DIR | Out-Null
     
+    # Check both .✨/ and .ai/ for backwards compatibility
+    $aiDir = if (Test-Path ".✨") { ".✨" } elseif (Test-Path ".ai") { ".ai" } else { $null }
+    
     # Backup ARCHITECTURE.md
-    if (Test-Path ".✨/ARCHITECTURE.md") {
-        Copy-Item ".✨/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
-        Write-Host "  ✓ .✨/ARCHITECTURE.md backed up" -ForegroundColor Green
+    if ($aiDir -and (Test-Path "$aiDir/ARCHITECTURE.md")) {
+        Copy-Item "$aiDir/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
+        Write-Host "  ✓ $aiDir/ARCHITECTURE.md backed up" -ForegroundColor Green
     }
     
     # Backup CONTEXT_LOG.md
-    if (Test-Path ".✨/CONTEXT_LOG.md") {
-        Copy-Item ".✨/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
-        Write-Host "  ✓ .✨/CONTEXT_LOG.md backed up" -ForegroundColor Green
+    if ($aiDir -and (Test-Path "$aiDir/CONTEXT_LOG.md")) {
+        Copy-Item "$aiDir/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
+        Write-Host "  ✓ $aiDir/CONTEXT_LOG.md backed up" -ForegroundColor Green
     }
     
     # Backup custom workflows
@@ -100,6 +129,11 @@ function Backup-UserFiles {
 # Function to restore user files
 function Restore-UserFiles {
     Write-Host "📥 Restoring user files..." -ForegroundColor Cyan
+    
+    # Ensure .✨ directory exists for restoration
+    if (-not (Test-Path ".✨")) {
+        New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
+    }
     
     # Restore ARCHITECTURE.md (unless force mode)
     if (-not $ForceMode -and (Test-Path "$BACKUP_DIR/ARCHITECTURE.md")) {
@@ -202,20 +236,33 @@ Remove-Item -Recurse -Force "$TEMP_DIR/.git" -ErrorAction SilentlyContinue
 # Install files
 Write-Host "📦 Installing protocol files..." -ForegroundColor Cyan
 
-# Handle .ai directory specially
-if (Test-Path "$TEMP_DIR/.ai") {
+# Run migration from .ai/ to .✨/ if needed
+$migrated = Invoke-Migration
+
+# Handle .✨ directory (protocol uses .✨, template may have .ai)
+$templateAiDir = if (Test-Path "$TEMP_DIR/.✨") { "$TEMP_DIR/.✨" } elseif (Test-Path "$TEMP_DIR/.ai") { "$TEMP_DIR/.ai" } else { $null }
+
+if ($templateAiDir) {
     if ($UpgradeMode) {
-        if (Test-Path ".ai") {
-            Remove-Item -Recurse -Force ".ai"
-        }
-        Copy-Item -Recurse "$TEMP_DIR/.ai" .
+        # Remove old directories
+        if (Test-Path ".✨") { Remove-Item -Recurse -Force ".✨" }
+        if (Test-Path ".ai") { Remove-Item -Recurse -Force ".ai" }
+        
+        # Copy to .✨
+        New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
+        Copy-Item -Recurse "$templateAiDir/*" ".✨/"
         Write-Host "  ✓ .✨/ (upgraded)" -ForegroundColor Green
-    } elseif (-not (Test-Path ".ai")) {
-        Copy-Item -Recurse "$TEMP_DIR/.ai" .
+    } elseif (-not (Test-Path ".✨") -and -not (Test-Path ".ai")) {
+        New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
+        Copy-Item -Recurse "$templateAiDir/*" ".✨/"
         Write-Host "  ✓ .✨/" -ForegroundColor Green
     } else {
+        # Ensure .✨ exists
+        if (-not (Test-Path ".✨")) {
+            New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
+        }
         Write-Host "  ~ .✨/ (exists, merging new files)" -ForegroundColor Yellow
-        Get-ChildItem "$TEMP_DIR/.ai" | ForEach-Object {
+        Get-ChildItem $templateAiDir | ForEach-Object {
             if (-not (Test-Path ".✨/$($_.Name)")) {
                 Copy-Item $_.FullName ".✨/"
                 Write-Host "    + $($_.Name)" -ForegroundColor Green

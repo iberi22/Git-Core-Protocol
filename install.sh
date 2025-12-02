@@ -101,21 +101,46 @@ if [ "$CURRENT_VERSION" != "0.0.0" ]; then
     echo ""
 fi
 
+# Function to migrate from .ai/ to .✨/
+migrate_ai_directory() {
+    if [ -d ".ai" ]; then
+        echo -e "${YELLOW}🔄 Detected legacy .ai/ directory...${NC}"
+        
+        mkdir -p ".✨"
+        
+        # Copy all files from .ai/ to .✨/
+        cp -r .ai/* .✨/ 2>/dev/null || true
+        
+        echo -e "  ${GREEN}✓ Migrated .ai/ → .✨/${NC}"
+        echo -e "  ${CYAN}ℹ️  You can safely delete .ai/ after verifying${NC}"
+        return 0
+    fi
+    return 1
+}
+
 # Function to backup user files
 backup_user_files() {
     echo -e "${CYAN}💾 Backing up user files...${NC}"
     mkdir -p "$BACKUP_DIR"
     
-    # Always backup ARCHITECTURE.md if it exists
-    if [ -f ".ai/ARCHITECTURE.md" ]; then
-        cp ".ai/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
-        echo -e "  ${GREEN}✓ .ai/ARCHITECTURE.md backed up${NC}"
+    # Check both .✨/ and .ai/ for backwards compatibility
+    AI_DIR=""
+    if [ -d ".✨" ]; then
+        AI_DIR=".✨"
+    elif [ -d ".ai" ]; then
+        AI_DIR=".ai"
+    fi
+    
+    # Backup ARCHITECTURE.md if it exists
+    if [ -n "$AI_DIR" ] && [ -f "$AI_DIR/ARCHITECTURE.md" ]; then
+        cp "$AI_DIR/ARCHITECTURE.md" "$BACKUP_DIR/ARCHITECTURE.md"
+        echo -e "  ${GREEN}✓ $AI_DIR/ARCHITECTURE.md backed up${NC}"
     fi
     
     # Backup CONTEXT_LOG.md if it exists
-    if [ -f ".ai/CONTEXT_LOG.md" ]; then
-        cp ".ai/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
-        echo -e "  ${GREEN}✓ .ai/CONTEXT_LOG.md backed up${NC}"
+    if [ -n "$AI_DIR" ] && [ -f "$AI_DIR/CONTEXT_LOG.md" ]; then
+        cp "$AI_DIR/CONTEXT_LOG.md" "$BACKUP_DIR/CONTEXT_LOG.md"
+        echo -e "  ${GREEN}✓ $AI_DIR/CONTEXT_LOG.md backed up${NC}"
     fi
     
     # Backup custom workflows
@@ -143,16 +168,19 @@ backup_user_files() {
 restore_user_files() {
     echo -e "${CYAN}📥 Restoring user files...${NC}"
     
+    # Ensure .✨ directory exists for restoration
+    mkdir -p ".✨"
+    
     # Restore ARCHITECTURE.md (unless force mode)
     if [ "$FORCE_MODE" != true ] && [ -f "$BACKUP_DIR/ARCHITECTURE.md" ]; then
-        cp "$BACKUP_DIR/ARCHITECTURE.md" ".ai/ARCHITECTURE.md"
-        echo -e "  ${GREEN}✓ .ai/ARCHITECTURE.md restored${NC}"
+        cp "$BACKUP_DIR/ARCHITECTURE.md" ".✨/ARCHITECTURE.md"
+        echo -e "  ${GREEN}✓ .✨/ARCHITECTURE.md restored${NC}"
     fi
     
     # Always restore CONTEXT_LOG.md
     if [ -f "$BACKUP_DIR/CONTEXT_LOG.md" ]; then
-        cp "$BACKUP_DIR/CONTEXT_LOG.md" ".ai/CONTEXT_LOG.md"
-        echo -e "  ${GREEN}✓ .ai/CONTEXT_LOG.md restored${NC}"
+        cp "$BACKUP_DIR/CONTEXT_LOG.md" ".✨/CONTEXT_LOG.md"
+        echo -e "  ${GREEN}✓ .✨/CONTEXT_LOG.md restored${NC}"
     fi
     
     # Restore custom workflows
@@ -242,21 +270,38 @@ rm -rf "$TEMP_DIR/.git"
 # Install files
 echo -e "${CYAN}📦 Installing protocol files...${NC}"
 
-# Handle .ai directory specially
-if [ -d "$TEMP_DIR/.ai" ]; then
+# Run migration from .ai/ to .✨/ if needed
+migrate_ai_directory
+
+# Handle .✨ directory (protocol uses .✨, template may have .ai)
+TEMPLATE_AI_DIR=""
+if [ -d "$TEMP_DIR/.✨" ]; then
+    TEMPLATE_AI_DIR="$TEMP_DIR/.✨"
+elif [ -d "$TEMP_DIR/.ai" ]; then
+    TEMPLATE_AI_DIR="$TEMP_DIR/.ai"
+fi
+
+if [ -n "$TEMPLATE_AI_DIR" ]; then
     if [ "$UPGRADE_MODE" = true ]; then
-        rm -rf .ai
-        cp -r "$TEMP_DIR/.ai" .
-        echo -e "  ${GREEN}✓ .ai/ (upgraded)${NC}"
-    elif [ ! -d ".ai" ]; then
-        cp -r "$TEMP_DIR/.ai" .
-        echo -e "  ${GREEN}✓ .ai/${NC}"
+        # Remove old directories
+        rm -rf .✨ .ai 2>/dev/null || true
+        
+        # Copy to .✨
+        mkdir -p ".✨"
+        cp -r "$TEMPLATE_AI_DIR"/* .✨/
+        echo -e "  ${GREEN}✓ .✨/ (upgraded)${NC}"
+    elif [ ! -d ".✨" ] && [ ! -d ".ai" ]; then
+        mkdir -p ".✨"
+        cp -r "$TEMPLATE_AI_DIR"/* .✨/
+        echo -e "  ${GREEN}✓ .✨/${NC}"
     else
-        echo -e "  ${YELLOW}~ .ai/ (exists, merging new files only)${NC}"
-        for file in "$TEMP_DIR/.ai"/*; do
+        # Ensure .✨ exists
+        mkdir -p ".✨"
+        echo -e "  ${YELLOW}~ .✨/ (exists, merging new files only)${NC}"
+        for file in "$TEMPLATE_AI_DIR"/*; do
             filename=$(basename "$file")
-            if [ ! -f ".ai/$filename" ]; then
-                cp "$file" ".ai/"
+            if [ ! -f ".✨/$filename" ]; then
+                cp "$file" ".✨/"
                 echo -e "    ${GREEN}+ $filename${NC}"
             fi
         done
@@ -334,7 +379,7 @@ if [ "$UPGRADE_MODE" = true ]; then
     fi
 else
     echo -e "📋 Files installed:"
-    echo "   .ai/ARCHITECTURE.md    - Document your architecture here"
+    echo "   .✨/ARCHITECTURE.md    - Document your architecture here"
     echo "   .github/               - Copilot rules + workflows"
     echo "   scripts/               - Init and update scripts"
     echo "   AGENTS.md              - Rules for all AI agents"

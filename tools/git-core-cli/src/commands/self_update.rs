@@ -14,10 +14,10 @@ pub async fn run(force: bool) -> Result<()> {
     print_info(&format!("Current CLI version: {}", style(CURRENT_VERSION).cyan()));
 
     let spinner = create_spinner("Checking latest version...");
-    
+
     // In a real implementation, this would check GitHub releases
     let latest_version = get_latest_cli_version().await?;
-    
+
     spinner.finish_and_clear();
 
     print_info(&format!("Latest CLI version: {}", style(&latest_version).green()));
@@ -33,7 +33,7 @@ pub async fn run(force: bool) -> Result<()> {
 
     // Download and update
     print_info("Downloading update...");
-    
+
     // This would download the new binary from GitHub releases
     // For now, we'll just show instructions
     println!();

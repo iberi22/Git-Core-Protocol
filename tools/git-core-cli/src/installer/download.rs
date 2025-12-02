@@ -10,11 +10,11 @@ use crate::utils::create_spinner;
 /// Fetch the protocol from GitHub
 pub async fn fetch_protocol(version: Option<&str>) -> Result<TempDir> {
     let temp_dir = TempDir::new()?;
-    
+
     // Clone repository
     let url = format!("https://github.com/{}/{}", GITHUB_OWNER, GITHUB_REPO);
     let branch = version.unwrap_or("main");
-    
+
     let output = std::process::Command::new("git")
         .args([
             "clone",
@@ -45,7 +45,7 @@ pub async fn fetch_protocol(version: Option<&str>) -> Result<TempDir> {
 pub async fn get_latest_version() -> Result<String> {
     let client = reqwest::Client::new();
     let url = format!("{}/{}", RAW_URL, ".git-core-protocol-version");
-    
+
     let response = client
         .get(&url)
         .header("User-Agent", "git-core-cli")
@@ -90,7 +90,7 @@ async fn get_latest_release_version() -> Result<String> {
 pub async fn download_file(path: &str) -> Result<String> {
     let client = reqwest::Client::new();
     let url = format!("{}/{}", RAW_URL, path);
-    
+
     let response = client
         .get(&url)
         .header("User-Agent", "git-core-cli")

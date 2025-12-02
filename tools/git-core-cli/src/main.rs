@@ -1,5 +1,5 @@
 //! Git-Core Protocol CLI
-//! 
+//!
 //! A modern installer and manager for AI-assisted development workflows.
 
 mod commands;
@@ -140,7 +140,7 @@ async fn main() -> Result<()> {
     } else {
         EnvFilter::new("info")
     };
-    
+
     tracing_subscriber::registry()
         .with(fmt::layer().without_time().with_target(false))
         .with(filter)

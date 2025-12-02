@@ -13,7 +13,7 @@ pub async fn run(name: Option<String>, path: Option<String>, template: &str, aut
     // Resolve target directory
     let target_path = utils::resolve_target_path(path, auto_yes)?;
     print_info(&format!("Target: {}", style(target_path.display()).cyan()));
-    
+
     // Change to target directory
     utils::change_to_target_dir(&target_path)?;
 
@@ -57,7 +57,7 @@ pub async fn run(name: Option<String>, path: Option<String>, template: &str, aut
     // Create initial issue
     print_header("📋 Next Steps");
     println!();
-    println!("  1. Edit {} to document your architecture", 
+    println!("  1. Edit {} to document your architecture",
         style(".✨/ARCHITECTURE.md").cyan());
     println!("  2. Run {} to set up labels and initial issues",
         style("./scripts/init_project.sh").cyan());
@@ -74,7 +74,7 @@ fn create_architecture_file(project_name: &str, template: &str) -> Result<()> {
     utils::ensure_dir(ai_dir)?;
 
     let arch_path = ai_dir.join("ARCHITECTURE.md");
-    
+
     // Don't overwrite existing
     if arch_path.exists() {
         return Ok(());
@@ -92,7 +92,7 @@ fn create_architecture_file(project_name: &str, template: &str) -> Result<()> {
 ## Structure
 <!-- Describe your file structure -->
 "#, project_name),
-        
+
         "full" | _ => format!(r#"# {} Architecture
 
 ## Overview

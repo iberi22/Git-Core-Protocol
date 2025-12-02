@@ -69,7 +69,7 @@ pub fn is_dir_empty() -> Result<bool> {
                 .starts_with('.')
         })
         .collect();
-    
+
     Ok(entries.is_empty())
 }
 
@@ -84,19 +84,19 @@ pub fn ensure_dir(path: &Path) -> Result<()> {
 /// Copy directory recursively
 pub fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<()> {
     ensure_dir(dst)?;
-    
+
     for entry in std::fs::read_dir(src)? {
         let entry = entry?;
         let src_path = entry.path();
         let dst_path = dst.join(entry.file_name());
-        
+
         if src_path.is_dir() {
             copy_dir_recursive(&src_path, &dst_path)?;
         } else {
             std::fs::copy(&src_path, &dst_path)?;
         }
     }
-    
+
     Ok(())
 }
 
@@ -111,7 +111,7 @@ pub fn remove_dir_if_exists(path: &Path) -> Result<()> {
 /// Confirm action with user
 pub fn confirm(message: &str, default: bool) -> Result<bool> {
     use dialoguer::Confirm;
-    
+
     Ok(Confirm::new()
         .with_prompt(message)
         .default(default)
@@ -121,7 +121,7 @@ pub fn confirm(message: &str, default: bool) -> Result<bool> {
 /// Select from options
 pub fn select(message: &str, options: &[&str]) -> Result<usize> {
     use dialoguer::Select;
-    
+
     Ok(Select::new()
         .with_prompt(message)
         .items(options)
@@ -132,7 +132,7 @@ pub fn select(message: &str, options: &[&str]) -> Result<usize> {
 /// Prompt for a path with autocomplete
 pub fn prompt_path(message: &str, default: &str) -> Result<String> {
     use dialoguer::Input;
-    
+
     Ok(Input::new()
         .with_prompt(message)
         .default(default.to_string())
@@ -152,24 +152,24 @@ pub fn resolve_target_path(path: Option<String>, auto_yes: bool) -> Result<std::
                 // Interactive mode: ask user
                 let current = std::env::current_dir()?;
                 let current_str = current.to_string_lossy().to_string();
-                
+
                 let input = prompt_path(
                     "📂 Target directory path",
                     &current_str
                 )?;
-                
+
                 std::path::PathBuf::from(input)
             }
         }
     };
-    
+
     // Expand to absolute path
     let absolute = if target.is_absolute() {
         target
     } else {
         std::env::current_dir()?.join(target)
     };
-    
+
     Ok(absolute)
 }
 

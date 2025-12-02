@@ -28,9 +28,9 @@ pub async fn run(bump: Option<String>, set: Option<String>) -> Result<()> {
 
 fn show_version(config: &Config) -> Result<()> {
     print_header("📊 Version Information");
-    
+
     println!();
-    println!("  {} {}", 
+    println!("  {} {}",
         style("Protocol Version:").dim(),
         style(&config.version).green().bold()
     );
@@ -69,7 +69,7 @@ fn bump_version(current: &str, bump_type: &str) -> Result<()> {
     set_version(&new_version)?;
 
     println!();
-    println!("  {} → {}", 
+    println!("  {} → {}",
         style(current).yellow(),
         style(&new_version).green().bold()
     );

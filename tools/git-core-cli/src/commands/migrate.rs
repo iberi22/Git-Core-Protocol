@@ -14,7 +14,7 @@ pub async fn run(path: Option<String>, remove_old: bool, dry_run: bool, auto_yes
     // Resolve target directory
     let target_path = utils::resolve_target_path(path, auto_yes)?;
     print_info(&format!("Target: {}", style(target_path.display()).cyan()));
-    
+
     // Change to target directory
     utils::change_to_target_dir(&target_path)?;
 
@@ -43,16 +43,16 @@ pub async fn run(path: Option<String>, remove_old: bool, dry_run: bool, auto_yes
         print_info("DRY RUN - No changes will be made");
         println!();
         println!("  Would migrate:");
-        
+
         for entry in std::fs::read_dir(old_dir)? {
             let entry = entry?;
             let name = entry.file_name();
-            println!("    {} → .✨/{}", 
+            println!("    {} → .✨/{}",
                 style(format!(".ai/{}", name.to_string_lossy())).yellow(),
                 style(name.to_string_lossy()).green()
             );
         }
-        
+
         if remove_old {
             println!();
             println!("  {} Would remove .ai/ directory", style("⚠").yellow());
@@ -75,9 +75,9 @@ pub fn run_migration(remove_old: bool, auto_yes: bool) -> Result<()> {
 
     // Create new directory and copy files
     utils::ensure_dir(new_dir)?;
-    
+
     let spinner = utils::create_spinner("Migrating files...");
-    
+
     for entry in std::fs::read_dir(old_dir)? {
         let entry = entry?;
         let src_path = entry.path();
@@ -89,7 +89,7 @@ pub fn run_migration(remove_old: bool, auto_yes: bool) -> Result<()> {
             std::fs::copy(&src_path, &dst_path)?;
         }
     }
-    
+
     spinner.finish_with_message("Migration complete!");
 
     print_success(&format!("Migrated {} → {}", OLD_AI_DIR, NEW_AI_DIR));

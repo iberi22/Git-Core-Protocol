@@ -10,7 +10,7 @@ use crate::utils::{self, copy_dir_recursive, print_success, print_warning};
 /// Install protocol files from temp directory
 pub async fn install_files(temp_dir: &TempDir, upgrade: bool) -> Result<()> {
     let src = temp_dir.path();
-    
+
     // Handle AI directory (.✨ or .ai in template)
     let template_ai_dir = if src.join(".✨").exists() {
         src.join(".✨")
@@ -32,7 +32,7 @@ pub async fn install_files(temp_dir: &TempDir, upgrade: bool) -> Result<()> {
     if !dest_ai_dir.exists() || upgrade {
         utils::ensure_dir(dest_ai_dir)?;
         copy_dir_recursive(&template_ai_dir, dest_ai_dir)?;
-        
+
         if upgrade {
             print_success(".✨/ (upgraded)");
         } else {
@@ -49,7 +49,7 @@ pub async fn install_files(temp_dir: &TempDir, upgrade: bool) -> Result<()> {
     for dir in dirs {
         let src_dir = src.join(dir);
         let dst_dir = Path::new(dir);
-        
+
         if src_dir.exists() {
             if upgrade {
                 utils::remove_dir_if_exists(dst_dir)?;
@@ -68,15 +68,15 @@ pub async fn install_files(temp_dir: &TempDir, upgrade: bool) -> Result<()> {
     // Install protocol files
     let protocol_files = [
         ".cursorrules",
-        ".windsurfrules", 
+        ".windsurfrules",
         "AGENTS.md",
         ".git-core-protocol-version",
     ];
-    
+
     for file in protocol_files {
         let src_file = src.join(file);
         let dst_file = Path::new(file);
-        
+
         if src_file.exists() {
             if upgrade {
                 std::fs::copy(&src_file, dst_file)?;
@@ -94,7 +94,7 @@ pub async fn install_files(temp_dir: &TempDir, upgrade: bool) -> Result<()> {
     for file in PRESERVE_FILES {
         let src_file = src.join(file);
         let dst_file = Path::new(file);
-        
+
         if src_file.exists() && !dst_file.exists() {
             std::fs::copy(&src_file, dst_file)?;
             print_success(file);

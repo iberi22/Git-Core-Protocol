@@ -16,12 +16,12 @@ pub async fn run() -> Result<()> {
     // Version info
     println!();
     if config.is_installed() {
-        println!("  {} {}", 
+        println!("  {} {}",
             style("Version:").dim(),
             style(&config.version).green().bold()
         );
     } else {
-        println!("  {} {}", 
+        println!("  {} {}",
             style("Version:").dim(),
             style("Not installed").red().bold()
         );
@@ -35,13 +35,13 @@ pub async fn run() -> Result<()> {
     } else {
         "None".to_string()
     };
-    
+
     println!("  {} {}", style("AI Directory:").dim(), ai_dir);
 
     // Files check
     println!();
     println!("  {}", style("Files:").cyan().bold());
-    
+
     let files_to_check = [
         ("AGENTS.md", "Agent configuration"),
         (".github/copilot-instructions.md", "Copilot instructions"),
@@ -63,7 +63,7 @@ pub async fn run() -> Result<()> {
     if let Some(ai_path) = ai_path {
         println!();
         println!("  {}", style(format!("{}/", ai_path.display())).cyan().bold());
-        
+
         let ai_files = ["ARCHITECTURE.md", "CONTEXT_LOG.md", "AGENT_INDEX.md"];
         for file in ai_files {
             let file_path = ai_path.join(file);
@@ -79,7 +79,7 @@ pub async fn run() -> Result<()> {
     // Git info
     println!();
     println!("  {}", style("Git:").cyan().bold());
-    
+
     if Path::new(".git").exists() {
         println!("    {} Repository initialized", style("✓").green());
     } else {

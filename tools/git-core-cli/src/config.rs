@@ -61,12 +61,12 @@ impl Config {
     /// Load configuration from the current directory
     pub fn load() -> anyhow::Result<Self> {
         let version_file = PathBuf::from(VERSION_FILE);
-        
+
         if version_file.exists() {
             let version = std::fs::read_to_string(&version_file)?
                 .trim()
                 .to_string();
-            
+
             Ok(Self {
                 version,
                 ..Default::default()
@@ -99,7 +99,7 @@ impl Config {
     pub fn needs_migration() -> bool {
         let old_dir = PathBuf::from(OLD_AI_DIR);
         let new_dir = PathBuf::from(NEW_AI_DIR);
-        
+
         old_dir.exists() && !new_dir.exists()
     }
 }
@@ -115,7 +115,7 @@ pub struct ProtocolVersion {
 impl ProtocolVersion {
     pub fn parse(version: &str) -> anyhow::Result<Self> {
         let parts: Vec<&str> = version.trim_start_matches('v').split('.').collect();
-        
+
         if parts.len() != 3 {
             anyhow::bail!("Invalid version format: {}", version);
         }

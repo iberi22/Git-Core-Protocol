@@ -44,7 +44,7 @@ pub async fn run(fix: bool, format: &str) -> Result<()> {
     // Check 2: Directory structure
     let new_dir = Path::new(NEW_AI_DIR);
     let old_dir = Path::new(OLD_AI_DIR);
-    
+
     let ai_directory = if new_dir.exists() {
         print_success("Using modern .✨/ directory");
         NEW_AI_DIR.to_string()
@@ -164,7 +164,7 @@ fn print_summary(issues: &[Issue], fix_available: bool) -> Result<()> {
         println!("{}", style("✅ All checks passed!").green().bold());
     } else {
         println!("{}", style("📊 Summary:").cyan().bold());
-        
+
         if errors > 0 {
             println!("  {} {} error(s)", style("❌").red(), errors);
         }
@@ -177,14 +177,14 @@ fn print_summary(issues: &[Issue], fix_available: bool) -> Result<()> {
 
         println!();
         println!("{}", style("Issues found:").yellow());
-        
+
         for issue in issues {
             let icon = match issue.severity.as_str() {
                 "error" => style("❌").red(),
                 "warning" => style("⚠").yellow(),
                 _ => style("ℹ").blue(),
             };
-            
+
             println!("  {} {}", icon, issue.message);
             if let Some(fix) = &issue.fix {
                 println!("    {} {}", style("Fix:").dim(), style(fix).cyan());
@@ -207,7 +207,7 @@ async fn apply_fixes(issues: &[Issue]) -> Result<()> {
             crate::commands::migrate::run_migration(false, true)?;
         }
     }
-    
+
     print_success("Fixes applied where possible");
     Ok(())
 }

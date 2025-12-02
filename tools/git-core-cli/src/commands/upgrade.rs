@@ -14,7 +14,7 @@ pub async fn run(path: Option<String>, force: bool, version: Option<String>, aut
     // Resolve target directory
     let target_path = utils::resolve_target_path(path, auto_yes)?;
     print_info(&format!("Target: {}", style(target_path.display()).cyan()));
-    
+
     // Change to target directory
     utils::change_to_target_dir(&target_path)?;
 
@@ -82,10 +82,10 @@ pub async fn run(path: Option<String>, force: bool, version: Option<String>, aut
 
     // Show completion
     let new_config = Config::load()?;
-    
+
     println!();
     println!("{}", style("════════════════════════════════════════").green());
-    println!("  {} Upgraded: {} → {}", 
+    println!("  {} Upgraded: {} → {}",
         style("✅").green(),
         style(current_version).yellow(),
         style(&new_config.version).green()

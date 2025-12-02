@@ -43,10 +43,10 @@ pub async fn backup_user_files() -> Result<()> {
         for entry in std::fs::read_dir(workflows_dir)? {
             let entry = entry?;
             let path = entry.path();
-            
+
             if path.extension().map_or(false, |e| e == "yml" || e == "yaml") {
                 let filename = path.file_name().unwrap().to_string_lossy();
-                
+
                 // Only backup non-protocol workflows
                 if !PROTOCOL_WORKFLOWS.contains(&filename.as_ref()) {
                     std::fs::copy(&path, backup_workflows.join(&*filename))?;
@@ -62,7 +62,7 @@ pub async fn backup_user_files() -> Result<()> {
 /// Restore user files after upgrade
 pub async fn restore_user_files() -> Result<()> {
     let backup_dir = Path::new(BACKUP_DIR);
-    
+
     if !backup_dir.exists() {
         return Ok(());
     }
@@ -94,7 +94,7 @@ pub async fn restore_user_files() -> Result<()> {
             let entry = entry?;
             let path = entry.path();
             let filename = path.file_name().unwrap();
-            
+
             std::fs::copy(&path, workflows_dir.join(filename))?;
             print_success(&format!("Custom workflow restored: {}", filename.to_string_lossy()));
         }

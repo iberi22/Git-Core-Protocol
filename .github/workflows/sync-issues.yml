@@ -57,6 +57,27 @@ jobs:
             echo "{}" > .github/issues/.issue-mapping.json
           fi
 
+      # ========== Ensure labels exist ==========
+      - name: Create missing labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Define labels that might be needed
+          declare -A LABELS=(
+            ["ai-agents"]="AI agent related tasks:#5319E7"
+            ["research"]="Research tasks:#D4C5F9"
+            ["workflow"]="Workflow improvements:#0E8A16"
+            ["bug"]="Something isn't working:#D73A4A"
+            ["documentation"]="Improvements or additions to documentation:#0075CA"
+            ["feature"]="New feature request:#A2EEEF"
+          )
+
+          for label in "${!LABELS[@]}"; do
+            IFS=':' read -r desc color <<< "${LABELS[$label]}"
+            gh label create "$label" --description "$desc" --color "$color" 2>/dev/null || true
+          done
+          echo "✅ Labels verificados"
+
       # ========== PUSH: Crear issues desde archivos .md ==========
       - name: Create issues from .md files
         if: github.event_name != 'issues' && (github.event.inputs.action != 'pull-only' || github.event.inputs.action == '')
@@ -120,8 +141,11 @@ jobs:
             echo "$BODY" > /tmp/issue_body.md
             CMD="$CMD --body-file /tmp/issue_body.md"
 
-            # Ejecutar
-            result=$(eval $CMD 2>&1) || true
+            # Ejecutar con manejo de errores robusto
+            set +e
+            result=$(eval $CMD 2>&1)
+            exit_code=$?
+            set -e
 
             # Extraer número del issue
             issue_num=$(echo "$result" | grep -oE '/issues/[0-9]+' | grep -oE '[0-9]+')

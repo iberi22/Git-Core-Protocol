@@ -1,4 +1,5 @@
 ---
+github_issue: 38
 title: "Implement Intelligent Workflow Agent Panel"
 labels:
   - enhancement
@@ -57,3 +58,4 @@ graph TD
 - [x] Update existing agents with model-specific behaviors
 - [ ] Document in AGENTS.md
 - [ ] Test workflow end-to-end
+

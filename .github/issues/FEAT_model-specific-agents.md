@@ -1,4 +1,5 @@
 ---
+github_issue: 37
 title: "Implement Model-Specific Custom Agents for Git-Core Protocol"
 labels:
   - enhancement
@@ -101,3 +102,4 @@ graph TD
 - [Anthropic Tool Use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use)
 - [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling)
 - [Gemini Function Calling](https://ai.google.dev/gemini-api/docs/function-calling)
+

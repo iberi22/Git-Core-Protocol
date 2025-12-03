@@ -24,6 +24,24 @@ This repository follows the **Git-Core Protocol** for AI-assisted development.
 
 ---
 
+## 🚀 Git-Core v2.0 Enhancements (NEW)
+
+**Implementación de lógicas "12-Factor Agents" y "HumanLayer":**
+
+### 1. Context Protocol (Stateless Reducer)
+Los agentes deben persistir su estado en los Issues usando bloques XML `<agent-state>`.
+👉 **Ver especificación:** `docs/agent-docs/CONTEXT_PROTOCOL.md`
+
+### 2. Micro-Agents (Personas)
+Los agentes deben adoptar roles específicos basados en las etiquetas (Labels) del Issue.
+👉 **Ver especificación:** `docs/agent-docs/MICRO_AGENTS.md`
+
+### 3. High Stakes Operations (Human-in-the-Loop)
+Para operaciones críticas (borrar datos, deploys, cambios de auth), el agente **DEBE PAUSAR** y solicitar confirmación explícita:
+> "⚠️ Esta es una operación de alto riesgo. Responde **'Proceder'** para continuar."
+
+---
+
 ## ⛔ FORBIDDEN FILES (HARD RULES)
 
 **NEVER create these files under ANY circumstances:**
@@ -85,6 +103,7 @@ When you need to export context for a new chat session:
 | **CANNOT** be manually created | Script enforces structure |
 
 **Workflow:**
+
 ```bash
 # Generate continuation prompt
 ./scripts/export-session.ps1 -Topic "feature-name" -Summary "Current progress..."

@@ -446,6 +446,16 @@ git-core migrate
 
 ✅ GitHub Copilot | ✅ Cursor | ✅ Windsurf | ✅ Claude | ✅ ChatGPT | ✅ Any LLM with terminal access
 
+## 🤝 Credits & Inspiration
+
+This protocol is inspired by and builds upon the excellent work of:
+
+- **[HumanLayer](https://github.com/humanlayer/humanlayer)**: For their pioneering work on "12-Factor Agents" and "Context Engineering".
+- **[CodeLayer](https://humanlayer.dev/code)**: For demonstrating advanced agent orchestration.
+- **Context7**: For the initial concepts of context management.
+
+We acknowledge their contributions to the field of AI-assisted development.
+
 ---
 
 # 🇪🇸 Español
@@ -597,6 +607,16 @@ El reporte AI incluye:
 - 🏷️ **Etiquetas Sugeridas**
 
 Los reportes se publican automáticamente como comentarios en el PR.
+
+## 🤝 Créditos e Inspiración
+
+Este protocolo está inspirado y se basa en el excelente trabajo de:
+
+- **[HumanLayer](https://github.com/humanlayer/humanlayer)**: Por su trabajo pionero en "12-Factor Agents" y "Context Engineering".
+- **[CodeLayer](https://humanlayer.dev/code)**: Por demostrar una orquestación avanzada de agentes.
+- **Context7**: Por los conceptos iniciales de gestión de contexto.
+
+Agradecemos sus contribuciones al campo del desarrollo asistido por IA.
 
 ---
 

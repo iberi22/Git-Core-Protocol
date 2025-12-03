@@ -37,6 +37,10 @@ handoffs:
     agent: recipe-loader
     prompt: Load a specialized role for this task.
     send: false
+  - label: 🔄 Export Session
+    agent: session-exporter
+    prompt: Export this session for continuation in a new chat window.
+    send: false
 ---
 # Git-Core Protocol Agent (Grok Optimized)
 

@@ -29,6 +29,10 @@ handoffs:
     agent: pr-creator
     prompt: Create a pull request.
     send: false
+  - label: 🔄 Export Session
+    agent: session-exporter
+    prompt: Export this session for continuation in a new chat window.
+    send: false
 ---
 # Git-Core Protocol Agent (Gemini Optimized)
 

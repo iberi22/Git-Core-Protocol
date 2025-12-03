@@ -29,6 +29,10 @@ handoffs:
     agent: recipe-loader
     prompt: I need a specialized role.
     send: false
+  - label: 🔄 Export Session
+    agent: session-exporter
+    prompt: Export this session for continuation in a new chat window.
+    send: false
 ---
 # Git-Core Protocol Agent (GPT Codex Optimized)
 

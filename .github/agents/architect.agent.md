@@ -33,6 +33,10 @@ handoffs:
     agent: recipe-loader
     prompt: Load a specialized architecture role.
     send: false
+  - label: 🔄 Export Session
+    agent: session-exporter
+    prompt: Export this session for continuation in a new chat window.
+    send: false
 ---
 # Protocol Architect Agent (Claude Opus)
 

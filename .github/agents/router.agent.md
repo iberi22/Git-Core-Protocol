@@ -1,9 +1,11 @@
 ---
-name: protocol-router
+name: Protocol Router
 description: Automatically routes requests to the optimal agent based on task type
 model: Auto
 tools:
-  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
+  - search
+  - problems
+  - references
 handoffs:
   - label: 🎯 Use Claude (Standard)
     agent: protocol-claude

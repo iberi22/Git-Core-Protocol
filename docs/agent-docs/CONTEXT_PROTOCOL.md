@@ -38,13 +38,13 @@ Cada vez que un agente realiza una acción significativa o pausa su trabajo, DEB
 <agent-state>
   <!-- Intención actual del agente -->
   <intent>implement_feature</intent>
-  
+
   <!-- Paso actual en el plan -->
   <step>waiting_for_review</step>
-  
+
   <!-- Progreso (0-100) -->
   <progress>60</progress>
-  
+
   <!-- Memoria a corto plazo (JSON) -->
   <memory>
     {
@@ -53,7 +53,7 @@ Cada vez que un agente realiza una acción significativa o pausa su trabajo, DEB
       "attempt_count": 2
     }
   </memory>
-  
+
   <!-- Siguiente acción recomendada -->
   <next_action>run_tests_again</next_action>
 </agent-state>
@@ -72,12 +72,14 @@ Cada vez que un agente realiza una acción significativa o pausa su trabajo, DEB
 ## 3. Flujo de Lectura/Escritura
 
 ### Al Iniciar (Lectura)
+
 1. El agente lee el Issue asignado.
 2. Busca el **último** bloque `<agent-state>` en los comentarios.
 3. Si existe, carga ese estado como su contexto inicial.
 4. Si no existe, inicia con estado `planning`.
 
 ### Al Finalizar/Pausar (Escritura)
+
 1. El agente determina su nuevo estado.
 2. Publica un comentario en el Issue con el bloque `<agent-state>` actualizado.
 3. (Opcional) Añade un resumen legible para humanos antes del bloque XML.

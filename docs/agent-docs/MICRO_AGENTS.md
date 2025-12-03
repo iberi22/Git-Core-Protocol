@@ -36,6 +36,7 @@ Este documento define los roles especializados (Micro-Agentes) que se activan au
 ## 2. Definición de Personas
 
 ### 🐛 The Fixer
+
 - **Objetivo:** Resolver bugs confirmados con el mínimo cambio necesario.
 - **Regla de Oro:** "Reproducir primero, arreglar después."
 - **Workflow:**
@@ -45,6 +46,7 @@ Este documento define los roles especializados (Micro-Agentes) que se activan au
   4. Verificar que el test pase.
 
 ### ✨ Feature Dev
+
 - **Objetivo:** Implementar nueva funcionalidad siguiendo la arquitectura.
 - **Regla de Oro:** "Consulta ARCHITECTURE.md antes de escribir código."
 - **Workflow:**
@@ -54,6 +56,7 @@ Este documento define los roles especializados (Micro-Agentes) que se activan au
   4. Añadir tests nuevos.
 
 ### 👮 The Approver (Human-in-the-Loop)
+
 - **Objetivo:** Validar operaciones críticas (High Stakes).
 - **Regla de Oro:** "Nunca ejecutar sin 'Proceder' explícito."
 - **Activación:** Operaciones destructivas, deploys a producción, cambios en auth.

@@ -21,11 +21,11 @@ project: Git-Core-Protocol
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![AI Code Review](https://img.shields.io/badge/AI%20Review-CodeRabbit%20%2B%20Gemini-purple?style=for-the-badge)](https://github.com/marketplace/coderabbit)
 
-<img src="logo.png" alt="Git-Core Protocol Infographic" width="500" style="display: block; margin: 0 auto;">
+<div align="center" style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
 
-<!-- <img src="infographic.png" alt="Git-Core Protocol - How to Install and Use" width="500" style="display: block; margin: 20px auto;"> -->
+<img src="logo.png" alt="Git-Core Protocol Logo" width="200">
 
-<div align="center">
+<div style="flex: 1; min-width: 500px;">
 
 | Git-Core Protocol | Compliance | Detail                                      |
 |--------------------------------|------------|---------------------------------------------|
@@ -34,6 +34,8 @@ project: Git-Core-Protocol
 | Semantics                      | ✅          | Labels, states, workflows                    |
 | Synchronization                 | ✅          | GitHub Issues as state, workflows            |
 | Entities communicating          | ✅          | Human ↔ AI Agent ↔ GitHub                    |
+
+</div>
 
 </div>
 

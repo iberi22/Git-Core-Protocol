@@ -1,4 +1,4 @@
----
+Which app would you like to open?---
 title: "Git-Core CLI - Transparency & Trust"
 type: DOCUMENTATION
 id: "doc-cli-trust"

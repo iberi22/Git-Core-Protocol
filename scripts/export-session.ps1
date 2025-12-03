@@ -34,22 +34,22 @@
 param(
     [Parameter(Mandatory=$true, HelpMessage="Brief summary of current work")]
     [string]$Summary,
-    
+
     [Parameter(HelpMessage="Topic identifier for filename")]
     [string]$Topic = "session",
-    
+
     [Parameter(HelpMessage="Include git status")]
     [bool]$IncludeGitStatus = $true,
-    
+
     [Parameter(HelpMessage="Include assigned issues")]
     [bool]$IncludeIssues = $true,
-    
+
     [Parameter(HelpMessage="Include recent commits")]
     [bool]$IncludeRecentCommits = $true,
-    
+
     [Parameter(HelpMessage="Number of recent commits")]
     [int]$CommitCount = 5,
-    
+
     [Parameter(HelpMessage="Additional context to include")]
     [string]$AdditionalContext = ""
 )
@@ -191,14 +191,21 @@ Based on the context above, please:
 # Write the file
 $content | Out-File -FilePath $filepath -Encoding utf8
 
+# Copy file reference to clipboard
+$clipboardText = "#file:$filepath"
+$clipboardText | Set-Clipboard
+
 Write-Host ""
 Write-Host "✅ Session prompt exported successfully!" -ForegroundColor Green
 Write-Host ""
 Write-Host "📄 File: $filepath" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📋 To continue in a new chat:" -ForegroundColor Yellow
-Write-Host "   1. Open a new chat window"
-Write-Host "   2. Type: #file:$filepath"
-Write-Host "   3. Continue your work!"
+Write-Host "📋 COPIADO AL PORTAPAPELES (Ctrl+V para pegar):" -ForegroundColor Yellow
+Write-Host "   $clipboardText" -ForegroundColor White
 Write-Host ""
-Write-Host "🗑️  Remember to delete this file after use (not permanent docs)" -ForegroundColor DarkGray
+Write-Host "🔄 Para continuar en nueva ventana:" -ForegroundColor Yellow
+Write-Host "   1. Abre nueva ventana de chat"
+Write-Host "   2. Pega (Ctrl+V) - el texto ya está copiado"
+Write-Host "   3. ¡Continúa tu trabajo!"
+Write-Host ""
+Write-Host "🗑️  Recuerda eliminar el archivo después de usar" -ForegroundColor DarkGray

@@ -98,7 +98,7 @@ Then execute: ./scripts/init_project.sh
 
 ---
 
-## 🤖 Agent "Dressing Room" (New!)
+## 🤖 Context Injector (New!)
 
 This protocol now includes a dynamic system to "equip" your AI agent with specific roles (Backend Architect, UX Researcher, etc.) on demand.
 

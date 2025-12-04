@@ -3,7 +3,7 @@
     Equips the AI agent with a specific Role (Recipe) by downloading it from GitHub.
 
 .DESCRIPTION
-    This script acts as the "Dressing Room" for the AI. It:
+    This script acts as the "Context Injector" for the AI. It:
     1. Looks up the requested Role in .✨/AGENT_INDEX.md.
     2. Extracts the recipe path.
     3. Downloads the recipe content from the remote repository.

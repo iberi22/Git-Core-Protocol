@@ -16,7 +16,7 @@ $RAW_URL = "https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main"
 $TEMP_DIR = ".git-core-temp"
 $BACKUP_DIR = ".git-core-backup"
 
-Write-Host "🧠 Git-Core Protocol - Remote Installer v2.0" -ForegroundColor Cyan
+Write-Host "🧠 Git-Core Protocol - Remote Installer v1.4.0" -ForegroundColor Cyan
 Write-Host "==============================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -272,7 +272,7 @@ if ($templateAiDir) {
 }
 
 # Copy other directories
-$dirs = @(".github", "scripts", "docs")
+$dirs = @(".github", "scripts", "docs", "bin")
 foreach ($dir in $dirs) {
     if (Test-Path "$TEMP_DIR/$dir") {
         if ($UpgradeMode) {
@@ -280,12 +280,45 @@ foreach ($dir in $dirs) {
                 Remove-Item -Recurse -Force $dir
             }
             Copy-Item -Recurse "$TEMP_DIR/$dir" .
+            
+            # Cleanup internal files
+            if ($dir -eq ".github") {
+                Remove-Item ".github/workflows/build-tools.yml" -ErrorAction SilentlyContinue
+                Remove-Item ".github/workflows/release.yml" -ErrorAction SilentlyContinue
+            }
+            if ($dir -eq "scripts") {
+                Remove-Item "scripts/bump-version.ps1" -ErrorAction SilentlyContinue
+                Remove-Item "scripts/bump-version.sh" -ErrorAction SilentlyContinue
+            }
+
             Write-Host "  ✓ $dir/ (upgraded)" -ForegroundColor Green
         } elseif (-not (Test-Path $dir)) {
             Copy-Item -Recurse "$TEMP_DIR/$dir" .
+
+            # Cleanup internal files
+            if ($dir -eq ".github") {
+                Remove-Item ".github/workflows/build-tools.yml" -ErrorAction SilentlyContinue
+                Remove-Item ".github/workflows/release.yml" -ErrorAction SilentlyContinue
+            }
+            if ($dir -eq "scripts") {
+                Remove-Item "scripts/bump-version.ps1" -ErrorAction SilentlyContinue
+                Remove-Item "scripts/bump-version.sh" -ErrorAction SilentlyContinue
+            }
+
             Write-Host "  ✓ $dir/" -ForegroundColor Green
         } else {
             Copy-Item -Recurse -Force "$TEMP_DIR/$dir/*" $dir -ErrorAction SilentlyContinue
+            
+            # Cleanup internal files
+            if ($dir -eq ".github") {
+                Remove-Item ".github/workflows/build-tools.yml" -ErrorAction SilentlyContinue
+                Remove-Item ".github/workflows/release.yml" -ErrorAction SilentlyContinue
+            }
+            if ($dir -eq "scripts") {
+                Remove-Item "scripts/bump-version.ps1" -ErrorAction SilentlyContinue
+                Remove-Item "scripts/bump-version.sh" -ErrorAction SilentlyContinue
+            }
+
             Write-Host "  ✓ $dir/ (merged)" -ForegroundColor Green
         }
     }

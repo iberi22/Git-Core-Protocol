@@ -3,7 +3,7 @@ title: "Living Research Context"
 type: RESEARCH
 agent: context-research-agent
 updated: 2025-12-01
-protocol_version: 1.3.0
+protocol_version: 1.4.0
 ---
 
 # 🧠 Living Research Context

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Git-Core Protocol v2.1 - Agent State Tool (Bash)
+# Git-Core Protocol v1.4.0 - Agent State Tool (Bash)
 # Usage:
 #   ./agent-state.sh read --issue <number>
 #   ./agent-state.sh write --intent "..." --step "..." --progress 50

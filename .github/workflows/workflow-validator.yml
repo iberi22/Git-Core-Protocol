@@ -49,6 +49,12 @@ jobs:
   build-orchestrator:
     name: "🔧 Build Orchestrator"
     runs-on: ubuntu-latest
+    # Prevent infinite loops: Do not validate the validator itself or other meta-workflows
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event_name == 'workflow_run' && 
+       github.event.workflow_run.name != 'Workflow Validator' && 
+       github.event.workflow_run.name != 'Copilot Meta-Analysis')
     outputs:
       cache_hit: ${{ steps.cache.outputs.cache-hit }}
 

@@ -13,7 +13,7 @@ summary: |
 keywords: [micro-agents, personas, roles, labels]
 tags: ["#agents", "#roles", "#configuration"]
 project: Git-Core-Protocol
-protocol_version: 1.3.0
+protocol_version: 1.4.0
 ---
 
 # 🎭 Micro-Agents & Personas (Git-Core v2.0)

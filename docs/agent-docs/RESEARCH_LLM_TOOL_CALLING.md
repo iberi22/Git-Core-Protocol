@@ -16,7 +16,7 @@ tags: ["#ai-agents", "#tool-calling", "#research", "#git-core-protocol"]
 topics: [ai-agents, tool-calling, llm-capabilities]
 related_issues: []
 project: Git-Core-Protocol
-protocol_version: 1.3.0
+protocol_version: 1.4.0
 module: agent-docs
 language: markdown
 priority: high

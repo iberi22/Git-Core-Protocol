@@ -24,7 +24,7 @@ CYAN='\033[0;36m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-echo -e "${CYAN}🧠 Git-Core Protocol - Remote Installer v2.0${NC}"
+echo -e "${CYAN}🧠 Git-Core Protocol - Remote Installer v1.4.0${NC}"
 echo "=============================================="
 echo ""
 
@@ -309,17 +309,50 @@ if [ -n "$TEMPLATE_AI_DIR" ]; then
 fi
 
 # Copy other directories
-for dir in .github scripts docs; do
+for dir in .github scripts docs bin; do
     if [ -d "$TEMP_DIR/$dir" ]; then
         if [ "$UPGRADE_MODE" = true ]; then
             rm -rf "$dir"
             cp -r "$TEMP_DIR/$dir" .
+            
+            # Cleanup internal files
+            if [ "$dir" = ".github" ]; then
+                rm -f ".github/workflows/build-tools.yml"
+                rm -f ".github/workflows/release.yml"
+            fi
+            if [ "$dir" = "scripts" ]; then
+                rm -f "scripts/bump-version.ps1"
+                rm -f "scripts/bump-version.sh"
+            fi
+
             echo -e "  ${GREEN}✓ $dir/ (upgraded)${NC}"
         elif [ ! -d "$dir" ]; then
             cp -r "$TEMP_DIR/$dir" .
+
+            # Cleanup internal files
+            if [ "$dir" = ".github" ]; then
+                rm -f ".github/workflows/build-tools.yml"
+                rm -f ".github/workflows/release.yml"
+            fi
+            if [ "$dir" = "scripts" ]; then
+                rm -f "scripts/bump-version.ps1"
+                rm -f "scripts/bump-version.sh"
+            fi
+
             echo -e "  ${GREEN}✓ $dir/${NC}"
         else
             cp -rn "$TEMP_DIR/$dir"/* "$dir/" 2>/dev/null || true
+            
+            # Cleanup internal files
+            if [ "$dir" = ".github" ]; then
+                rm -f ".github/workflows/build-tools.yml"
+                rm -f ".github/workflows/release.yml"
+            fi
+            if [ "$dir" = "scripts" ]; then
+                rm -f "scripts/bump-version.ps1"
+                rm -f "scripts/bump-version.sh"
+            fi
+
             echo -e "  ${GREEN}✓ $dir/ (merged)${NC}"
         fi
     fi

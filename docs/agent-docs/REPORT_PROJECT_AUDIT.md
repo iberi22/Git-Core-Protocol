@@ -15,7 +15,7 @@ tags: ["#audit", "#quality", "#maintenance"]
 topics: [project-health, technical-debt]
 related_issues: []
 project: Git-Core-Protocol
-protocol_version: 1.3.0
+protocol_version: 1.4.0
 priority: high
 status: completed
 confidence: 0.95

@@ -13,7 +13,7 @@ summary: |
   v2.1: Adds Dynamic Planning, Human-as-Tool, and Metrics.
 keywords: [context, protocol, state, xml, 12-factor, acp]
 tags: ["#protocol", "#context", "#state"]
-protocol_version: 1.3.0
+protocol_version: 1.4.0
 project: Git-Core-Protocol
 ---
 

@@ -186,7 +186,7 @@ All agents can hand off to each other with context-aware prompts. Click the hand
 
 ---
 
-## 🤖 AI Report Generation (New in v1.5!)
+## 🤖 AI Report Generation (New in v1.4!)
 
 Automated PR analysis using multiple AI models:
 
@@ -234,7 +234,7 @@ Reports are automatically posted as PR comments.
 
 ---
 
-## 📤 Session Export (New in v1.5!)
+## 📤 Session Export (New in v1.4!)
 
 Continue your work in a new chat window **without losing context**.
 
@@ -560,7 +560,7 @@ curl -sL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/instal
 
 ---
 
-## 🤖 Generación de Reportes AI (Nuevo en v1.5!)
+## 🤖 Generación de Reportes AI (Nuevo en v1.4!)
 
 Análisis automatizado de PRs usando múltiples modelos de IA:
 

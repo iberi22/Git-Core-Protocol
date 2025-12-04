@@ -294,9 +294,9 @@ jobs:
               echo "✅ PR #$PR_NUM cleared for graduation"
 
               # Update labels
-              gh pr edit "$PR_NUM" --remove-label "quarantine" --add-label "ready-to-adopt"
+              gh pr edit "$PR_NUM" --remove-label "quarantine" --add-label "ready-to-adopt,copilot"
 
-              # Post graduation comment
+              # Post graduation comment with Copilot assignment using Grok Code Fast 1
               gh pr comment "$PR_NUM" --body "## 🎓 Quarantine Complete!
 
               This dependency update has **successfully passed** the 14-day quarantine period.
@@ -309,16 +309,44 @@ jobs:
               | 🏗️ Architecture | ✅ No conflicts |
               | 🔍 Community Issues | ✅ Monitored |
 
-              ### 📋 Next Steps
+              ---
 
-              This PR is now \`ready-to-adopt\`. You can:
+              ## 🤖 Copilot Assignment (Grok Code Fast 1)
 
-              1. **Merge manually** - Review and merge when ready
-              2. **Request AI implementation** - Comment \`@copilot implement\`
-              3. **Auto-merge** (if enabled) - Will merge automatically
+              @copilot Please analyze and implement this dependency update using **Grok Code Fast 1** model.
+
+              ### 📋 Task Instructions
+
+              1. **Read the full context** (use your 2M token context window):
+                 - \`docs/agent-docs/RESEARCH_STACK_CONTEXT.md\`
+                 - \`.✨/ARCHITECTURE.md\`
+                 - All files affected by this dependency
+
+              2. **Analyze breaking changes**:
+                 - Check the dependency's CHANGELOG
+                 - Identify any API changes
+                 - Review migration guides if available
+
+              3. **Implement the update**:
+                 - Update any code that uses deprecated APIs
+                 - Add migration notes to RESEARCH_STACK_CONTEXT.md
+                 - Run tests and fix any failures
+
+              4. **Create summary comment** with:
+                 - Changes made
+                 - Breaking changes addressed
+                 - Recommended follow-up actions
+
+              ### 🚀 Model Configuration
+
+              \`\`\`
+              Model: Grok Code Fast 1
+              Context: 2M tokens (massive context for full codebase analysis)
+              Focus: Speed + accuracy for dependency updates
+              \`\`\`
 
               ---
-              *Approved by Dependency Sentinel*"
+              *Assigned by Dependency Sentinel - Git-Core Protocol*"
 
               # Trigger post-quarantine analysis
               gh workflow run post-quarantine-analysis.yml 2>/dev/null || true

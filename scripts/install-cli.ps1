@@ -56,17 +56,9 @@ try {
             Write-Host "✅ Installed from release" -ForegroundColor Green
         }
     } catch {
-        # Fall back to cargo
-        Write-Host "No pre-built binary found. Installing from source..." -ForegroundColor Yellow
-
-        if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
-            Write-Host "❌ Cargo not found. Please install Rust first:" -ForegroundColor Red
-            Write-Host "   https://rustup.rs/"
-            exit 1
-        }
-
-        cargo install --git "https://github.com/$REPO" git-core-cli
-        Write-Host "✅ Installed via cargo" -ForegroundColor Green
+        Write-Host "❌ No pre-built binary found and source installation is deprecated." -ForegroundColor Red
+        Write-Host "   Please check the repository for manual installation instructions."
+        exit 1
     }
 }
 

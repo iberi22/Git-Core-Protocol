@@ -77,17 +77,9 @@ else
         chmod +x "$INSTALL_DIR/$BINARY_NAME"
         echo -e "${GREEN}✅ Installed from release${NC}"
     else
-        # Fall back to cargo
-        echo -e "${YELLOW}No pre-built binary found. Installing from source...${NC}"
-
-        if ! command -v cargo &> /dev/null; then
-            echo -e "${RED}Cargo not found. Please install Rust first:${NC}"
-            echo "  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
-            exit 1
-        fi
-
-        cargo install --git "https://github.com/$REPO" --root ~/.local git-core-cli
-        echo -e "${GREEN}✅ Installed via cargo${NC}"
+        echo -e "${RED}❌ No pre-built binary found and source installation is deprecated.${NC}"
+        echo "Please check the repository for manual installation instructions."
+        exit 1
     fi
 fi
 

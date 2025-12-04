@@ -175,7 +175,7 @@ mod tests {
         // A release from 30 days ago should NOT be in quarantine
         let old_date = Utc::now().date_naive() - chrono::Duration::days(30);
         let status = check_quarantine_status("tokio", "1.32.0", Some(old_date));
-        
+
         assert_eq!(status.dependency_name, "tokio");
         assert_eq!(status.version, "1.32.0");
         assert!(!status.is_quarantined);
@@ -187,7 +187,7 @@ mod tests {
         // A release from 5 days ago SHOULD be in quarantine
         let new_date = Utc::now().date_naive() - chrono::Duration::days(5);
         let status = check_quarantine_status("new-crate", "0.1.0", Some(new_date));
-        
+
         assert!(status.is_quarantined);
         assert!(status.days_in_quarantine < QUARANTINE_DAYS);
     }
@@ -196,7 +196,7 @@ mod tests {
     fn test_quarantine_status_unknown_date() {
         // Unknown release date should assume stable (not quarantined)
         let status = check_quarantine_status("unknown-crate", "1.0.0", None);
-        
+
         assert!(!status.is_quarantined);
     }
 
@@ -205,7 +205,7 @@ mod tests {
         // Exactly 14 days ago should NOT be in quarantine (>= threshold)
         let boundary_date = Utc::now().date_naive() - chrono::Duration::days(QUARANTINE_DAYS);
         let status = check_quarantine_status("boundary", "1.0.0", Some(boundary_date));
-        
+
         assert!(!status.is_quarantined);
     }
 
@@ -214,7 +214,7 @@ mod tests {
         // 13 days ago SHOULD be in quarantine (< threshold)
         let almost_date = Utc::now().date_naive() - chrono::Duration::days(QUARANTINE_DAYS - 1);
         let status = check_quarantine_status("almost", "1.0.0", Some(almost_date));
-        
+
         assert!(status.is_quarantined);
     }
 }

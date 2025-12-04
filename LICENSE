@@ -6,6 +6,22 @@ Git-Core Protocol - AI-Driven Project Management Template
 
 ===============================================================================
 
+DUAL LICENSING MODEL
+
+This software is available under two licenses:
+
+1. COMMUNITY LICENSE (CC BY-NC-SA 4.0)
+   For open source and non-commercial use.
+   See terms below.
+
+2. COMMERCIAL LICENSE
+   For commercial use, contact @iberi22 for licensing terms.
+   See "COMMERCIAL USE" section below.
+
+===============================================================================
+
+COMMUNITY LICENSE - CC BY-NC-SA 4.0
+
 This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 
 You are free to:
@@ -17,16 +33,16 @@ Under the following terms:
     provide a link to the license, and indicate if changes were made.
     You may do so in any reasonable manner, but not in any way that suggests
     the licensor endorses you or your use.
-    
+
   • NonCommercial — You may NOT use the material for commercial purposes.
     This includes:
     - Selling this software or derivatives
     - Using it in commercial products without explicit permission
     - Offering paid services that primarily rely on this software
-    
+
   • ShareAlike — If you remix, transform, or build upon the material, you must
     distribute your contributions under the same license as the original.
-    
+
   • No additional restrictions — You may not apply legal terms or technological
     measures that legally restrict others from doing anything the license permits.
 
@@ -34,7 +50,7 @@ Notices:
   You do not have to comply with the license for elements of the material in
   the public domain or where your use is permitted by an applicable exception
   or limitation.
-  
+
   No warranties are given. The license may not give you all of the permissions
   necessary for your intended use. For example, other rights such as publicity,
   privacy, or moral rights may limit how you use the material.
@@ -55,10 +71,35 @@ clearly state that your project is based on or powered by Git-Core Protocol.
 
 ===============================================================================
 
-COMMERCIAL USE:
+AUTHOR'S RESERVED RIGHTS (CRITICAL):
+
+The copyright holder (@iberi22) retains ALL commercial rights to this software.
+
+This means the author (@iberi22) may:
+  ✓ Use this software in commercial products
+  ✓ Sell products or services based on this software
+  ✓ Create proprietary derivatives for commercial purposes
+  ✓ License this software under different terms to third parties
+  ✓ Sublicense commercial rights to partners or customers
+
+The NonCommercial restriction in CC BY-NC-SA 4.0 applies ONLY to third parties,
+NOT to the original author/copyright holder.
+
+This reservation of rights is standard practice in dual-licensing models and
+ensures the author can sustainably develop and maintain this open source project.
+
+===============================================================================
+
+COMMERCIAL USE (for third parties):
 
 If you wish to use Git-Core Protocol for commercial purposes, you must obtain
-explicit written permission from @iberi22.
+a commercial license from @iberi22.
+
+Commercial licensing options:
+  • Startup License - For small teams (<10 employees)
+  • Enterprise License - For larger organizations
+  • OEM License - For embedding in your products
+  • Custom License - For specific use cases
 
 Contact: https://github.com/iberi22
 

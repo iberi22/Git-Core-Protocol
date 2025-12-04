@@ -25,6 +25,7 @@ $OrganizeFiles = $env:GIT_CORE_ORGANIZE -eq "1"
 $AutoMode = $env:GIT_CORE_AUTO -eq "1"
 $UpgradeMode = $env:GIT_CORE_UPGRADE -eq "1"
 $ForceMode = $env:GIT_CORE_FORCE -eq "1"
+$NoBinaries = $env:GIT_CORE_NO_BINARIES -eq "1"
 
 # Force implies upgrade and auto
 if ($ForceMode) {
@@ -216,6 +217,24 @@ if ($hasFiles -and -not $AutoMode) {
     }
 }
 
+# Ask about binaries if not in auto mode
+$InstallBinaries = $true
+if (-not $AutoMode -and -not $NoBinaries) {
+    Write-Host ""
+    Write-Host "📦 Optional Components:" -ForegroundColor Cyan
+    Write-Host "   Do you want to install pre-compiled AI agent binaries (bin/)?"
+    Write-Host "   These are useful for local execution but increase download size."
+    $binChoice = Read-Host "   Install binaries? (Y/n)"
+    if ($binChoice -match "^[nN]") {
+        $InstallBinaries = $false
+        Write-Host "   → Skipping binaries." -ForegroundColor Yellow
+    } else {
+        Write-Host "   → Installing binaries." -ForegroundColor Green
+    }
+} elseif ($NoBinaries) {
+    $InstallBinaries = $false
+}
+
 # Backup user files before upgrade
 if ($UpgradeMode) {
     Backup-UserFiles
@@ -253,10 +272,14 @@ if ($templateAiDir) {
         Copy-Item -Recurse "$templateAiDir/*" ".✨/"
         Write-Host "  ✓ .✨/ (upgraded)" -ForegroundColor Green
     } elseif (-not (Test-Path ".✨") -and -not (Test-Path ".ai")) {
-        New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
-        Copy-Item -Recurse "$templateAiDir/*" ".✨/"
-        Write-Host "  ✓ .✨/" -ForegroundColor Green
-    } else {
+# Copy other directories
+$dirs = @(".github", "scripts", "docs")
+if ($InstallBinaries) {
+    $dirs += "bin"
+}
+
+foreach ($dir in $dirs) {
+    if (Test-Path "$TEMP_DIR/$dir") {
         # Ensure .✨ exists
         if (-not (Test-Path ".✨")) {
             New-Item -ItemType Directory -Force -Path ".✨" | Out-Null
@@ -280,7 +303,7 @@ foreach ($dir in $dirs) {
                 Remove-Item -Recurse -Force $dir
             }
             Copy-Item -Recurse "$TEMP_DIR/$dir" .
-            
+
             # Cleanup internal files
             if ($dir -eq ".github") {
                 Remove-Item ".github/workflows/build-tools.yml" -ErrorAction SilentlyContinue
@@ -308,7 +331,7 @@ foreach ($dir in $dirs) {
             Write-Host "  ✓ $dir/" -ForegroundColor Green
         } else {
             Copy-Item -Recurse -Force "$TEMP_DIR/$dir/*" $dir -ErrorAction SilentlyContinue
-            
+
             # Cleanup internal files
             if ($dir -eq ".github") {
                 Remove-Item ".github/workflows/build-tools.yml" -ErrorAction SilentlyContinue

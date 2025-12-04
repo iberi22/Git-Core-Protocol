@@ -33,6 +33,8 @@ ORGANIZE_FILES=false
 AUTO_MODE=false
 UPGRADE_MODE=false
 FORCE_MODE=false
+NO_BINARIES=false
+
 for arg in "$@"; do
     case $arg in
         --organize|-o)
@@ -50,6 +52,9 @@ for arg in "$@"; do
             UPGRADE_MODE=true
             AUTO_MODE=true
             ;;
+        --no-binaries)
+            NO_BINARIES=true
+            ;;
         --help|-h)
             echo "Usage: install.sh [OPTIONS]"
             echo ""
@@ -58,6 +63,7 @@ for arg in "$@"; do
             echo "  --auto, -y        Non-interactive mode"
             echo "  --upgrade, -u     Upgrade protocol files (PRESERVES your ARCHITECTURE.md)"
             echo "  --force, -f       Force full upgrade (overwrites everything)"
+            echo "  --no-binaries     Skip installing pre-compiled binaries"
             echo "  --help, -h        Show this help"
             echo ""
             echo "Examples:"
@@ -253,6 +259,27 @@ if [ "$(ls -A 2>/dev/null | grep -v '^\.' | head -1)" ] && [ "$AUTO_MODE" = fals
     esac
 fi
 
+# Ask about binaries if not in auto mode
+INSTALL_BINARIES=true
+if [ "$AUTO_MODE" = false ] && [ "$NO_BINARIES" = false ]; then
+    echo ""
+    echo -e "${CYAN}📦 Optional Components:${NC}"
+    echo "   Do you want to install pre-compiled AI agent binaries (bin/)?"
+    echo "   These are useful for local execution but increase download size."
+    read -p "   Install binaries? (Y/n) " bin_choice
+    case "$bin_choice" in
+        [nN][oO]|[nN])
+            INSTALL_BINARIES=false
+            echo -e "   ${YELLOW}→ Skipping binaries.${NC}"
+            ;;
+        *)
+            echo -e "   ${GREEN}→ Installing binaries.${NC}"
+            ;;
+    esac
+elif [ "$NO_BINARIES" = true ]; then
+    INSTALL_BINARIES=false
+fi
+
 # Backup user files before upgrade
 if [ "$UPGRADE_MODE" = true ]; then
     backup_user_files
@@ -287,9 +314,14 @@ if [ -n "$TEMPLATE_AI_DIR" ]; then
         rm -rf .✨ .ai 2>/dev/null || true
 
         # Copy to .✨
-        mkdir -p ".✨"
-        cp -r "$TEMPLATE_AI_DIR"/* .✨/
-        echo -e "  ${GREEN}✓ .✨/ (upgraded)${NC}"
+# Copy other directories
+DIRS=".github scripts docs"
+if [ "$INSTALL_BINARIES" = true ]; then
+    DIRS="$DIRS bin"
+fi
+
+for dir in $DIRS; do
+    if [ -d "$TEMP_DIR/$dir" ]; thengraded)${NC}"
     elif [ ! -d ".✨" ] && [ ! -d ".ai" ]; then
         mkdir -p ".✨"
         cp -r "$TEMPLATE_AI_DIR"/* .✨/
@@ -314,7 +346,7 @@ for dir in .github scripts docs bin; do
         if [ "$UPGRADE_MODE" = true ]; then
             rm -rf "$dir"
             cp -r "$TEMP_DIR/$dir" .
-            
+
             # Cleanup internal files
             if [ "$dir" = ".github" ]; then
                 rm -f ".github/workflows/build-tools.yml"
@@ -342,7 +374,7 @@ for dir in .github scripts docs bin; do
             echo -e "  ${GREEN}✓ $dir/${NC}"
         else
             cp -rn "$TEMP_DIR/$dir"/* "$dir/" 2>/dev/null || true
-            
+
             # Cleanup internal files
             if [ "$dir" = ".github" ]; then
                 rm -f ".github/workflows/build-tools.yml"

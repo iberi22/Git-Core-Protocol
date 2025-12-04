@@ -92,10 +92,12 @@ jobs:
 
       - name: 🤖 Assign to Copilot for fix
         uses: actions/github-script@v8
+        env:
+          VIOLATIONS_JSON: ${{ needs.validate-structure.outputs.violations }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const violations = JSON.parse('${{ needs.validate-structure.outputs.violations }}');
+            const violations = JSON.parse(process.env.VIOLATIONS_JSON || '[]');
 
             // Create issue for Copilot to fix
             const issueBody = `

@@ -283,12 +283,54 @@ Continue your work in a new chat window **without losing context**.
 
 ---
 
-## 🗺️ Roadmap & Feedback
+## 🆕 v2.1 Features: 12-Factor Agents + ACP Patterns
+
+The latest version integrates advanced patterns from **[12-Factor Agents](https://github.com/humanlayer/12-factor-agents)** and **Agent Control Plane (ACP)**:
+
+### 🧠 Context Protocol (Stateless Reducer)
+
+Agents persist state in GitHub Issues using structured XML blocks. This enables:
+- **Pausable/Resumable workflows**: Any agent can pick up where another left off
+- **Dynamic Planning**: `<plan>` field with items marked `done`/`in_progress`/`pending`
+- **Human-as-Tool**: `<input_request>` for structured data requests (not just approvals)
+- **Observability**: `<metrics>` tracks tool calls, errors, and cost estimates
+
+```bash
+# Helper script to read/write agent state
+./scripts/agent-state.ps1 read -IssueNumber 42
+./scripts/agent-state.ps1 write -Intent "fix_bug" -Step "coding" -Progress 50
+```
+
+👉 **Full spec:** [docs/agent-docs/CONTEXT_PROTOCOL.md](docs/agent-docs/CONTEXT_PROTOCOL.md)
+
+### 🎭 Micro-Agents (Label-Based Personas)
+
+Agents adopt specialized roles based on Issue labels:
+
+| Label | Persona | Focus |
+|-------|---------|-------|
+| `bug` | 🐛 The Fixer | Reproduce → Fix → Verify |
+| `enhancement` | ✨ Feature Dev | Architecture First |
+| `high-stakes` | 👮 The Approver | Requires "Proceder" |
+
+👉 **Full spec:** [docs/agent-docs/MICRO_AGENTS.md](docs/agent-docs/MICRO_AGENTS.md)
+
+### �️ High-Stakes Operations (Human-in-the-Loop)
+
+For critical operations (deletions, deploys, auth changes), agents **MUST PAUSE** and request explicit confirmation:
+
+> "⚠️ **HIGH STAKES ACTION DETECTED**. Respond 'Proceder' to continue."
+
+👉 **Full spec:** [docs/agent-docs/HUMAN_LAYER_PROTOCOL.md](docs/agent-docs/HUMAN_LAYER_PROTOCOL.md)
+
+---
+
+## �🗺️ Roadmap & Feedback
 
 We are building the standard for AI-Human collaboration. **Your feedback shapes this protocol.**
 
-### 🛣️ Upcoming Milestones
-- [ ] **v2.1**: Full "Context Injector" automation (Agent self-diagnosis)
+### 🛣️ Milestones
+- [x] **v2.1**: ✅ Context Protocol, Micro-Agents, HumanLayer (12-Factor Agents)
 - [ ] **v2.2**: "Memory Core" - Persistent semantic memory across sessions
 - [ ] **v2.3**: Multi-Agent Swarm Protocol (Coordinator + Workers)
 - [ ] **v3.0**: Native IDE Integration (VS Code Extension)

@@ -1,33 +1,74 @@
-# 📡 Federated Telemetry System
+# 📡 Federated Telemetry System v2
 
-This directory receives **anonymized metrics** from projects using the Git-Core Protocol worldwide.
+> **Scalable architecture for 1,000+ users**
 
-## How It Works
+This directory manages the **federated telemetry system** that collects anonymized metrics from projects using Git-Core Protocol worldwide.
+
+## Architecture (v2 - Discussion-Based)
 
 ```
-┌─────────────────┐    PR with metrics    ┌─────────────────────┐
-│  Your Project   │ ─────────────────────▶│ Official Git-Core   │
-│  (uses protocol)│                       │ Protocol Repo       │
-└─────────────────┘                       └─────────────────────┘
-                                                    │
-                                                    ▼
-                                          ┌─────────────────────┐
-                                          │ Aggregate Analysis  │
-                                          │ • Pattern Detection │
-                                          │ • Protocol Improve  │
-                                          └─────────────────────┘
+┌─────────────────┐   Discussion (GraphQL)   ┌─────────────────────┐
+│  Your Project   │ ─────────────────────────▶│ GitHub Discussions │
+│  (uses protocol)│                           │ Category: Telemetry│
+└─────────────────┘                           └─────────────────────┘
+                                                       │
+┌─────────────────┐   Discussion (GraphQL)             │
+│ Another Project │ ─────────────────────────▶─────────┤
+└─────────────────┘                                    │
+                                                       │ Weekly Workflow
+┌─────────────────┐   Discussion (GraphQL)             │ (aggregate-telemetry.yml)
+│  Project N      │ ─────────────────────────▶─────────┤
+└─────────────────┘                                    │
+                                                       ▼
+                                              ┌─────────────────────┐
+                                              │ 1 Issue per Week    │
+                                              │ "[Evolution] Week X" │
+                                              │ • N projects        │
+                                              │ • Aggregated metrics│
+                                              │ • Ecosystem patterns│
+                                              └─────────────────────┘
 ```
 
-## For Protocol Users
+## Why Discussions Instead of PRs?
 
-Send your project's metrics:
+| Approach | 10 Users | 1,000 Users | 10,000 Users |
+|----------|----------|-------------|--------------|
+| **PRs (v1)** | 10 PRs/week | 1,000 PRs/week ❌ | 10,000 PRs/week 💀 |
+| **Discussions (v2)** | 10 Discussions | 1,000 Discussions ✅ | 10,000 Discussions ✅ |
+
+**Benefits:**
+- ✅ Discussions don't flood the PR feed
+- ✅ No Actions minutes consumed for each submission
+- ✅ Single aggregated report per week
+- ✅ Scales infinitely
+- ✅ Transparent and auditable
+
+## Usage
+
+### Send Telemetry (For Protocol Users)
 
 ```powershell
-# In your project directory
+# Preview what would be sent
+./scripts/send-telemetry.ps1 -DryRun
+
+# Send anonymized metrics (creates a Discussion)
 ./scripts/send-telemetry.ps1
 
-# Preview without sending
-./scripts/send-telemetry.ps1 -DryRun
+# Include detected patterns
+./scripts/send-telemetry.ps1 -IncludePatterns
+```
+
+### Aggregate Metrics (Automatic)
+
+The `aggregate-telemetry.yml` workflow runs every Monday at 10:00 UTC:
+1. Fetches all Discussions from the "Telemetry" category
+2. Filters by the target week
+3. Aggregates metrics from all submissions
+4. Creates a single Evolution Report issue
+
+Manual trigger:
+```bash
+gh workflow run aggregate-telemetry.yml
 ```
 
 ## Data Collected
@@ -40,18 +81,21 @@ Send your project's metrics:
 
 ## Privacy
 
-- **Anonymous by default:** Project names are hashed
+- **Anonymous by default:** Project names are SHA256 hashed (`anon-a1b2c3d4`)
 - **No code is sent:** Only aggregate numbers
-- **Opt-in:** You choose when to send
+- **No personal data:** No usernames, emails, or identifiable info
+- **Opt-in only:** You choose when to send
+- **Revocable:** Delete your Discussion to remove your data
 
-## File Format
+## Schema v2.0
 
 ```json
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
+  "submission_method": "discussion",
   "project_id": "anon-a1b2c3d4",
   "anonymous": true,
-  "timestamp": "2025-12-05T18:00:00Z",
+  "timestamp": "2025-12-06T00:00:00Z",
   "week": 49,
   "year": 2025,
   "protocol_version": "2.1",
@@ -61,19 +105,52 @@ Send your project's metrics:
     "prs_merged_total": 28
   },
   "order2": {
-    "agent_state_usage_pct": 75,
-    "atomic_commit_ratio": 82
+    "agent_state_usage_pct": 75.0,
+    "atomic_commit_ratio": 82.0,
+    "sample_size": 10
   },
   "order3": {
     "friction_reports": 2,
     "evolution_proposals": 1
-  }
+  },
+  "patterns": ["low_atomic_commit_ratio"]
 }
 ```
 
-## Benefits of Contributing
+## Ecosystem Patterns Detected
 
-1. **Help improve the protocol** for everyone
-2. **Identify common friction points** across projects
-3. **Drive data-informed decisions** for new features
-4. **Benchmark your project** against the community
+The aggregation workflow detects these patterns:
+
+| Pattern | Trigger | Action |
+|---------|---------|--------|
+| Low adoption | `avg_agent_state_usage < 50%` | Improve documentation |
+| Excellent adoption | `avg_agent_state_usage >= 80%` | Celebrate! 🎉 |
+| Low atomicity | `avg_atomic_commit_ratio < 70%` | Strengthen CI validation |
+| High friction | `total_friction_reports > 10` | Prioritize usability fixes |
+
+## Opt-Out
+
+To stop sending telemetry:
+1. **Simply don't run the script** - it's manually triggered
+2. **Remove the workflow** from your project if you forked it
+3. **Delete your Discussions** to remove historical data
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `README.md` | This documentation |
+| `../scripts/send-telemetry.ps1` | Script to send metrics |
+| `../.github/workflows/aggregate-telemetry.yml` | Weekly aggregation |
+
+## Changelog
+
+### v2.0 (2025-12-06)
+- 🔄 **Breaking:** Switched from PRs to Discussions
+- ✨ New: `schema_version: 2.0` with `submission_method` field
+- ✨ New: Ecosystem pattern detection
+- ✨ New: Single aggregated report per week
+- 🗑️ Deprecated: `telemetry/submissions/` directory (no longer used)
+
+### v1.0 (2025-12-05)
+- Initial PR-based implementation

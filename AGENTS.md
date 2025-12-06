@@ -3,16 +3,17 @@ title: "Git-Core Protocol - Agent Configuration"
 type: CONFIGURATION
 id: "config-agents"
 created: 2025-12-01
-updated: 2025-12-01
+updated: 2025-12-06
 agent: copilot
-model: gemini-3-pro
+model: claude-sonnet-4
 requested_by: system
 summary: |
   Configuration rules, forbidden actions, and workflows for AI agents.
-keywords: [agents, rules, workflow, configuration]
-tags: ["#configuration", "#agents", "#rules"]
+  Includes Protocol v3.0 "Full Autonomy" with autonomous agent cycle.
+keywords: [agents, rules, workflow, configuration, autonomy]
+tags: ["#configuration", "#agents", "#rules", "#v3"]
 project: Git-Core-Protocol
-protocol_version: 1.5.0
+protocol_version: 3.0.0
 ---
 
 # 🤖 AGENTS.md - AI Agent Configuration
@@ -25,9 +26,78 @@ This repository follows the **Git-Core Protocol** for AI-assisted development.
 
 ---
 
-## 🚀 Git-Core v2.1 (12-Factor Agents + ACP Patterns)
+## 🚀 Git-Core v3.0 "Full Autonomy" (NEW)
+
+> **Zero human intervention except for high-stakes operations.**
+
+### Autonomous Agent Cycle
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│              FULL AUTONOMY CYCLE                                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  🧠 PLANNER  ──▶  🎯 ROUTER  ──▶  🛠️ EXECUTOR  ──▶  🔍 REVIEWER           │
+│       ▲           (Dispatcher)    (Copilot/Jules)  (CodeRabbit)            │
+│       │                                                    │                │
+│       │                                                    ▼                │
+│       └────────────────────  🛡️ GUARDIAN  ◀───────────────┘                │
+│                             (Auto-Merge)                                    │
+│                                                                             │
+│  ⚡ Human intervention: ONLY for `high-stakes` labeled items               │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Protocol Agents (Orchestration Layer)
+
+| Agent | Workflow | Trigger | Function |
+|-------|----------|---------|----------|
+| **🧠 Planner** | `planner-agent.yml` | Daily 6 AM UTC / Manual | Reads ARCHITECTURE.md → Generates atomic issues |
+| **🎯 Router** | `agent-dispatcher.yml` | `ai-agent` label | Assigns issues to best-fit executor (Copilot/Jules) |
+| **🛡️ Guardian** | `guardian-agent.yml` | PR review + checks pass | Auto-merge decision (70%+ confidence) |
+
+### Agent Commands
+
+```bash
+# Trigger Planner manually
+gh workflow run planner-agent.yml --field objective="Implement feature X"
+
+# Check Guardian decision
+gh workflow run guardian-agent.yml --field pr_number=42
+
+# Dispatch issues to agents
+gh workflow run agent-dispatcher.yml --field strategy=round-robin
+```
+
+### Required Files for v3.0
+
+| File | Purpose |
+|------|---------|
+| `.✨/ARCHITECTURE.md` | Roadmap for Planner to parse |
+| `.✨/features.json` | Feature status tracking |
+
+### Auto-Merge Conditions (Guardian)
+
+PRs are auto-merged if ALL conditions are met:
+
+| Condition | Weight |
+|-----------|--------|
+| ✅ All CI checks pass | Required |
+| ✅ Positive review (CodeRabbit/Gemini) | Required |
+| ❌ No `high-stakes` label | Required |
+| ❌ No `needs-human` label | Required |
+| 📏 Changes < 500 lines | +20 confidence |
+| 🧪 Includes tests | +15 confidence |
+| 🎯 Single scope/module | +10 confidence |
+
+**Threshold**: 70% confidence = auto-merge
+
+---
+
+## 📊 Git-Core v2.1 (12-Factor Agents + ACP Patterns)
 
 **Implementación avanzada de lógicas "12-Factor Agents", "HumanLayer" y "Agent Control Plane":**
+
 
 ### 1. Context Protocol (Stateless Reducer) ⭐ UPDATED
 

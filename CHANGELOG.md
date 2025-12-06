@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **🧠 Context-Driven Decision Engine**: Introduction of Semantic Risk Analysis for Guardian Agent.
 - **🗺️ Risk Map**: New `.✨/risk-map.json` configuration to define risk scores per file path.
 - **Shadow Mode**: Guardian Agent now calculates `semantic_risk_score` in logs without blocking merges (data collection phase).
+- **🏗️ Hybrid Dispatcher**: `agent-dispatcher.yml` is now a thin wrapper around `scripts/dispatcher-core.ps1`.
+- **🚦 Risk-Based Routing**: Dispatcher now routes high-risk issues (from `risk-map.json`) to Human/Senior Review automatically.
 
 ---
 

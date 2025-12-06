@@ -1,38 +1,52 @@
 <#
 .SYNOPSIS
-    Sends anonymized protocol metrics to the official Git-Core Protocol repository via GitHub Discussions.
+    Sends anonymized protocol metrics to the official Git-Core Protocol repository.
 
 .DESCRIPTION
     This script collects evolution metrics from the current project and submits
-    them as a GitHub Discussion (not PR) to the official Git-Core Protocol repository.
-    This approach scales to thousands of users without flooding the PR feed.
+    them to the official Git-Core Protocol repository. It supports two modes:
+
+    - INTERNAL MODE (-Internal): Creates Issues with label 'telemetry-internal'
+      Use this for author's own projects to dogfood and refine the system.
+
+    - PUBLIC MODE (default): Creates Discussions in the Telemetry category.
+      Use this for public adoption when the system is production-ready.
 
 .PARAMETER DryRun
-    If set, shows what would be sent without actually creating the Discussion.
+    If set, shows what would be sent without actually creating anything.
 
 .PARAMETER Anonymous
-    If set, removes project identifiers (default: true).
+    If set, removes project identifiers (default: true for public, false for internal).
 
 .PARAMETER IncludePatterns
     If set, includes detected patterns in the telemetry.
 
+.PARAMETER Internal
+    If set, uses Issues instead of Discussions. For author's projects only.
+    This mode uses the label 'telemetry-internal' and shows the real project name.
+
+.EXAMPLE
+    ./send-telemetry.ps1 -Internal
+    # Sends metrics as Issue (for author's projects - dogfooding)
+
 .EXAMPLE
     ./send-telemetry.ps1
-    # Sends anonymized metrics to official repo via Discussion
+    # Sends anonymized metrics via Discussion (for public users)
 
 .EXAMPLE
     ./send-telemetry.ps1 -DryRun
     # Preview what would be sent
 
 .NOTES
-    Scalability: This script creates Discussions, not PRs.
-    10,000 users = 10,000 Discussions (not PRs), aggregated weekly.
+    Internal mode: Issues with label 'telemetry-internal' (private dogfooding)
+    Public mode: Discussions in Telemetry category (scalable for 1000+ users)
 #>
 
 param(
     [switch]$DryRun,
-    [bool]$Anonymous = $true,
-    [switch]$IncludePatterns
+    [switch]$Internal,
+    [switch]$IncludePatterns,
+    [bool]$Anonymous = (-not $Internal)  # Default: anonymous for public, identified for internal
 )
 
 $ErrorActionPreference = "Stop"
@@ -40,10 +54,13 @@ $ErrorActionPreference = "Stop"
 $OFFICIAL_REPO_OWNER = "iberi22"
 $OFFICIAL_REPO_NAME = "Git-Core-Protocol"
 $TELEMETRY_CATEGORY_NAME = "Telemetry Submissions"
+$INTERNAL_LABEL = "telemetry-internal"
 
-Write-Host "📡 Git-Core Protocol - Federated Telemetry System v2" -ForegroundColor Cyan
-Write-Host "   Method: GitHub Discussions (scalable)" -ForegroundColor Gray
+$mode = if ($Internal) { "Internal (Issues)" } else { "Public (Discussions)" }
+Write-Host "📡 Git-Core Protocol - Federated Telemetry System v2.1" -ForegroundColor Cyan
+Write-Host "   Mode: $mode" -ForegroundColor $(if ($Internal) { "Yellow" } else { "Gray" })
 Write-Host "   Destination: github.com/$OFFICIAL_REPO_OWNER/$OFFICIAL_REPO_NAME" -ForegroundColor Gray
+
 
 # ============================================
 # 1. COLLECT LOCAL METRICS
@@ -75,8 +92,8 @@ Write-Host "   Project ID: $projectId" -ForegroundColor Gray
 
 # Collect metrics
 $metrics = @{
-    schema_version = "2.0"
-    submission_method = "discussion"
+    schema_version = "2.1"
+    submission_method = if ($Internal) { "issue" } else { "discussion" }
     project_id = $projectId
     anonymous = $Anonymous
     timestamp = $timestamp
@@ -174,21 +191,77 @@ if ($IncludePatterns) {
 # 2. GENERATE TELEMETRY PAYLOAD
 # ============================================
 $telemetryJson = $metrics | ConvertTo-Json -Depth 10 -Compress
-$discussionTitle = "📊 $projectId - Week $weekNumber ($year)"
+$submissionTitle = if ($Internal) {
+    "[Telemetry-Internal] $projectId - Week $weekNumber ($year)"
+} else {
+    "📊 $projectId - Week $weekNumber ($year)"
+}
 
 Write-Host "`n📄 Generated telemetry:" -ForegroundColor Yellow
 Write-Host ($metrics | ConvertTo-Json -Depth 10)
 
 if ($DryRun) {
-    Write-Host "`n🔍 DRY RUN - No Discussion will be created" -ForegroundColor Magenta
-    Write-Host "   Would create Discussion: '$discussionTitle'" -ForegroundColor Gray
+    $targetType = if ($Internal) { "Issue" } else { "Discussion" }
+    Write-Host "`n🔍 DRY RUN - No $targetType will be created" -ForegroundColor Magenta
+    Write-Host "   Would create $targetType`: '$submissionTitle'" -ForegroundColor Gray
+    if ($Internal) {
+        Write-Host "   Label: $INTERNAL_LABEL" -ForegroundColor Gray
+    }
     return
 }
 
 # ============================================
-# 3. GET REPOSITORY AND CATEGORY IDs
+# 3. SUBMIT TELEMETRY (MODE-DEPENDENT)
 # ============================================
-Write-Host "`n🔍 Getting repository info..." -ForegroundColor Yellow
+
+if ($Internal) {
+    # ============================================
+    # INTERNAL MODE: Create Issue with label
+    # ============================================
+    Write-Host "`n🔧 Creating Issue (Internal Mode)..." -ForegroundColor Yellow
+
+    $issueBody = @"
+## 📡 Internal Telemetry Submission
+
+**Project:** ``$projectId``
+**Week:** $weekNumber ($year)
+**Protocol Version:** $($metrics.protocol_version)
+**Mode:** Internal (dogfooding)
+
+### Metrics
+
+``````json
+$($metrics | ConvertTo-Json -Depth 10)
+``````
+
+---
+*Auto-generated by Git-Core Protocol Telemetry System v2.1 (Internal Mode)*
+"@
+
+    try {
+        $result = gh issue create --repo "$OFFICIAL_REPO_OWNER/$OFFICIAL_REPO_NAME" `
+            --title "$submissionTitle" `
+            --body "$issueBody" `
+            --label "$INTERNAL_LABEL" 2>&1
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "`n✅ Internal telemetry submitted!" -ForegroundColor Green
+            Write-Host "   Issue: $result" -ForegroundColor Cyan
+        } else {
+            throw "Issue creation failed: $result"
+        }
+    } catch {
+        Write-Error "Failed to create Issue: $_"
+        Write-Host "`n💡 Tip: Make sure the label '$INTERNAL_LABEL' exists in the repo." -ForegroundColor Yellow
+    }
+
+    return
+}
+
+# ============================================
+# PUBLIC MODE: Create Discussion
+# ============================================
+Write-Host "`n🔍 Getting repository info (Public Mode)..." -ForegroundColor Yellow
 
 try {
     # Get repo ID
@@ -239,9 +312,9 @@ query {
 }
 
 # ============================================
-# 4. CREATE DISCUSSION
+# 4. CREATE DISCUSSION (PUBLIC MODE)
 # ============================================
-Write-Host "`n🚀 Creating Discussion..." -ForegroundColor Yellow
+Write-Host "`n🚀 Creating Discussion (Public Mode)..." -ForegroundColor Yellow
 
 $discussionBody = @"
 ## 📡 Telemetry Submission
@@ -257,7 +330,7 @@ $($metrics | ConvertTo-Json -Depth 10)
 \`\`\`
 
 ---
-*Auto-generated by Git-Core Protocol Telemetry System v2*
+*Auto-generated by Git-Core Protocol Telemetry System v2.1*
 "@
 
 # Escape for GraphQL
@@ -268,7 +341,7 @@ mutation {
   createDiscussion(input: {
     repositoryId: "$repoId"
     categoryId: "$categoryId"
-    title: "$discussionTitle"
+    title: "$submissionTitle"
     body: "$escapedBody"
   }) {
     discussion {
@@ -293,3 +366,4 @@ try {
     Write-Error "Failed to create Discussion: $_"
     Write-Host "`n💡 Tip: Make sure you have permission to create Discussions." -ForegroundColor Yellow
 }
+

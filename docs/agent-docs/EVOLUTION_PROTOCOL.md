@@ -279,3 +279,153 @@ Cualquier cambio que modifique:
 - [ ] Dashboard visual de métricas
 - [ ] Alertas automáticas de anomalías
 - [ ] Integración con notificaciones (Slack/Email)
+
+---
+
+## 11. Telemetría Federada (Ecosystem-Wide Evolution)
+
+> **"Mejoramos juntos. Cada proyecto contribuye al conocimiento colectivo."**
+
+### 11.1 Concepto
+
+Los proyectos que usan Git-Core Protocol pueden **enviar métricas anonimizadas** al repositorio oficial para:
+- Análisis centralizado de patrones
+- Identificación de friction points comunes
+- Toma de decisiones informada para evolución del protocolo
+
+```
+┌─────────────────┐    PR con métricas    ┌─────────────────────┐
+│  Proyecto A     │ ─────────────────────▶│                     │
+│  (usa protocolo)│                       │   Repositorio       │
+└─────────────────┘                       │   Oficial           │
+                                          │   Git-Core Protocol │
+┌─────────────────┐    PR con métricas    │                     │
+│  Proyecto B     │ ─────────────────────▶│                     │
+│  (usa protocolo)│                       └─────────────────────┘
+└─────────────────┘                                │
+                                                   ▼
+                                          ┌─────────────────────┐
+                                          │  Análisis Agregado  │
+                                          │  • Patrones globales│
+                                          │  • Mejoras priorizad│
+                                          │  • Benchmarks       │
+                                          └─────────────────────┘
+```
+
+### 11.2 Cómo Enviar Telemetría
+
+```powershell
+# En tu proyecto que usa Git-Core Protocol
+./scripts/send-telemetry.ps1
+
+# Vista previa sin enviar
+./scripts/send-telemetry.ps1 -DryRun
+
+# Incluir patrones detectados
+./scripts/send-telemetry.ps1 -IncludePatterns
+```
+
+### 11.3 Datos Enviados
+
+| Categoría | Datos | Anonimizado |
+|-----------|-------|-------------|
+| **Identificador** | Hash del nombre del repo | ✅ Por defecto |
+| **Order 1** | Issues abiertos/cerrados, PRs | ✅ Solo números |
+| **Order 2** | % uso de agent-state, % commits atómicos | ✅ Solo porcentajes |
+| **Order 3** | # friction reports, # evolution proposals | ✅ Solo conteos |
+
+**Nunca se envía:**
+- ❌ Código fuente
+- ❌ Nombres de archivos
+- ❌ Contenido de issues/PRs
+- ❌ Información de usuarios
+
+### 11.4 Procesamiento en Repo Oficial
+
+El workflow `process-telemetry.yml`:
+1. **Valida** formato JSON de la submission
+2. **Agrega** métricas de todas las fuentes
+3. **Detecta** patrones del ecosistema
+4. **Actualiza** dashboard de evolución
+
+### 11.5 Beneficios para Contribuyentes
+
+| Beneficio | Descripción |
+|-----------|-------------|
+| 🎯 **Influir en el roadmap** | Tus friction points ayudan a priorizar mejoras |
+| 📊 **Benchmarking** | Compara tu proyecto con el promedio del ecosistema |
+| 🔄 **Feedback loop** | Reportes de evolución incluyen datos agregados |
+| 🏆 **Reconocimiento** | Contributors activos listados (si opt-in) |
+
+### 11.6 Opt-In / Opt-Out
+
+La telemetría es **completamente voluntaria**:
+- **Opt-In:** Ejecuta `send-telemetry.ps1` cuando quieras
+- **Sin automatismo:** No hay envío automático
+- **Total control:** Puedes revisar el JSON antes de enviar (`-DryRun`)
+
+### 11.7 Directorio de Telemetría
+
+```
+telemetry/
+├── README.md                    # Documentación del sistema
+└── submissions/                 # Archivos JSON de métricas
+    ├── anon-a1b2c3d4_week49_2025.json
+    ├── anon-e5f6g7h8_week49_2025.json
+    └── ...
+```
+
+### 11.8 Ejemplo de Submission
+
+```json
+{
+  "schema_version": "1.0",
+  "project_id": "anon-a1b2c3d4",
+  "anonymous": true,
+  "timestamp": "2025-12-05T18:00:00Z",
+  "week": 49,
+  "year": 2025,
+  "protocol_version": "2.1",
+  "order1": {
+    "issues_open": 5,
+    "issues_closed_total": 42,
+    "prs_merged_total": 28
+  },
+  "order2": {
+    "agent_state_usage_pct": 75,
+    "atomic_commit_ratio": 82
+  },
+  "order3": {
+    "friction_reports": 2,
+    "evolution_proposals": 1
+  }
+}
+```
+
+---
+
+## 12. Ciclo Completo de Evolución
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    EVOLUCIÓN DEL ECOSISTEMA                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   ┌──────────┐   send-telemetry   ┌──────────────┐                 │
+│   │ Proyecto │ ─────────────────▶ │ Repo Oficial │                 │
+│   │  Local   │                    │  (análisis)  │                 │
+│   └──────────┘                    └──────────────┘                 │
+│        ▲                                 │                          │
+│        │                                 │ evolution-cycle.yml      │
+│        │                                 ▼                          │
+│        │                          ┌──────────────┐                 │
+│        │                          │   Reportes   │                 │
+│        │                          │   Semanales  │                 │
+│        │                          └──────────────┘                 │
+│        │                                 │                          │
+│        │         pull / upgrade          │ mejoras al protocolo     │
+│        └─────────────────────────────────┘                          │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+

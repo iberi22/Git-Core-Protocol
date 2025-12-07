@@ -58,3 +58,5 @@ Thumbs.db
 # package-lock.json
 # yarn.lock
 # Pipfile.lock
+tools/email-handler/credentials.json
+tools/email-handler/token.json

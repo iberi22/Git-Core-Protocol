@@ -1,0 +1,251 @@
+name: 🛡️ Self-Healing CI/CD
+
+on:
+  workflow_run:
+    workflows: ["*"]  # Monitorea TODOS los workflows del repo
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  actions: write      # Para re-ejecutar workflows
+  issues: write       # Para crear issues
+  pull-requests: write # Para crear PRs de fix
+
+jobs:
+  analyze-failure:
+    runs-on: ubuntu-latest
+    # Solo ejecutar si el workflow falló
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    
+    steps:
+      - name: 🔍 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 📋 Extract Failure Info
+        id: info
+        run: |
+          echo "workflow_name=${{ github.event.workflow_run.name }}" >> $GITHUB_OUTPUT
+          echo "run_id=${{ github.event.workflow_run.id }}" >> $GITHUB_OUTPUT
+          echo "run_url=${{ github.event.workflow_run.html_url }}" >> $GITHUB_OUTPUT
+          echo "commit_sha=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
+          echo "branch=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_OUTPUT
+      
+      - name: 📥 Download Failure Logs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Descargar logs del workflow fallido
+          gh run view ${{ steps.info.outputs.run_id }} --log > failure.log 2>&1 || echo "No logs available" > failure.log
+          
+          # Extraer solo los errores (últimas 100 líneas)
+          tail -n 100 failure.log > failure_snippet.log
+      
+      - name: 🔬 Classify Error Type
+        id: classify
+        run: |
+          log_content=$(cat failure.log)
+          
+          # Detectar errores transitorios (flaky)
+          if echo "$log_content" | grep -qiE "ECONNRESET|ETIMEDOUT|ENOTFOUND|429 Too Many Requests|socket hang up|network timeout"; then
+            echo "error_type=transient" >> $GITHUB_OUTPUT
+            echo "retry_count=3" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Detectar errores de dependencias
+          if echo "$log_content" | grep -qiE "npm ERR!|yarn error|pip install failed|Could not resolve|package not found|EBADENGINE"; then
+            echo "error_type=dependency" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Detectar errores de linting/formatting
+          if echo "$log_content" | grep -qiE "ESLint|Prettier|lint error|formatting error"; then
+            echo "error_type=lint" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Detectar errores de tests
+          if echo "$log_content" | grep -qiE "Test failed|FAIL|AssertionError|expected .* to|jest.*failed"; then
+            echo "error_type=test" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Si no coincide con ninguno, es un error de código genérico
+          echo "error_type=code" >> $GITHUB_OUTPUT
+      
+      - name: 🔄 Auto-Retry Transient Errors
+        if: steps.classify.outputs.error_type == 'transient'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "🔄 Detectado error transitorio. Reintentando workflow..."
+          
+          # Esperar 30 segundos antes de reintentar
+          sleep 30
+          
+          # Re-ejecutar solo los jobs fallidos
+          gh run rerun ${{ steps.info.outputs.run_id }} --failed
+          
+          echo "✅ Workflow re-ejecutado. Monitoreando resultado..."
+      
+      - name: 📦 Auto-Fix Dependencies
+        if: steps.classify.outputs.error_type == 'dependency'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "📦 Detectado error de dependencias. Intentando fix automático..."
+          
+          # Crear branch de fix
+          branch_name="fix/deps-$(date +%s)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch_name"
+          
+          # Intentar fix común: actualizar lockfiles
+          if [ -f "package-lock.json" ]; then
+            rm package-lock.json
+            npm install
+          elif [ -f "yarn.lock" ]; then
+            rm yarn.lock
+            yarn install
+          elif [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt --upgrade
+          fi
+          
+          # Commit y push
+          if git diff --quiet; then
+            echo "⚠️ No se detectaron cambios para fix automático."
+          else
+            git add .
+            git commit -m "fix(deps): auto-resolve dependency issues
+
+Triggered by failed workflow: ${{ steps.info.outputs.workflow_name }}
+Run: ${{ steps.info.outputs.run_url }}"
+            git push origin "$branch_name"
+            
+            # Crear PR
+            gh pr create \
+              --title "🤖 Auto-Fix: Dependency Issues" \
+              --body "**Auto-generated fix for dependency errors**
+
+**Failed Workflow:** [${{ steps.info.outputs.workflow_name }}](${{ steps.info.outputs.run_url }})
+**Commit:** ${{ steps.info.outputs.commit_sha }}
+
+### Changes
+- Updated dependency lockfiles
+- Resolved version conflicts
+
+### Error Log Snippet
+\`\`\`
+$(tail -n 30 failure_snippet.log)
+\`\`\`
+
+**Auto-Actions:**
+- [x] Analyzed error type
+- [x] Applied automatic fix
+- [ ] Tests need to pass
+" \
+              --label "dependencies,auto-fix,ai-agent" \
+              --base main
+          fi
+      
+      - name: 🎨 Auto-Fix Linting
+        if: steps.classify.outputs.error_type == 'lint'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "🎨 Detectado error de linting. Aplicando auto-fix..."
+          
+          # Crear branch de fix
+          branch_name="fix/lint-$(date +%s)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch_name"
+          
+          # Intentar auto-fix con herramientas comunes
+          npm run lint:fix 2>/dev/null || true
+          npm run format 2>/dev/null || true
+          npx prettier --write . 2>/dev/null || true
+          
+          if git diff --quiet; then
+            echo "⚠️ No se pudieron aplicar fixes automáticos."
+          else
+            git add .
+            git commit -m "style: auto-fix linting issues
+
+Triggered by failed workflow: ${{ steps.info.outputs.workflow_name }}"
+            git push origin "$branch_name"
+            
+            gh pr create \
+              --title "🤖 Auto-Fix: Linting Issues" \
+              --body "Applied automatic linting fixes." \
+              --label "style,auto-fix" \
+              --base main
+          fi
+      
+      - name: 🐛 Create Issue for Code Errors
+        if: steps.classify.outputs.error_type == 'code' || steps.classify.outputs.error_type == 'test'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Verificar si ya existe un issue para este workflow fallido
+          existing_issue=$(gh issue list \
+            --label "auto-generated,ci-failure" \
+            --search "in:title ${{ steps.info.outputs.workflow_name }}" \
+            --json number \
+            --jq '.[0].number')
+          
+          if [ -n "$existing_issue" ]; then
+            echo "📌 Issue existente encontrado: #$existing_issue"
+            
+            # Agregar comentario al issue existente
+            gh issue comment "$existing_issue" --body "🔄 **Nuevo fallo detectado**
+
+**Run:** ${{ steps.info.outputs.run_url }}
+**Commit:** \`${{ steps.info.outputs.commit_sha }}\`
+**Branch:** \`${{ steps.info.outputs.branch }}\`
+
+### Error Log (últimas 30 líneas)
+\`\`\`
+$(tail -n 30 failure_snippet.log)
+\`\`\`
+"
+          else
+            echo "🆕 Creando nuevo issue..."
+            
+            gh issue create \
+              --title "🚨 CI Failure: ${{ steps.info.outputs.workflow_name }}" \
+              --body "**Workflow:** \`${{ steps.info.outputs.workflow_name }}\`  
+**Run:** ${{ steps.info.outputs.run_url }}  
+**Commit:** \`${{ steps.info.outputs.commit_sha }}\`  
+**Branch:** \`${{ steps.info.outputs.branch }}\`  
+**Error Type:** ${{ steps.classify.outputs.error_type }}
+
+### Error Log (últimas 50 líneas)
+\`\`\`
+$(tail -n 50 failure_snippet.log)
+\`\`\`
+
+---
+
+### 🤖 Auto-Actions Checklist
+- [x] Error classified
+- [ ] Analyzed by AI agent
+- [ ] Fix PR created
+- [ ] Tests passed
+
+**Labels:** \`auto-generated\`, \`ci-failure\`, \`${{ steps.classify.outputs.error_type }}\`
+" \
+              --label "bug,ai-agent,auto-generated,ci-failure,${{ steps.classify.outputs.error_type }}"
+          fi
+      
+      - name: 📊 Report Summary
+        if: always()
+        run: |
+          echo "### 🛡️ Self-Healing Summary"
+          echo "- **Workflow:** ${{ steps.info.outputs.workflow_name }}"
+          echo "- **Run ID:** ${{ steps.info.outputs.run_id }}"
+          echo "- **Error Type:** ${{ steps.classify.outputs.error_type || 'unknown' }}"
+          echo "- **Action Taken:** Auto-retry/Fix/Issue created"

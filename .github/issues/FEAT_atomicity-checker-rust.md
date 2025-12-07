@@ -1,4 +1,5 @@
 ---
+github_issue: 62
 title: "Migrate commit-atomicity.yml to Rust (atomicity-checker)"
 labels:
   - enhancement
@@ -54,3 +55,4 @@ Migrar las ~325 líneas de shell script del workflow `commit-atomicity.yml` a un
 | Error handling | Exit codes | Result types | ✓ |
 | Paralelismo | Limited | Native async | ✓ |
 | Testability | Hard | Easy | ✓ |
+

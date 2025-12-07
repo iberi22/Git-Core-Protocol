@@ -291,7 +291,7 @@ impl GuardianCore {
     }
 
     /// Calculate size penalty based on diff size
-    fn calculate_size_penalty(&self, additions: u32, deletions: u32) -> u8 {
+    pub fn calculate_size_penalty(&self, additions: u32, deletions: u32) -> u8 {
         let total = additions + deletions;
         match total {
             0..=100 => 0,
@@ -302,14 +302,14 @@ impl GuardianCore {
     }
 
     /// Check if PR includes tests
-    fn has_tests(&self, files: &[String]) -> bool {
+    pub fn has_tests(&self, files: &[String]) -> bool {
         files.iter().any(|f| {
             f.contains("test") || f.contains("spec") || f.starts_with("tests/")
         })
     }
 
     /// Check if all files are in single scope/module
-    fn is_single_scope(&self, files: &[String]) -> bool {
+    pub fn is_single_scope(&self, files: &[String]) -> bool {
         if files.is_empty() {
             return false;
         }
@@ -329,14 +329,14 @@ impl GuardianCore {
         match decision {
             Decision::AutoMerge { confidence } => {
                 info!("✅ Auto-merging PR #{} (confidence: {})", pr_number, confidence);
-                
+
                 // Add comment before merging
                 let comment = format!(
                     "🤖 **Guardian Agent**: Auto-merge approved (confidence: {}%)\n\n\
                      All checks passed, reviews approved, and confidence threshold met.",
                     confidence
                 );
-                
+
                 self.github
                     .issues(&self.owner, &self.repo)
                     .create_comment(pr_number, comment)
@@ -354,7 +354,7 @@ impl GuardianCore {
             }
             Decision::Escalate { reason, confidence } => {
                 info!("⚠️ Escalating PR #{}: {} (confidence: {})", pr_number, reason, confidence);
-                
+
                 let comment = format!(
                     "🤖 **Guardian Agent**: Manual review required\n\n\
                      **Reason:** {}\n\
@@ -362,7 +362,7 @@ impl GuardianCore {
                      A human reviewer must approve this PR for merge.",
                     reason, confidence
                 );
-                
+
                 self.github
                     .issues(&self.owner, &self.repo)
                     .create_comment(pr_number, comment)
@@ -376,14 +376,14 @@ impl GuardianCore {
             }
             Decision::Blocked { reason } => {
                 warn!("⛔ PR #{} blocked: {}", pr_number, reason);
-                
+
                 let comment = format!(
                     "🤖 **Guardian Agent**: PR blocked\n\n\
                      **Reason:** {}\n\n\
                      This PR cannot be auto-merged. Please review the blocking conditions.",
                     reason
                 );
-                
+
                 self.github
                     .issues(&self.owner, &self.repo)
                     .create_comment(pr_number, comment)
@@ -411,8 +411,8 @@ mod tests {
         assert!(matches!(decision, Decision::Blocked { .. }));
     }
 
-    #[test]
-    fn test_size_penalty() {
+    #[tokio::test]
+    async fn test_size_penalty() {
         let github = Octocrab::builder().build().unwrap();
         let guardian = GuardianCore::new(github, "owner".to_string(), "repo".to_string());
 
@@ -422,8 +422,8 @@ mod tests {
         assert_eq!(guardian.calculate_size_penalty(600, 600), 20);
     }
 
-    #[test]
-    fn test_has_tests() {
+    #[tokio::test]
+    async fn test_has_tests() {
         let github = Octocrab::builder().build().unwrap();
         let guardian = GuardianCore::new(github, "owner".to_string(), "repo".to_string());
 
@@ -434,8 +434,8 @@ mod tests {
         assert!(!guardian.has_tests(&files));
     }
 
-    #[test]
-    fn test_is_single_scope() {
+    #[tokio::test]
+    async fn test_is_single_scope() {
         let github = Octocrab::builder().build().unwrap();
         let guardian = GuardianCore::new(github, "owner".to_string(), "repo".to_string());
 

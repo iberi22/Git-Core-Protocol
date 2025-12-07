@@ -40,6 +40,10 @@ jobs:
       - name: 📋 Checkout
         uses: actions/checkout@v4
 
+      - name: 🦀 Setup Rust (if available)
+        uses: dtolnay/rust-toolchain@stable
+        continue-on-error: true
+
       - name: 🔢 Resolve PR Number
         id: pr
         run: |
@@ -52,8 +56,25 @@ jobs:
             echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: 🛡️ Run Guardian Core
+      - name: 🛡️ Run Guardian Core (Rust/PowerShell Hybrid)
         if: steps.pr.outputs.number != ''
-        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          ./scripts/guardian-core.ps1 -PrNumber ${{ steps.pr.outputs.number }} -CiMode -DryRun:$false
+          # Try Rust version first (faster)
+          if command -v cargo &> /dev/null && [ -f "tools/workflow-orchestrator/Cargo.toml" ]; then
+            echo "✅ Running Guardian Agent (Rust - High Performance)"
+            cd tools/workflow-orchestrator
+            cargo run --release -- guardian \
+              --pr-number ${{ steps.pr.outputs.number }} \
+              --threshold 70 \
+              --ci-mode
+          else
+            # Fallback to PowerShell
+            echo "⚠️  Rust not available, falling back to PowerShell"
+            pwsh ./scripts/guardian-core.ps1 \
+              -PrNumber ${{ steps.pr.outputs.number }} \
+              -CiMode \
+              -DryRun:$false
+          fi

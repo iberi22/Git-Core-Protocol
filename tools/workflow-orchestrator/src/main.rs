@@ -14,6 +14,7 @@ mod analyzer;
 mod validator;
 mod reporter;
 mod parallel;
+mod guardian_core;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -104,6 +105,29 @@ enum Commands {
         #[arg(long, default_value = "false")]
         quick: bool,
     },
+
+    /// Guardian Agent - Auto-merge PR evaluation
+    Guardian {
+        /// Pull Request number to evaluate
+        #[arg(short, long)]
+        pr_number: u64,
+
+        /// Confidence threshold (0-100)
+        #[arg(long, default_value = "70")]
+        threshold: u8,
+
+        /// Path to risk-map.json
+        #[arg(long, default_value = ".✨/risk-map.json")]
+        risk_map: String,
+
+        /// Dry run mode (don't execute merge)
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
+
+        /// CI mode (exit with error code on escalate/block)
+        #[arg(long, default_value = "false")]
+        ci_mode: bool,
+    },
 }
 
 #[tokio::main]
@@ -145,6 +169,50 @@ async fn main() -> Result<()> {
         }
         Commands::Health { quick } => {
             analyzer::health_check(&github_client, quick).await?;
+        }
+        Commands::Guardian {
+            pr_number,
+            threshold,
+            risk_map,
+            dry_run,
+            ci_mode,
+        } => {
+            // Create Octocrab client for Guardian
+            let octocrab = octocrab::Octocrab::builder()
+                .personal_token(token.clone())
+                .build()?;
+
+            let (owner, repo_name) = repo.split_once('/').expect("Invalid repo format (expected owner/repo)");
+
+            let mut guardian = guardian_core::GuardianCore::new(
+                octocrab,
+                owner.to_string(),
+                repo_name.to_string(),
+            )
+            .with_threshold(threshold);
+
+            // Load risk map if exists
+            if std::path::Path::new(&risk_map).exists() {
+                guardian = guardian.with_risk_map(&risk_map)?;
+            } else {
+                info!("⚠️  Risk map not found: {}, skipping risk analysis", risk_map);
+            }
+
+            let decision = guardian.evaluate_pr(pr_number, dry_run).await?;
+
+            // Output decision as JSON for CI consumption
+            if ci_mode {
+                println!("{}", serde_json::to_string_pretty(&decision)?);
+            }
+
+            // Exit with error code in CI mode if escalated/blocked
+            if ci_mode {
+                match decision {
+                    guardian_core::Decision::AutoMerge { .. } => std::process::exit(0),
+                    guardian_core::Decision::Escalate { .. } => std::process::exit(1),
+                    guardian_core::Decision::Blocked { .. } => std::process::exit(2),
+                }
+            }
         }
     }
 

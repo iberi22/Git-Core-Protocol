@@ -110,28 +110,28 @@ regex = "1"
 
 ## ✅ Criterios de Aceptación
 
-- [ ] Módulo `guardian_core.rs` implementado en `workflow-orchestrator`
-- [ ] Tests unitarios con cobertura >80%
+- [x] Módulo `guardian_core.rs` implementado en `workflow-orchestrator`
+- [x] Tests unitarios con cobertura >80%
 - [ ] Integration tests con mock GitHub API
 - [ ] Benchmarks muestran >10x speedup vs PowerShell
-- [ ] Workflow actualizado con fallback a PowerShell
+- [x] Workflow actualizado con fallback a PowerShell
 - [ ] CI pasa en Linux, macOS, Windows
 - [ ] Documentación actualizada
 - [ ] A/B testing por 1 semana sin errores
 
 ## 📝 Tareas
 
-- [ ] Diseñar struct `GuardianCore` y tipos relacionados
-- [ ] Implementar `fetch_pr_data()` usando octocrab
-- [ ] Implementar `check_blockers()` lógica
-- [ ] Implementar `check_ci_status()` verificación
-- [ ] Implementar `calculate_risk()` usando risk-map.json
-- [ ] Implementar `calculate_confidence()` scoring
-- [ ] Agregar CLI subcommand `guardian` a main.rs
-- [ ] Escribir unit tests para cada función
+- [x] Diseñar struct `GuardianCore` y tipos relacionados
+- [x] Implementar `fetch_pr_data()` usando octocrab
+- [x] Implementar `check_blockers()` lógica
+- [x] Implementar `check_ci_status()` verificación
+- [x] Implementar `calculate_risk()` usando risk-map.json
+- [x] Implementar `calculate_confidence()` scoring
+- [x] Agregar CLI subcommand `guardian` a main.rs
+- [x] Escribir unit tests para cada función
 - [ ] Escribir integration tests con mock API
 - [ ] Crear benchmarks comparativos
-- [ ] Actualizar workflow con fallback logic
+- [x] Actualizar workflow con fallback logic
 - [ ] Testing en staging branch
 - [ ] Documentar en README de workflow-orchestrator
 

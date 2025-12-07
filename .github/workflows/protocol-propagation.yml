@@ -1,4 +1,4 @@
-name: 🚀 Protocol Propagation - Update All Repos
+name: Protocol Propagation
 
 on:
   push:
@@ -6,10 +6,6 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
     inputs:
-      target_repos:
-        description: 'Target repos (comma-separated, leave empty for all)'
-        required: false
-        type: string
       update_type:
         description: 'Update type'
         required: true
@@ -20,11 +16,6 @@ on:
           - scripts
           - full
         default: 'workflows'
-      create_pr:
-        description: 'Create PR (true) or Issue (false)'
-        required: true
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -34,15 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
-      changed_files: ${{ steps.changes.outputs.files }}
 
     steps:
-      - name: 🔍 Checkout
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
-      - name: 📋 Get Version
+      - name: Get Version
         id: version
         run: |
           if [ -f VERSION ]; then
@@ -51,33 +39,11 @@ jobs:
             VERSION=${GITHUB_REF#refs/tags/v}
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Version: $VERSION"
-
-      - name: 🔬 Detect Changed Files
-        id: changes
-        run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            # Tag push - comparar con tag anterior
-            PREV_TAG=$(git tag --sort=-version:refname | sed -n 2p)
-            if [ -z "$PREV_TAG" ]; then
-              echo "files=all" >> $GITHUB_OUTPUT
-            else
-              CHANGED=$(git diff --name-only $PREV_TAG HEAD | grep -E '\.github/|scripts/|AGENTS\.md|\.cursorrules' || echo "")
-              if [ -z "$CHANGED" ]; then
-                echo "files=none" >> $GITHUB_OUTPUT
-              else
-                echo "files=$CHANGED" >> $GITHUB_OUTPUT
-              fi
-            fi
-          else
-            # Manual dispatch
-            echo "files=all" >> $GITHUB_OUTPUT
-          fi
+          echo "Version: $VERSION"
 
   propagate:
     needs: detect-changes
     runs-on: ubuntu-latest
-    if: needs.detect-changes.outputs.changed_files != 'none'
 
     strategy:
       matrix:
@@ -96,19 +62,19 @@ jobs:
       max-parallel: 3
 
     steps:
-      - name: 🔍 Checkout Protocol Repo
+      - name: Checkout Protocol Repo
         uses: actions/checkout@v4
 
-      - name: 📥 Clone Target Repo
+      - name: Clone Target Repo
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh repo clone ${{ matrix.repo }} target-repo || {
-            echo "⚠️ Cannot access ${{ matrix.repo }}, skipping..."
+            echo "Cannot access ${{ matrix.repo }}, skipping..."
             exit 0
           }
 
-      - name: 📦 Prepare Update Package
+      - name: Prepare Update
         id: package
         run: |
           UPDATE_TYPE="${{ github.event.inputs.update_type || 'workflows' }}"
@@ -116,30 +82,28 @@ jobs:
 
           cd target-repo
 
-          # Crear branch de actualización
           BRANCH_NAME="protocol-update-v${VERSION}"
           git checkout -b "$BRANCH_NAME" 2>/dev/null || git checkout "$BRANCH_NAME"
 
-          # Determinar qué archivos copiar
           case "$UPDATE_TYPE" in
             workflows)
-              echo "📋 Updating workflows..."
+              echo "Updating workflows..."
               mkdir -p .github/workflows
               cp -r ../.github/workflows/* .github/workflows/ 2>/dev/null || true
               ;;
             agents)
-              echo "🤖 Updating agent configs..."
+              echo "Updating agent configs..."
               cp ../AGENTS.md . 2>/dev/null || true
               cp ../.cursorrules . 2>/dev/null || true
               cp -r ../.github/copilot-instructions.md .github/ 2>/dev/null || true
               ;;
             scripts)
-              echo "📜 Updating scripts..."
+              echo "Updating scripts..."
               mkdir -p scripts
               cp -r ../scripts/* scripts/ 2>/dev/null || true
               ;;
             full)
-              echo "🔄 Full protocol update..."
+              echo "Full protocol update..."
               cp ../AGENTS.md . 2>/dev/null || true
               cp ../.cursorrules . 2>/dev/null || true
               mkdir -p .github/workflows scripts
@@ -149,31 +113,22 @@ jobs:
               ;;
           esac
 
-          # Verificar si hay cambios
           if git diff --quiet; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "⚠️ No changes detected for ${{ matrix.repo }}"
+            echo "No changes detected"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "✅ Changes detected"
+            echo "Changes detected"
 
-            # Commit cambios
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add .
-            git commit -m "chore: update Git-Core Protocol to v${VERSION}
-
-Updates from iberi22/Git-Core-Protocol@v${VERSION}
-
-Update type: ${UPDATE_TYPE}
-Changed files: ${{ needs.detect-changes.outputs.changed_files }}
-
-Co-authored-by: Git-Core-Protocol <noreply@github.com>"
+            git commit -m "chore: update Git-Core Protocol to v${VERSION}"
           fi
 
           echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-      - name: 📤 Push Changes
+      - name: Push Changes
         if: steps.package.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -181,8 +136,8 @@ Co-authored-by: Git-Core-Protocol <noreply@github.com>"
           cd target-repo
           git push -u origin ${{ steps.package.outputs.branch }} --force
 
-      - name: 📝 Create PR
-        if: steps.package.outputs.has_changes == 'true' && (github.event.inputs.create_pr == 'true' || github.event.inputs.create_pr == '')
+      - name: Create PR
+        if: steps.package.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -190,70 +145,11 @@ Co-authored-by: Git-Core-Protocol <noreply@github.com>"
 
           VERSION="${{ needs.detect-changes.outputs.version }}"
           UPDATE_TYPE="${{ github.event.inputs.update_type || 'workflows' }}"
-
-          # Generar changelog de cambios
-          CHANGELOG="See full changelog: https://github.com/iberi22/Git-Core-Protocol/releases/tag/v${VERSION}"
+          REPO="${{ matrix.repo }}"
 
           gh pr create \
-            --title "🚀 Git-Core Protocol v${VERSION} Update" \
-            --body "## Git-Core Protocol Update
-
-**Version:** v${VERSION}
-**Update Type:** ${UPDATE_TYPE}
-
-### Changes
-This PR updates the Git-Core Protocol files to the latest version.
-
-### What's Included
-$(case "$UPDATE_TYPE" in
-  workflows) echo "- ✅ GitHub Actions workflows (self-healing, CI/CD, etc.)" ;;
-  agents) echo "- ✅ Agent configuration (AGENTS.md, .cursorrules, copilot-instructions.md)" ;;
-  scripts) echo "- ✅ Helper scripts (deployment, telemetry, etc.)" ;;
-  full) echo "- ✅ Complete protocol update (workflows, agents, scripts)" ;;
-esac)
-
-### Documentation
-- 📖 [Protocol Documentation](https://github.com/iberi22/Git-Core-Protocol)
-- 📋 [Changelog](https://github.com/iberi22/Git-Core-Protocol/blob/main/CHANGELOG.md)
-- 🔧 ${CHANGELOG}
-
-### Testing
-- [ ] Review changes
-- [ ] Run tests
-- [ ] Verify workflows
-
-**Auto-generated by Git-Core Protocol Propagation**
-" \
+            --title "Git-Core Protocol v${VERSION} Update" \
+            --body "Updates from Git-Core Protocol v${VERSION}. Type: ${UPDATE_TYPE}. See: https://github.com/iberi22/Git-Core-Protocol/releases/tag/v${VERSION}" \
             --label "dependencies,protocol-update" \
             --base main \
-            --head ${{ steps.package.outputs.branch }} || echo "⚠️ PR already exists or error creating PR"
-
-      - name: 📋 Create Issue (Alternative)
-        if: steps.package.outputs.has_changes == 'true' && github.event.inputs.create_pr == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd target-repo
-
-          VERSION="${{ needs.detect-changes.outputs.version }}"
-
-          gh issue create \
-            --title "📦 Git-Core Protocol v${VERSION} Available" \
-            --body "A new version of Git-Core Protocol is available. Branch \`${{ steps.package.outputs.branch }}\` has been created with the updates. Review and merge when ready." \
-            --label "enhancement,protocol-update"
-
-  summary:
-    needs: [detect-changes, propagate]
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-      - name: 📊 Generate Summary
-        run: |
-          echo "## 🚀 Protocol Propagation Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Version:** ${{ needs.detect-changes.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Changed Files:** ${{ needs.detect-changes.outputs.changed_files }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Results" >> $GITHUB_STEP_SUMMARY
-          echo "Check individual job logs for details." >> $GITHUB_STEP_SUMMARY
+            --head ${{ steps.package.outputs.branch }} || echo "PR already exists or error"

@@ -37,6 +37,8 @@ jobs:
       - name: Detect Repository Type
         id: detect
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           ./scripts/detect-repo-config.ps1
 

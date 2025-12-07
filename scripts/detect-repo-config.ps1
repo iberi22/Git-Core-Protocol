@@ -31,7 +31,14 @@ Write-Host "${Cyan}🔍 Repository Configuration Detection${Reset}`n"
 
 # Detect repository visibility
 try {
-    $repoInfo = gh repo view $Repository --json visibility,isPrivate,name,owner | ConvertFrom-Json
+    # Redirect stderr to null to avoid false negatives from warnings
+    $ErrorActionPreference = 'Continue'
+    $repoInfo = gh repo view $Repository --json visibility,isPrivate,name,owner 2>$null | ConvertFrom-Json
+    
+    if (-not $repoInfo) {
+        throw "No repository information returned"
+    }
+    
     $isPublic = -not $repoInfo.isPrivate
     $visibility = if ($isPublic) { "PUBLIC" } else { "PRIVATE" }
 
@@ -39,7 +46,7 @@ try {
     Write-Host "🔒 Visibility: ${Cyan}$visibility${Reset}"
 
 } catch {
-    Write-Host "${Red}❌ Error detecting repository visibility${Reset}"
+    Write-Host "${Red}❌ Error detecting repository visibility: $_${Reset}"
     Write-Host "${Yellow}⚠️  Defaulting to PRIVATE (conservative mode)${Reset}"
     $isPublic = $false
     $visibility = "PRIVATE"
@@ -110,3 +117,6 @@ switch ($scheduleMode) {
 }
 
 Write-Host ""
+
+# Ensure we exit successfully
+exit 0

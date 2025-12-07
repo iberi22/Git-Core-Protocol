@@ -98,6 +98,7 @@ Configure which repos receive updates:
 ```
 
 **Fields:**
+
 - `enabled`: Enable/disable propagation for this repo
 - `update_types`: Which types of updates to apply
 - `auto_merge`: Auto-merge PRs (requires CI passing)
@@ -138,6 +139,7 @@ gh workflow run protocol-propagation.yml \
 ```
 
 **Parameters:**
+
 - `target_repos`: Comma-separated list (empty = all)
 - `update_type`: workflows | agents | scripts | full
 - `create_pr`: true (PR) or false (Issue)
@@ -175,7 +177,8 @@ https://github.com/iberi22/Git-Core-Protocol/actions
 
 **Title:** `🚀 Git-Core Protocol v3.1.0 Update`
 
-**Body:** 
+**Body:**
+
 - Version information
 - Update type
 - Changelog link
@@ -188,6 +191,7 @@ https://github.com/iberi22/Git-Core-Protocol/actions
 **Title:** `📦 Git-Core Protocol v3.1.0 Available`
 
 **Body:**
+
 - Notification of new version
 - Branch name with updates
 - Instructions to review and merge
@@ -227,6 +231,7 @@ If the target repo has diverged significantly, merge conflicts may occur.
 ### 1. **Semantic Versioning**
 
 Follow semver:
+
 - `major`: Breaking changes
 - `minor`: New features, backwards compatible
 - `patch`: Bug fixes
@@ -249,6 +254,7 @@ Don't auto-merge. Review each PR to ensure compatibility.
 ### 5. **Staged Rollout**
 
 Use priorities in `.propagation.json`:
+
 - Priority 1: Critical repos (test first)
 - Priority 2: Standard repos
 - Priority 3: Low-priority repos
@@ -287,6 +293,7 @@ If a version causes issues:
 ### GitHub Token Permissions
 
 The workflow requires:
+
 - `contents: read` on Protocol repo
 - `contents: write` on target repos (for creating branches)
 - `pull-requests: write` on target repos (for creating PRs)
@@ -294,6 +301,7 @@ The workflow requires:
 ### Sensitive Files
 
 Excluded by default (see `.propagation.json`):
+
 - `.env`
 - `credentials.json`
 - `token.json`
@@ -322,13 +330,17 @@ gh pr list --label "protocol-update" --state merged
 1. **Develop feature** in Protocol repo
 2. **Test locally**
 3. **Update VERSION**:
+
    ```powershell
    .\scripts\release-protocol.ps1 -Type minor
    ```
+
 4. **Monitor propagation**:
+
    ```bash
    gh run watch
    ```
+
 5. **Review PRs** in target repos
 6. **Merge PRs** after testing
 7. **Verify** self-healing works in each repo

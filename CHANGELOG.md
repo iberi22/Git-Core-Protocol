@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - 2025-12-06
 
 ### Added
+
 - **🚀 Protocol Propagation System**: Automatic distribution of protocol updates to all managed repos
   - `protocol-propagation.yml` workflow triggers on version tags
   - `release-protocol.ps1` script for creating new versions
@@ -32,12 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fallback polling method for environments without workflow_run support
 
 ### Changed
+
 - Updated `.github/issues/` syncing to handle protocol update PRs
 - Improved error handling in workflow file syntax validation
 
 ## [3.2.0-alpha] - 2025-12-06 📊 "Session Analytics"
 
 ### Added
+
 - **📚 Agent Docs Structure**: New organized folder structure in `docs/agent-docs/`:
   - `specs/` - Technical specifications
   - `prompts/` - Reusable prompts for agents
@@ -59,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Monthly aggregated METRICS.json
 
 ### Changed
+
 - **Session Export**: Now includes accomplishments, next actions, and efficiency metrics
 - **Documentation**: `docs/agent-docs/README.md` completely rewritten with archiving workflow
 
@@ -67,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.1.0-alpha] - 2025-12-06 🧪 "Context Intelligence"
 
 ### Experimental
+
 - **🧠 Context-Driven Decision Engine**: Introduction of Semantic Risk Analysis for Guardian Agent.
 - **🗺️ Risk Map**: New `.✨/risk-map.json` configuration to define risk scores per file path.
 - **Shadow Mode**: Guardian Agent now calculates `semantic_risk_score` in logs without blocking merges (data collection phase).
@@ -102,7 +107,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.0] - 2025-12-04
 
 ### Added
-
 
 - **Real Quarantine Logic**: `context-research-agent` now queries NPM, Crates.io, and PyPI APIs to verify package release dates.
 - **Binary Automation**: New `build-tools.yml` workflow automatically compiles Rust agents and commits binaries to `bin/`.

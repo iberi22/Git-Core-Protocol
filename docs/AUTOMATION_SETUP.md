@@ -15,6 +15,7 @@ The following secrets need to be configured in your repository settings.
 **What:** OAuth2 client credentials from Google Cloud Console
 
 **How to get:**
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Select project `saber-proactivo-2025`
 3. Navigate to **APIs & Services** → **Credentials**
@@ -22,6 +23,7 @@ The following secrets need to be configured in your repository settings.
 5. Copy the entire JSON content
 
 **Add to GitHub:**
+
 ```bash
 gh secret set GMAIL_CREDENTIALS --repo iberi22/Git-Core-Protocol
 # Paste the JSON content when prompted
@@ -32,14 +34,18 @@ gh secret set GMAIL_CREDENTIALS --repo iberi22/Git-Core-Protocol
 **What:** OAuth2 access/refresh token (generated after first authentication)
 
 **How to get:**
+
 1. Run the email handler locally first:
+
    ```bash
    python tools/email-handler/src/main.py
    ```
+
 2. Complete OAuth flow in browser
 3. Copy content of generated `tools/email-handler/token.json`
 
 **Add to GitHub:**
+
 ```bash
 gh secret set GMAIL_TOKEN --repo iberi22/Git-Core-Protocol
 # Paste the token.json content when prompted
@@ -54,6 +60,7 @@ gh secret set GMAIL_TOKEN --repo iberi22/Git-Core-Protocol
 ### Required Permissions
 
 The `GITHUB_TOKEN` (automatically provided) needs access to:
+
 - ✅ Read workflow runs (all repos)
 - ✅ Create issues (all repos)
 - ✅ Rerun workflows (all repos)
@@ -61,6 +68,7 @@ The `GITHUB_TOKEN` (automatically provided) needs access to:
 **Grant access:**
 
 For each target repo, ensure the GitHub App or Personal Access Token has:
+
 - `actions: read`
 - `contents: read`
 - `issues: write`
@@ -72,6 +80,7 @@ For each target repo, ensure the GitHub App or Personal Access Token has:
 ### Required Permissions
 
 The `GITHUB_TOKEN` needs:
+
 - ✅ Read source repo (`Git-Core-Protocol`)
 - ✅ Create branches (target repos)
 - ✅ Create PRs (target repos)

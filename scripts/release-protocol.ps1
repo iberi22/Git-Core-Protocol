@@ -4,18 +4,18 @@
 param(
     [Parameter(Mandatory=$false)]
     [string]$Version = "",
-    
+
     [Parameter(Mandatory=$false)]
     [ValidateSet("major", "minor", "patch")]
     [string]$Type = "patch",
-    
+
     [Parameter(Mandatory=$false)]
     [string]$Message = "",
-    
+
     [Parameter(Mandatory=$false)]
     [ValidateSet("workflows", "agents", "scripts", "full")]
     [string]$UpdateType = "workflows",
-    
+
     [Parameter(Mandatory=$false)]
     [switch]$DryRun
 )
@@ -40,13 +40,13 @@ if (-not $Version) {
     $major = [int]$parts[0]
     $minor = [int]$parts[1]
     $patch = [int]$parts[2]
-    
+
     switch ($Type) {
         "major" { $major++; $minor = 0; $patch = 0 }
         "minor" { $minor++; $patch = 0 }
         "patch" { $patch++ }
     }
-    
+
     $Version = "$major.$minor.$patch"
 }
 

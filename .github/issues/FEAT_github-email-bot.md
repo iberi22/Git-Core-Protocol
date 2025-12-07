@@ -9,19 +9,22 @@ assignees: []
 ---
 
 ## Descripción
+
 Sistema de auto-reparación para detectar, analizar y resolver fallos de CI/CD automáticamente sin intervención humana.
 
 ## 🎯 Solución Implementada
 
 ### Método Principal: `workflow_run` Events (Recomendado)
-✅ **Latencia:** < 1 minuto  
-✅ **Costo:** $0 (GitHub Actions gratuito)  
-✅ **Sin email polling:** Event-driven nativo  
-✅ **Escalable:** Multi-repo compatible  
+
+✅ **Latencia:** < 1 minuto
+✅ **Costo:** $0 (GitHub Actions gratuito)
+✅ **Sin email polling:** Event-driven nativo
+✅ **Escalable:** Multi-repo compatible
 
 **Archivo:** `.github/workflows/self-healing.yml`
 
 ### Método Fallback: Email Handler (Opcional)
+
 - **Ubicación:** `tools/email-handler/`
 - **Uso:** Solo como backup si GitHub Actions tiene downtime
 - **Estado:** Implementado pero no activo por defecto
@@ -47,11 +50,13 @@ git pull origin main
 ### 2. Desactivar Notificaciones de Email (Opcional)
 
 **GitHub UI:**
-1. Ve a: https://github.com/settings/notifications
+
+1. Ve a: <https://github.com/settings/notifications>
 2. Desactiva: `Actions → Failed workflows`
 3. Mantén activo: `Security alerts`
 
 **O vía API:**
+
 ```bash
 gh api --method PATCH /user/settings/notifications \
   -f actions_failed_workflows=false
@@ -60,11 +65,13 @@ gh api --method PATCH /user/settings/notifications \
 ### 3. Configurar Permisos del Repo
 
 Verifica que GitHub Actions tenga permisos para:
+
 - ✅ `actions: write` (para re-ejecutar workflows)
 - ✅ `issues: write` (para crear issues)
 - ✅ `pull-requests: write` (para PRs de fix)
 
 **Settings → Actions → General → Workflow permissions:**
+
 - Selecciona: "Read and write permissions"
 
 ## 📊 Métricas Esperadas
@@ -82,6 +89,7 @@ Verifica que GitHub Actions tenga permisos para:
 - [Self-Healing Workflow](../../.github/workflows/self-healing.yml) - Implementación
 
 ## Tareas
+
 - [x] Investigar alternativas (Email vs Webhooks vs workflow_run)
 - [x] Crear workflow `self-healing.yml`
 - [x] Implementar clasificación de errores
@@ -100,16 +108,19 @@ Verifica que GitHub Actions tenga permisos para:
 ## 📊 Estado Actual (2025-12-06)
 
 ### Deployment
+
 - ✅ Workflow `self-healing.yml` desplegado en Git-Core-Protocol
 - ✅ Fix aplicado: Prevención de auto-monitoreo
 - ⏳ Pendiente: Verificar ejecución exitosa del workflow
 
 ### Email Handler
+
 - ✅ Lógica de archivado implementada
 - ✅ Verificación de estado de workflows
 - ⏳ Pendiente: Ejecutar en modo watch para limpieza continua
 
 ### Correos Detectados
+
 - 📧 **94 correos de fallos** en inbox
 - Repos afectados: software-factory, domus-otec, less-colegio, synapse-protocol, etc.
 - Workflows comunes fallando:
@@ -120,9 +131,10 @@ Verifica que GitHub Actions tenga permisos para:
   - `E2E Tests` (less-colegio)
 
 ### Próximos Pasos
+
 1. Verificar que self-healing.yml se ejecute correctamente
 2. Monitorear si auto-repara fallos transitorios
 3. Copiar self-healing.yml a repos críticos
 4. Ejecutar email-handler en modo watch para limpieza continua
-- [ ] Implementar borrado de correos post-fix.
 
+- [ ] Implementar borrado de correos post-fix.

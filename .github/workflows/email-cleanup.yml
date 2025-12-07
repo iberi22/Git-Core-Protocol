@@ -3,13 +3,13 @@ name: 📧 Email Notification Cleanup
 on:
   schedule:
     # Ejecutar cada hora
-    - cron: '0 * * * *'
+    - cron: "0 * * * *"
   workflow_dispatch:
     inputs:
       max_emails:
-        description: 'Maximum emails to process'
+        description: "Maximum emails to process"
         required: false
-        default: '50'
+        default: "50"
         type: string
 
 permissions:
@@ -18,37 +18,37 @@ permissions:
 jobs:
   cleanup-notifications:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 🔍 Checkout
         uses: actions/checkout@v4
-      
+
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
-      
+          python-version: "3.11"
+          cache: "pip"
+
       - name: 📦 Install Dependencies
         run: |
           cd tools/email-handler
           pip install -r requirements.txt
-      
+
       - name: 🔐 Setup Gmail Credentials
         env:
           GMAIL_CREDENTIALS: ${{ secrets.GMAIL_CREDENTIALS }}
           GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
         run: |
           cd tools/email-handler
-          
+
           # Crear credentials.json desde secret
           echo "$GMAIL_CREDENTIALS" > credentials.json
-          
+
           # Crear token.json desde secret si existe
           if [ -n "$GMAIL_TOKEN" ]; then
             echo "$GMAIL_TOKEN" > token.json
           fi
-      
+
       - name: 📧 Process Notifications
         env:
           GH_TOKEN: ${{ github.token }}
@@ -56,7 +56,7 @@ jobs:
         run: |
           cd tools/email-handler
           python src/main.py --max-emails $MAX_EMAILS
-      
+
       - name: 💾 Update Token (if refreshed)
         if: always()
         run: |
@@ -66,7 +66,7 @@ jobs:
             # Note: GitHub Actions cannot update secrets automatically
             # User must copy the new token.json content to GMAIL_TOKEN secret
           fi
-      
+
       - name: 📊 Summary
         if: always()
         run: |

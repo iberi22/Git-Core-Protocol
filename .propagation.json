@@ -1,95 +1,124 @@
 {
-  "version": "3.0.0",
-  "propagation": {
-    "enabled": true,
-    "target_repos": [
-      {
-        "name": "iberi22/software-factory",
-        "enabled": true,
-        "update_types": ["workflows", "agents", "scripts"],
-        "auto_merge": false,
-        "priority": 1
-      },
-      {
-        "name": "iberi22/domus-otec",
-        "enabled": true,
-        "update_types": ["workflows", "agents"],
-        "auto_merge": false,
-        "priority": 1
-      },
-      {
-        "name": "iberi22/less-colegio",
-        "enabled": true,
-        "update_types": ["workflows", "agents"],
-        "auto_merge": false,
-        "priority": 2
-      },
-      {
-        "name": "iberi22/synapse-protocol",
-        "enabled": true,
-        "update_types": ["workflows"],
-        "auto_merge": false,
-        "priority": 2
-      },
-      {
-        "name": "iberi22/gara-g",
-        "enabled": true,
-        "update_types": ["workflows"],
-        "auto_merge": false,
-        "priority": 3
-      },
-      {
-        "name": "iberi22/AI-Chef",
-        "enabled": true,
-        "update_types": ["workflows"],
-        "auto_merge": false,
-        "priority": 3
-      },
-      {
-        "name": "iberi22/contratafacil",
-        "enabled": true,
-        "update_types": ["workflows"],
-        "auto_merge": false,
-        "priority": 3
-      },
-      {
-        "name": "iberi22/bestof-opensorce",
-        "enabled": true,
-        "update_types": ["workflows"],
-        "auto_merge": false,
-        "priority": 3
-      },
-      {
-        "name": "iberi22/obs-studio-agent",
-        "enabled": true,
-        "update_types": ["workflows", "agents"],
-        "auto_merge": false,
-        "priority": 2
-      },
-      {
-        "name": "iberi22/pocket_cerebro",
-        "enabled": true,
-        "update_types": ["workflows", "agents"],
-        "auto_merge": false,
-        "priority": 2
+   "version": "3.0.0",
+   "propagation": {
+      "enabled": true,
+      "target_repos": [
+         {
+            "name": "iberi22/software-factory",
+            "enabled": true,
+            "update_types": [
+               "workflows",
+               "agents",
+               "scripts"
+            ],
+            "auto_merge": false,
+            "priority": 1
+         },
+         {
+            "name": "iberi22/domus-otec",
+            "enabled": true,
+            "update_types": [
+               "workflows",
+               "agents"
+            ],
+            "auto_merge": false,
+            "priority": 1
+         },
+         {
+            "name": "iberi22/less-colegio",
+            "enabled": true,
+            "update_types": [
+               "workflows",
+               "agents"
+            ],
+            "auto_merge": false,
+            "priority": 2
+         },
+         {
+            "name": "iberi22/synapse-protocol",
+            "enabled": true,
+            "update_types": [
+               "workflows"
+            ],
+            "auto_merge": false,
+            "priority": 2
+         },
+         {
+            "name": "iberi22/gara-g",
+            "enabled": true,
+            "update_types": [
+               "workflows"
+            ],
+            "auto_merge": false,
+            "priority": 3
+         },
+         {
+            "name": "iberi22/AI-Chef",
+            "enabled": true,
+            "update_types": [
+               "workflows"
+            ],
+            "auto_merge": false,
+            "priority": 3
+         },
+         {
+            "name": "iberi22/contratafacil",
+            "enabled": true,
+            "update_types": [
+               "workflows"
+            ],
+            "auto_merge": false,
+            "priority": 3
+         },
+         {
+            "name": "iberi22/bestof-opensorce",
+            "enabled": true,
+            "update_types": [
+               "workflows"
+            ],
+            "auto_merge": false,
+            "priority": 3
+         },
+         {
+            "name": "iberi22/obs-studio-agent",
+            "enabled": true,
+            "update_types": [
+               "workflows",
+               "agents"
+            ],
+            "auto_merge": false,
+            "priority": 2
+         },
+         {
+            "name": "iberi22/pocket_cerebro",
+            "enabled": true,
+            "update_types": [
+               "workflows",
+               "agents"
+            ],
+            "auto_merge": false,
+            "priority": 2
+         }
+      ],
+      "excluded_files": [
+         "README.md",
+         "LICENSE",
+         ".git*",
+         "node_modules",
+         "package.json",
+         "package-lock.json"
+      ],
+      "pr_settings": {
+         "auto_approve": false,
+         "require_tests": true,
+         "labels": [
+            "dependencies",
+            "protocol-update"
+         ],
+         "reviewers": []
       }
-    ],
-    "excluded_files": [
-      "README.md",
-      "LICENSE",
-      ".git*",
-      "node_modules",
-      "package.json",
-      "package-lock.json"
-    ],
-    "pr_settings": {
-      "auto_approve": false,
-      "require_tests": true,
-      "labels": ["dependencies", "protocol-update"],
-      "reviewers": []
-    }
-  },
-  "changelog": {
-    "url": "https://github.com/iberi22/Git-Core-Protocol/blob/main/CHANGELOG.md"
-  }
+   },
+   "changelog": {
+      "url": "https://github.com/iberi22/Git-Core-Protocol/blob/main/CHANGELOG.md"
+   }
 }

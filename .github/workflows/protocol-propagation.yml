@@ -35,13 +35,13 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       changed_files: ${{ steps.changes.outputs.files }}
-      
+
     steps:
       - name: 🔍 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      
+
       - name: 📋 Get Version
         id: version
         run: |
@@ -52,7 +52,7 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📦 Version: $VERSION"
-      
+
       - name: 🔬 Detect Changed Files
         id: changes
         run: |
@@ -73,12 +73,12 @@ jobs:
             # Manual dispatch
             echo "files=all" >> $GITHUB_OUTPUT
           fi
-  
+
   propagate:
     needs: detect-changes
     runs-on: ubuntu-latest
     if: needs.detect-changes.outputs.changed_files != 'none'
-    
+
     strategy:
       matrix:
         repo:
@@ -94,11 +94,11 @@ jobs:
           - iberi22/pocket_cerebro
       fail-fast: false
       max-parallel: 3
-    
+
     steps:
       - name: 🔍 Checkout Protocol Repo
         uses: actions/checkout@v4
-      
+
       - name: 📥 Clone Target Repo
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,19 +107,19 @@ jobs:
             echo "⚠️ Cannot access ${{ matrix.repo }}, skipping..."
             exit 0
           }
-      
+
       - name: 📦 Prepare Update Package
         id: package
         run: |
           UPDATE_TYPE="${{ github.event.inputs.update_type || 'workflows' }}"
           VERSION="${{ needs.detect-changes.outputs.version }}"
-          
+
           cd target-repo
-          
+
           # Crear branch de actualización
           BRANCH_NAME="protocol-update-v${VERSION}"
           git checkout -b "$BRANCH_NAME" 2>/dev/null || git checkout "$BRANCH_NAME"
-          
+
           # Determinar qué archivos copiar
           case "$UPDATE_TYPE" in
             workflows)
@@ -148,7 +148,7 @@ jobs:
               cp -r ../scripts/* scripts/ 2>/dev/null || true
               ;;
           esac
-          
+
           # Verificar si hay cambios
           if git diff --quiet; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
@@ -156,7 +156,7 @@ jobs:
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
             echo "✅ Changes detected"
-            
+
             # Commit cambios
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -170,9 +170,9 @@ Changed files: ${{ needs.detect-changes.outputs.changed_files }}
 
 Co-authored-by: Git-Core-Protocol <noreply@github.com>"
           fi
-          
+
           echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
-      
+
       - name: 📤 Push Changes
         if: steps.package.outputs.has_changes == 'true'
         env:
@@ -180,20 +180,20 @@ Co-authored-by: Git-Core-Protocol <noreply@github.com>"
         run: |
           cd target-repo
           git push -u origin ${{ steps.package.outputs.branch }} --force
-      
+
       - name: 📝 Create PR
         if: steps.package.outputs.has_changes == 'true' && (github.event.inputs.create_pr == 'true' || github.event.inputs.create_pr == '')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd target-repo
-          
+
           VERSION="${{ needs.detect-changes.outputs.version }}"
           UPDATE_TYPE="${{ github.event.inputs.update_type || 'workflows' }}"
-          
+
           # Generar changelog de cambios
           CHANGELOG="See full changelog: https://github.com/iberi22/Git-Core-Protocol/releases/tag/v${VERSION}"
-          
+
           gh pr create \
             --title "🚀 Git-Core Protocol v${VERSION} Update" \
             --body "## Git-Core Protocol Update
@@ -227,26 +227,26 @@ esac)
             --label "dependencies,protocol-update" \
             --base main \
             --head ${{ steps.package.outputs.branch }} || echo "⚠️ PR already exists or error creating PR"
-      
+
       - name: 📋 Create Issue (Alternative)
         if: steps.package.outputs.has_changes == 'true' && github.event.inputs.create_pr == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd target-repo
-          
+
           VERSION="${{ needs.detect-changes.outputs.version }}"
-          
+
           gh issue create \
             --title "📦 Git-Core Protocol v${VERSION} Available" \
             --body "A new version of Git-Core Protocol is available. Branch \`${{ steps.package.outputs.branch }}\` has been created with the updates. Review and merge when ready." \
             --label "enhancement,protocol-update"
-  
+
   summary:
     needs: [detect-changes, propagate]
     runs-on: ubuntu-latest
     if: always()
-    
+
     steps:
       - name: 📊 Generate Summary
         run: |

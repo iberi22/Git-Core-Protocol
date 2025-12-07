@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory=$false)]
     [string]$Repos = "",
-    
+
     [Parameter(Mandatory=$false)]
     [switch]$DryRun
 )
@@ -26,12 +26,12 @@ Write-Host "🚀 Desplegando Self-Healing Workflow a $($reposToUpdate.Count) rep
 
 foreach ($repo in $reposToUpdate) {
     Write-Host "`n📦 Procesando: $repo" -ForegroundColor Yellow
-    
+
     if ($DryRun) {
         Write-Host "   [DRY RUN] Se copiaría $workflowFile" -ForegroundColor Gray
         continue
     }
-    
+
     try {
         # Verificar si el repo existe
         gh repo view $repo --json name | Out-Null
@@ -39,27 +39,27 @@ foreach ($repo in $reposToUpdate) {
             Write-Host "   ❌ Repo no encontrado o sin acceso" -ForegroundColor Red
             continue
         }
-        
+
         # Clonar repo temporalmente
         $tempDir = "temp-$($repo.Replace('/', '-'))"
         if (Test-Path $tempDir) {
             Remove-Item -Recurse -Force $tempDir
         }
-        
+
         gh repo clone $repo $tempDir 2>&1 | Out-Null
         Push-Location $tempDir
-        
+
         # Crear branch
         git checkout -b $tempBranch 2>&1 | Out-Null
-        
+
         # Copiar workflow
         $workflowDir = ".github/workflows"
         if (-not (Test-Path $workflowDir)) {
             New-Item -ItemType Directory -Path $workflowDir -Force | Out-Null
         }
-        
+
         Copy-Item -Path "../../$workflowFile" -Destination $workflowFile -Force
-        
+
         # Commit y push
         git add $workflowFile
         git commit -m "feat(ci): add self-healing workflow
@@ -73,9 +73,9 @@ Adds automated CI/CD failure detection and repair system.
 
 Source: Git-Core-Protocol
 Issue: https://github.com/iberi22/Git-Core-Protocol/issues/65"
-        
+
         git push origin $tempBranch 2>&1 | Out-Null
-        
+
         # Crear PR
         $prUrl = gh pr create `
             --title "🛡️ Add Self-Healing CI/CD Workflow" `
@@ -100,16 +100,16 @@ When a failure is detected, it classifies the error type and takes appropriate a
 **Source:** Git-Core-Protocol #65" `
             --label "ci,automation,enhancement" `
             --base main 2>&1
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "   ✅ PR creado: $prUrl" -ForegroundColor Green
         } else {
             Write-Host "   ⚠️ Error creando PR" -ForegroundColor Yellow
         }
-        
+
         Pop-Location
         Remove-Item -Recurse -Force $tempDir
-        
+
     } catch {
         Write-Host "   ❌ Error: $_" -ForegroundColor Red
         if (Test-Path $tempDir) {

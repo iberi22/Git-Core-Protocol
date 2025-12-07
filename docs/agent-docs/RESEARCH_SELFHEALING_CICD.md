@@ -25,6 +25,7 @@ confidence: 0.95
 ## 🎯 Problema a Resolver
 
 **Situación Actual:**
+
 - Múltiples repositorios con workflows que fallan
 - Notificaciones de email abruman la bandeja de entrada
 - Intervención manual requerida para cada fallo
@@ -50,11 +51,11 @@ Automatizar la detección, análisis y reparación de fallos de CI/CD sin interv
 
 ### ¿Por Qué Es La Mejor Opción?
 
-✅ **Nativo de GitHub Actions** - Sin servicios externos  
-✅ **Latencia < 1 minuto** - Se dispara inmediatamente después del fallo  
-✅ **Costo $0** - Usa los minutos gratuitos de GitHub Actions  
-✅ **No requiere credenciales de email** - Todo dentro de GitHub  
-✅ **Escalable** - Funciona en múltiples repos sin configuración extra  
+✅ **Nativo de GitHub Actions** - Sin servicios externos
+✅ **Latencia < 1 minuto** - Se dispara inmediatamente después del fallo
+✅ **Costo $0** - Usa los minutos gratuitos de GitHub Actions
+✅ **No requiere credenciales de email** - Todo dentro de GitHub
+✅ **Escalable** - Funciona en múltiples repos sin configuración extra
 
 ### ¿Cómo Funciona?
 
@@ -74,7 +75,7 @@ jobs:
   analyze-failure:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    
+
     steps:
       - name: 📋 Get Failed Workflow Info
         id: info
@@ -82,12 +83,12 @@ jobs:
           echo "workflow_name=${{ github.event.workflow_run.name }}" >> $GITHUB_OUTPUT
           echo "run_id=${{ github.event.workflow_run.id }}" >> $GITHUB_OUTPUT
           echo "run_url=${{ github.event.workflow_run.html_url }}" >> $GITHUB_OUTPUT
-      
+
       - name: 🔍 Analyze Logs
         run: |
           # Descargar logs del run fallido
           gh run view ${{ steps.info.outputs.run_id }} --log > failure.log
-          
+
           # Analizar si es un error conocido (flaky test, rate limit, etc.)
           if grep -q "ECONNRESET\|ETIMEDOUT\|429" failure.log; then
             echo "ERROR_TYPE=transient" >> $GITHUB_ENV
@@ -96,13 +97,13 @@ jobs:
           else
             echo "ERROR_TYPE=code" >> $GITHUB_ENV
           fi
-      
+
       - name: 🔄 Auto-Retry (Transient Errors)
         if: env.ERROR_TYPE == 'transient'
         run: |
           gh run rerun ${{ steps.info.outputs.run_id }} --failed
           echo "✅ Reintentando workflow debido a error transitorio"
-      
+
       - name: 🐛 Create Issue (Code Errors)
         if: env.ERROR_TYPE == 'code'
         run: |
@@ -111,18 +112,18 @@ jobs:
             --body "**Workflow:** ${{ steps.info.outputs.workflow_name }}
           **Run:** ${{ steps.info.outputs.run_url }}
           **Error Type:** Code issue detected
-          
+
           \`\`\`
           $(tail -n 50 failure.log)
           \`\`\`
-          
+
           **Auto-Actions:**
           - [ ] Analyzed by AI agent
           - [ ] Fix PR created
           - [ ] Tests passed
           " \
             --label "bug,ai-agent,auto-generated"
-      
+
       - name: 📦 Dependency Fix (Dependency Errors)
         if: env.ERROR_TYPE == 'dependency'
         run: |
@@ -130,10 +131,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b fix/deps-$(date +%s)
-          
+
           # Intentar fix común: reinstalar dependencias
           npm ci --legacy-peer-deps || yarn install --frozen-lockfile || pip install -r requirements.txt
-          
+
           git commit -am "fix(deps): auto-fix dependency issues"
           git push origin HEAD
           gh pr create --fill --label "dependencies,auto-fix"
@@ -153,7 +154,8 @@ jobs:
 ### 2. Desactivar Notificaciones de Email (Opcional)
 
 **GitHub Settings:**
-1. Ve a: https://github.com/settings/notifications
+
+1. Ve a: <https://github.com/settings/notifications>
 2. Desactiva:
    - ❌ Actions: Failed workflows
    - ❌ Actions: Successful workflows
@@ -162,6 +164,7 @@ jobs:
    - ✅ Pull request reviews
 
 **O por API:**
+
 ```bash
 # Desactivar notificaciones de workflow failures
 gh api --method PUT /repos/{owner}/{repo}/notifications \
@@ -178,7 +181,7 @@ gh api --method PUT /repos/{owner}/{repo}/notifications \
     # Enviar logs a Gemini para análisis
     gemini -p "Analiza este error y sugiere un fix:
     $(cat failure.log)" > analysis.md
-    
+
     # Crear issue con el análisis
     gh issue create --body-file analysis.md --label "ai-analyzed"
 ```
@@ -224,10 +227,12 @@ Si prefieres mantener el email como **backup**, el workflow puede coexistir:
 ### Opción 2: GitHub Webhooks + Lambda/Vercel Function
 
 **Pros:**
+
 - Latencia < 1 segundo
 - Puedes agregar lógica compleja (base de datos, ML)
 
 **Cons:**
+
 - Necesitas un servidor/serverless function
 - Costo adicional ($5-20/mes)
 - Más complejidad
@@ -238,11 +243,13 @@ Si tienes cientos de repos y necesitas análisis avanzado (ML, históricos).
 ### Opción 3: GitHub App
 
 **Pros:**
+
 - Instalable en múltiples organizaciones
 - Permisos granulares
 - Webhooks nativos
 
 **Cons:**
+
 - Desarrollo complejo (OAuth, manifest, server)
 - Hosting requerido
 
@@ -317,6 +324,7 @@ git push
 4. 📈 **Monitorear métricas** para refinar la detección de errores
 
 **Resultado Esperado:**
+
 - 90% menos emails
 - 60%+ de fallos auto-reparados
 - < 5 minutos de tiempo de respuesta
@@ -324,6 +332,6 @@ git push
 
 ---
 
-*Investigación completada: 2025-12-06*  
-*Autor: GitHub Copilot (Claude Sonnet 4)*  
+*Investigación completada: 2025-12-06*
+*Autor: GitHub Copilot (Claude Sonnet 4)*
 *Issue relacionado: #63*

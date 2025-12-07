@@ -17,7 +17,7 @@ permissions:
 jobs:
   monitor-all-repos:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         repo:
@@ -34,7 +34,7 @@ jobs:
           - iberi22/pocket_cerebro
       fail-fast: false
       max-parallel: 3
-    
+
     steps:
       - name: 🔍 Check Recent Failures
         id: check
@@ -42,31 +42,31 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "Checking ${{ matrix.repo }} for failures..."
-          
+
           # Obtener últimos 10 workflows runs
           FAILURES=$(gh run list \
             --repo ${{ matrix.repo }} \
             --limit 10 \
             --json conclusion,workflowName,databaseId,createdAt \
             --jq '[.[] | select(.conclusion == "failure")] | length')
-          
+
           echo "failures=$FAILURES" >> $GITHUB_OUTPUT
-          
+
           if [ "$FAILURES" -gt 0 ]; then
             echo "⚠️ Found $FAILURES failed runs"
-            
+
             # Obtener detalles del más reciente
             LATEST=$(gh run list \
               --repo ${{ matrix.repo }} \
               --limit 1 \
               --json conclusion,workflowName,databaseId,htmlUrl \
               --jq '.[] | select(.conclusion == "failure")')
-            
+
             echo "latest_failure=$LATEST" >> $GITHUB_OUTPUT
           else
             echo "✅ No failures found"
           fi
-      
+
       - name: 🔬 Analyze Failure Type
         if: steps.check.outputs.failures > 0
         id: analyze
@@ -74,22 +74,22 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "Analyzing failure in ${{ matrix.repo }}..."
-          
+
           # Obtener el último workflow fallido
           RUN_ID=$(gh run list \
             --repo ${{ matrix.repo }} \
             --limit 1 \
             --json databaseId,conclusion \
             --jq '.[] | select(.conclusion == "failure") | .databaseId')
-          
+
           if [ -z "$RUN_ID" ]; then
             echo "No run ID found"
             exit 0
           fi
-          
+
           # Intentar obtener logs
           LOGS=$(gh run view $RUN_ID --repo ${{ matrix.repo }} --log 2>&1 || echo "")
-          
+
           # Clasificar error
           if echo "$LOGS" | grep -qiE "ETIMEDOUT|ECONNRESET|429|rate limit"; then
             echo "error_type=transient" >> $GITHUB_OUTPUT
@@ -107,33 +107,33 @@ jobs:
             echo "error_type=unknown" >> $GITHUB_OUTPUT
             echo "action=create_issue" >> $GITHUB_OUTPUT
           fi
-          
+
           echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
-      
+
       - name: 🔄 Auto-Retry Transient Errors
         if: steps.analyze.outputs.action == 'retry'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "🔄 Retrying failed workflow in ${{ matrix.repo }}..."
-          
+
           gh run rerun ${{ steps.analyze.outputs.run_id }} \
             --repo ${{ matrix.repo }} \
             --failed || echo "⚠️ Could not rerun workflow"
-      
+
       - name: 📋 Create Issue for Non-Transient Errors
         if: steps.analyze.outputs.action == 'create_issue' && steps.check.outputs.failures > 0
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "📋 Creating issue in ${{ matrix.repo }}..."
-          
+
           WORKFLOW_NAME=$(gh run list \
             --repo ${{ matrix.repo }} \
             --limit 1 \
             --json workflowName,conclusion \
             --jq '.[] | select(.conclusion == "failure") | .workflowName')
-          
+
           # Verificar si ya existe un issue similar
           EXISTING=$(gh issue list \
             --repo ${{ matrix.repo }} \
@@ -142,7 +142,7 @@ jobs:
             --state open \
             --json number \
             --jq '.[0].number')
-          
+
           if [ -n "$EXISTING" ]; then
             echo "Issue already exists: #$EXISTING"
             gh issue comment $EXISTING \
@@ -166,12 +166,12 @@ jobs:
 - [ ] Verify workflow passes" \
               --label "bug,ai-plan"
           fi
-  
+
   summary:
     needs: monitor-all-repos
     runs-on: ubuntu-latest
     if: always()
-    
+
     steps:
       - name: 📊 Generate Summary
         run: |

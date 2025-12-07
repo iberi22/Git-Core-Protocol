@@ -24,7 +24,7 @@ CREDENTIALS_FILE = os.path.join(SCRIPT_DIR, '..', 'credentials.json')
 def get_gmail_service():
     """Autenticación mejorada con fallbacks múltiples."""
     creds = None
-    
+
     # 1. Intentar cargar token.json (sesión guardada)
     if os.path.exists(TOKEN_FILE):
         try:
@@ -61,11 +61,11 @@ def get_gmail_service():
             flow = InstalledAppFlow.from_client_secrets_file(
                 CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=0)
-            
+
             # Guardar token para la próxima vez
             with open(TOKEN_FILE, 'w') as token:
                 token.write(creds.to_json())
-            
+
             logging.info("✅ Autenticación exitosa!")
             service = build('gmail', 'v1', credentials=creds)
             return service
@@ -82,7 +82,7 @@ def get_gmail_service():
     logging.info("5. Configura la pantalla de consentimiento (tipo: Externa)")
     logging.info("6. Descarga el JSON y guárdalo como: tools/email-handler/credentials.json")
     logging.info("7. Vuelve a ejecutar este script.\n")
-    
+
     return None
 
 def parse_github_email(snippet, body):
@@ -91,11 +91,11 @@ def parse_github_email(snippet, body):
     Busca patrones como 'Run failed: CI - main' y el nombre del repo.
     """
     # Ejemplo de asunto/snippet: "[iberi22/domus-otec] Run failed: CI - main (c33f718)"
-    
+
     # Regex para capturar repo y workflow
     # Patrón: [owner/repo] Run failed: Workflow Name - branch (commit)
     match = re.search(r'\[([\w-]+/[\w-]+)\] Run failed: (.+?) -', snippet)
-    
+
     if match:
         repo = match.group(1)
         workflow = match.group(2)
@@ -106,7 +106,7 @@ def parse_github_email(snippet, body):
             'workflow': workflow,
             'snippet': snippet
         }
-    
+
     return None
 
 def process_messages(service):
@@ -116,7 +116,7 @@ def process_messages(service):
         # query = 'from:notifications@github.com is:unread subject:"Run failed"'
         # Para pruebas, podemos ser más amplios o específicos
         query = 'from:notifications@github.com is:unread "Run failed"'
-        
+
         results = service.users().messages().list(userId='me', q=query).execute()
         messages = results.get('messages', [])
 
@@ -128,21 +128,21 @@ def process_messages(service):
 
         for message in messages:
             msg = service.users().messages().get(userId='me', id=message['id']).execute()
-            
+
             snippet = msg.get('snippet', '')
             payload = msg.get('payload', {})
             headers = payload.get('headers', [])
-            
+
             subject = next((h['value'] for h in headers if h['name'] == 'Subject'), 'Sin Asunto')
             logging.info(f"Procesando correo: {subject}")
 
             # Analizar contenido
             issue_data = parse_github_email(subject + " " + snippet, "")
-            
+
             if issue_data:
                 # Verificar si el workflow ya está pasando
                 is_fixed = check_workflow_status(issue_data['repo'], issue_data['workflow'])
-                
+
                 if is_fixed:
                     logging.info(f"✅ Workflow {issue_data['workflow']} ya está PASANDO. Archivando correo...")
                     archive_message(service, message['id'])
@@ -151,10 +151,10 @@ def process_messages(service):
                     # 1. Verificar logs con `gh run view ...`
                     # 2. Intentar rerun o crear issue
                     logging.info(f"⚠️ Acción requerida para {issue_data['repo']}")
-                    
+
                     # TODO: Implementar llamada a GH CLI
                     # subprocess.run(["gh", "run", "rerun", ...])
-                    
+
                     # Por ahora, marcar como leído para no procesarlo múltiples veces
                     mark_as_read(service, message['id'])
             else:
@@ -189,12 +189,12 @@ def check_workflow_status(repo, workflow_name):
     try:
         # Ejecutar gh CLI para verificar el último run
         result = subprocess.run(
-            ['gh', 'run', 'list', '--repo', repo, '--workflow', workflow_name, 
+            ['gh', 'run', 'list', '--repo', repo, '--workflow', workflow_name,
              '--limit', '1', '--json', 'conclusion'],
             capture_output=True,
             text=True
         )
-        
+
         if result.returncode == 0:
             import json
             runs = json.loads(result.stdout)
@@ -207,17 +207,17 @@ def check_workflow_status(repo, workflow_name):
 
 if __name__ == '__main__':
     import argparse
-    
+
     parser = argparse.ArgumentParser(description='GitHub Email Handler Agent')
     parser.add_argument('--max-emails', type=int, default=50, help='Maximum emails to process')
     parser.add_argument('--dry-run', action='store_true', help='Dry run mode (no modifications)')
     args = parser.parse_args()
-    
+
     logging.info(f"Iniciando Email Handler Agent (max: {args.max_emails} emails)...")
-    
+
     if args.dry_run:
         logging.info("🔍 DRY RUN MODE - No se modificarán correos")
-    
+
     service = get_gmail_service()
     if service:
         process_messages(service)

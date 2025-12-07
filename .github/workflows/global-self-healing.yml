@@ -1,36 +1,130 @@
 name: Global Self-Healing Monitor
 
 on:
+  # PRIMARY: React to workflow failures (FREE - only runs when needed)
+  workflow_run:
+    workflows: ["*"]
+    types: [completed]
+  
+  # SECONDARY: Scheduled check (only for public repos or main repo)
   schedule:
-    - cron: '*/30 * * * *'
+    # Aggressive: Every 30 min (public repos)
+    - cron: "*/30 * * * *"
+    # Moderate: Every 6 hours (private main repo)
+    - cron: "0 */6 * * *"
+  
   workflow_dispatch:
+    inputs:
+      force_mode:
+        description: 'Force schedule mode (aggressive/moderate/conservative)'
+        required: false
+        type: choice
+        options:
+          - auto
+          - aggressive
+          - moderate
+          - conservative
+        default: auto
 
 permissions:
   contents: read
-  issues: write  # Required to create/update issues
-  pull-requests: read  # Required to read PR status
+  issues: write
+  pull-requests: read
 
 jobs:
-  monitor-repos:
+  # ═══════════════════════════════════════════════════════════════════
+  # JOB 0: Detect Repository Configuration
+  # ═══════════════════════════════════════════════════════════════════
+  config:
+    name: 🔧 Detect Config
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      should_run: ${{ steps.decide.outputs.should_run }}
+      schedule_mode: ${{ steps.detect.outputs.schedule_mode }}
+      repo_list: ${{ steps.decide.outputs.repo_list }}
     
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Detect Repository Type
+        id: detect
+        shell: pwsh
+        run: |
+          ./scripts/detect-repo-config.ps1
+      
+      - name: Decide Execution
+        id: decide
+        shell: pwsh
+        run: |
+          $eventName = "${{ github.event_name }}"
+          $scheduleMode = "${{ steps.detect.outputs.schedule_mode }}"
+          $forceMode = "${{ inputs.force_mode || 'auto' }}"
+          
+          # Override if force mode specified
+          if ($forceMode -ne "auto") {
+            $scheduleMode = $forceMode
+          }
+          
+          $shouldRun = "false"
+          $repoList = "[]"
+          
+          # Always run on workflow_run events (FREE)
+          if ($eventName -eq "workflow_run") {
+            $shouldRun = "true"
+            $repoList = '["${{ github.repository }}"]'
+            Write-Host "✅ Running due to workflow_run event (FREE)"
+          }
+          # Run scheduled jobs based on repo type
+          elseif ($eventName -eq "schedule") {
+            switch ($scheduleMode) {
+              "aggressive" {
+                # Public repos: Monitor all repos
+                $shouldRun = "true"
+                $repoList = @"
+          ["iberi22/Git-Core-Protocol","iberi22/software-factory","iberi22/domus-otec","iberi22/less-colegio","iberi22/synapse-protocol","iberi22/gara-g","iberi22/AI-Chef","iberi22/contratafacil","iberi22/bestof-opensorce","iberi22/obs-studio-agent","iberi22/pocket_cerebro"]
+          "@
+                Write-Host "✅ Aggressive mode: Monitoring 11 repos"
+              }
+              "moderate" {
+                # Main private repo: Only monitor self
+                $shouldRun = "true"
+                $repoList = '["${{ github.repository }}"]'
+                Write-Host "⚠️ Moderate mode: Monitoring only this repo"
+              }
+              "conservative" {
+                # Other private repos: Skip scheduled runs
+                $shouldRun = "false"
+                Write-Host "🔒 Conservative mode: Skipping scheduled run"
+              }
+            }
+          }
+          # Manual dispatch: Always run
+          elseif ($eventName -eq "workflow_dispatch") {
+            $shouldRun = "true"
+            $repoList = '["${{ github.repository }}"]'
+            Write-Host "🎯 Manual dispatch: Running"
+          }
+          
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=$shouldRun"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "repo_list=$repoList"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # JOB 1: Monitor Repositories
+  # ═══════════════════════════════════════════════════════════════════
+  monitor-repos:
+    name: 🔍 Monitor
+    needs: config
+    if: needs.config.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     strategy:
       matrix:
-        repo:
-          - iberi22/Git-Core-Protocol
-          - iberi22/software-factory
-          - iberi22/domus-otec
-          - iberi22/less-colegio
-          - iberi22/synapse-protocol
-          - iberi22/gara-g
-          - iberi22/AI-Chef
-          - iberi22/contratafacil
-          - iberi22/bestof-opensorce
-          - iberi22/obs-studio-agent
-          - iberi22/pocket_cerebro
+        repo: ${{ fromJson(needs.config.outputs.repo_list) }}
       fail-fast: false
       max-parallel: 3
-    
+
     steps:
       - name: Check Failures
         id: check
@@ -38,14 +132,14 @@ jobs:
           GH_TOKEN: ${{ secrets.MULTI_REPO_TOKEN || github.token }}
         run: |
           echo "Checking ${{ matrix.repo }} for failures..."
-          
+
           # Check the last 10 runs to find any recent failures
           RUN_ID=$(gh run list \
             --repo ${{ matrix.repo }} \
             --limit 10 \
             --json databaseId,conclusion \
             --jq 'map(select(.conclusion == "failure")) | .[0].databaseId' 2>/dev/null || echo "")
-          
+
           if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
             echo "No failures found in last 10 runs"
             echo "has_failure=false" >> $GITHUB_OUTPUT
@@ -54,7 +148,7 @@ jobs:
             echo "has_failure=true" >> $GITHUB_OUTPUT
             echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Create Issue
         if: steps.check.outputs.has_failure == 'true'
         env:
@@ -62,12 +156,12 @@ jobs:
         run: |
           RUN_ID="${{ steps.check.outputs.run_id }}"
           REPO="${{ matrix.repo }}"
-          
+
           WORKFLOW_NAME=$(gh run view $RUN_ID \
             --repo $REPO \
             --json name \
             --jq '.name' 2>/dev/null || echo "Unknown Workflow")
-          
+
           EXISTING=$(gh issue list \
             --repo $REPO \
             --label "bug" \
@@ -75,7 +169,7 @@ jobs:
             --state open \
             --json number \
             --jq '.[0].number' 2>/dev/null || echo "")
-          
+
           if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
             echo "Updating issue #$EXISTING"
             gh issue comment $EXISTING --repo $REPO --body "New failure: https://github.com/$REPO/actions/runs/$RUN_ID"

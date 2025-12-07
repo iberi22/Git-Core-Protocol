@@ -158,7 +158,7 @@ jobs:
             --body "Updates from Git-Core Protocol v${VERSION}. Type: ${UPDATE_TYPE}. See: https://github.com/iberi22/Git-Core-Protocol/releases/tag/v${VERSION}" \
             --base main \
             --head ${{ steps.package.outputs.branch }} || echo "PR may already exist"
-          
+
           # Try to add labels (ignore if they don't exist)
           PR_NUMBER=$(gh pr list --head ${{ steps.package.outputs.branch }} --json number --jq '.[0].number' 2>/dev/null || echo "")
           if [ -n "$PR_NUMBER" ]; then

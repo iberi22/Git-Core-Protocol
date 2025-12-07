@@ -65,6 +65,7 @@ jobs:
         contains(github.event.pull_request.labels.*.name, 'ready-to-adopt')))
 
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     outputs:
       pr_number: ${{ steps.create-pr.outputs.pull-request-number }}
       pr_url: ${{ steps.create-pr.outputs.pull-request-url }}

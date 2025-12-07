@@ -1,7 +1,7 @@
 ---
 name: protocol-claude
 description: AI assistant optimized for Claude models following Git-Core Protocol
-model: Claude Sonnet 4
+model: Claude Sonnet 4.5
 tools:
   ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent']
 handoffs:

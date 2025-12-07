@@ -24,9 +24,9 @@ complexity: high
 
 ## 📋 Problem Report
 
-**Date:** 2025-12-07  
-**Reporter:** User  
-**Affected Workflow:** `global-self-healing.yml`  
+**Date:** 2025-12-07
+**Reporter:** User
+**Affected Workflow:** `global-self-healing.yml`
 **Repositories:** software-factory, synapse-protocol, and 9 others
 
 ### Symptoms
@@ -43,27 +43,35 @@ complexity: high
 ### Investigation Steps
 
 1. **Checked workflow status**
+
    ```bash
    gh run list --workflow="Global Self-Healing Monitor" --limit 5
    ```
+
    Result: Workflow was running but marked as "failure" on push events
 
 2. **Examined execution logs**
+
    ```bash
    gh run view 20000677717
    ```
+
    Result: "This run likely failed because of a workflow file issue"
 
 3. **Analyzed failure patterns**
+
    ```bash
    gh run list --repo iberi22/software-factory --limit 10
    ```
+
    Result: Multiple failures in Sync Issues, Codex Review, Dependency Quarantine
 
 4. **Tested detection logic**
+
    ```bash
    gh run view 20000953409 --log
    ```
+
    Result: Found "No failures found" for software-factory despite actual failures
 
 ### Three-Tiered Problem
@@ -71,12 +79,14 @@ complexity: high
 #### Problem 1: Missing Permissions ✅ FIXED
 
 **Issue:**
+
 ```yaml
 permissions:
   contents: read  # ❌ Insufficient
 ```
 
 **Fix:**
+
 ```yaml
 permissions:
   contents: read
@@ -91,6 +101,7 @@ permissions:
 #### Problem 2: Limited Detection Scope ✅ FIXED
 
 **Issue:**
+
 ```bash
 # Only checked the most recent run
 gh run list --limit 1
@@ -99,6 +110,7 @@ gh run list --limit 1
 **Problem:** If the most recent run passed, earlier failures were missed.
 
 **Fix:**
+
 ```bash
 # Check last 10 runs to find recent failures
 gh run list --limit 10 --json databaseId,conclusion \
@@ -112,6 +124,7 @@ gh run list --limit 10 --json databaseId,conclusion \
 #### Problem 3: Cross-Repository Authentication ❌ NEEDS SETUP
 
 **Issue:**
+
 ```bash
 # software-factory failures
 STATUS  TITLE                          CONCLUSION
@@ -123,6 +136,7 @@ failure Dependency Quarantine          failure
 ```
 
 **Log Evidence:**
+
 ```
 monitor-repos (iberi22/synapse-protocol) Found failure: Run ID 20000337162
 monitor-repos (iberi22/synapse-protocol) Creating new issue
@@ -130,11 +144,13 @@ monitor-repos (iberi22/synapse-protocol) Could not create issue ❌
 ```
 
 **Root Cause:**
+
 - `GITHUB_TOKEN` has permissions only in the **current repository**
 - Cannot create issues in **other repositories** (software-factory, synapse-protocol)
 - This is a GitHub Actions security limitation
 
 **Fix:**
+
 ```yaml
 env:
   GH_TOKEN: ${{ secrets.MULTI_REPO_TOKEN || github.token }}
@@ -148,7 +164,7 @@ env:
 
 ### Step 1: Create Personal Access Token (PAT)
 
-1. Go to: https://github.com/settings/tokens
+1. Go to: <https://github.com/settings/tokens>
 2. Click **"Generate new token (classic)"**
 3. Name it: `Multi-Repo Issue Creator`
 4. Select scopes:
@@ -157,7 +173,7 @@ env:
 
 ### Step 2: Add Token as Repository Secret
 
-1. Go to: https://github.com/iberi22/Git-Core-Protocol/settings/secrets/actions
+1. Go to: <https://github.com/iberi22/Git-Core-Protocol/settings/secrets/actions>
 2. Click **"New repository secret"**
 3. Name: `MULTI_REPO_TOKEN`
 4. Value: Paste your PAT
@@ -198,11 +214,13 @@ When failures are detected:
 
 1. **Check existing issues** to avoid duplicates
 2. **Create new issue** if none exists:
+
    ```
    Title: CI Failure: Sync Issues from Files
    Body: Workflow failed. Run: https://github.com/iberi22/software-factory/actions/runs/XXXXX
    Labels: bug, ai-plan
    ```
+
 3. **Comment on existing issue** if already open
 
 ---
@@ -256,6 +274,7 @@ When failures are detected:
 **Problem:** PATs expire (max 1 year for classic, no expiry for fine-grained)
 
 **Solution:**
+
 1. Use **fine-grained PAT** with no expiration
 2. Set calendar reminder 11 months from now
 3. Or use GitHub App instead (more complex but permanent)
@@ -265,6 +284,7 @@ When failures are detected:
 **Problem:** 11 repos × 10 runs each = 110+ API calls every 30 min
 
 **Solution:**
+
 ```yaml
 strategy:
   max-parallel: 3  # Already set - limits concurrent checks
@@ -275,6 +295,7 @@ strategy:
 **Problem:** Workflow marked as "failure" but was expected (e.g., manual cancellation)
 
 **Solution:**
+
 - Add filter for `cancelled` conclusion
 - Only report `failure` and `timed_out`
 
@@ -283,15 +304,18 @@ strategy:
 ## 📝 Lessons Learned
 
 ### 1. Token Scoping Matters
+
 - `GITHUB_TOKEN` is repository-scoped by design
 - Cross-repo operations need PAT or GitHub App
 
 ### 2. Detection Logic Evolution
+
 - Started with `--limit 1` (too narrow)
 - Upgraded to `--limit 10` (better coverage)
 - Future: Could track "last checked" timestamp
 
 ### 3. Fail-Safe Design
+
 - Uses `|| github.token` fallback
 - Won't break if secret is missing
 - Degrades gracefully to local-only monitoring
@@ -317,5 +341,5 @@ strategy:
 
 ---
 
-**Status:** RESOLVED (pending user setup of PAT)  
+**Status:** RESOLVED (pending user setup of PAT)
 **Next Steps:** User must create and configure `MULTI_REPO_TOKEN` secret

@@ -1,6 +1,7 @@
 name: Self-Healing Workflow
 
 on:
+  # PRIMARY: React to workflow failures (event-based - FREE)
   workflow_run:
     workflows: ["*"]
     types:
@@ -14,6 +15,7 @@ permissions:
 jobs:
   self-heal:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
 
     steps:

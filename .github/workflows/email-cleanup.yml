@@ -2,8 +2,13 @@ name: 📧 Email Notification Cleanup
 
 on:
   schedule:
-    # Ejecutar cada hora
+    # Aggressive: Every hour (public repos only)
     - cron: "0 * * * *"
+    # Moderate: Every 6 hours (private main repo)
+    - cron: "0 */6 * * *"
+    # Conservative: Once daily (fallback)
+    - cron: "0 9 * * *"
+  
   workflow_dispatch:
     inputs:
       max_emails:
@@ -16,8 +21,78 @@ permissions:
   contents: read
 
 jobs:
-  cleanup-notifications:
+  # ═══════════════════════════════════════════════════════════════════
+  # JOB 0: Check if should run
+  # ═══════════════════════════════════════════════════════════════════
+  check-config:
+    name: 🔧 Check Config
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      should_run: ${{ steps.decide.outputs.should_run }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Detect Repository Type
+        id: detect
+        shell: pwsh
+        run: |
+          ./scripts/detect-repo-config.ps1
+      
+      - name: Decide if should run
+        id: decide
+        shell: pwsh
+        run: |
+          $scheduleMode = "${{ steps.detect.outputs.schedule_mode }}"
+          $eventName = "${{ github.event_name }}"
+          $cronMinute = "${{ github.event.schedule }}"
+          
+          $shouldRun = "false"
+          
+          # Manual dispatch: Always run
+          if ($eventName -eq "workflow_dispatch") {
+            $shouldRun = "true"
+            Write-Host "✅ Manual dispatch: Running"
+          }
+          # Scheduled: Check mode
+          elseif ($eventName -eq "schedule") {
+            switch ($scheduleMode) {
+              "aggressive" {
+                # Public repos: Run every hour
+                if ($cronMinute -match "0 \* \* \* \*") {
+                  $shouldRun = "true"
+                  Write-Host "✅ Aggressive mode: Running (hourly)"
+                }
+              }
+              "moderate" {
+                # Main private repo: Run every 6 hours
+                if ($cronMinute -match "0 \*/6 \* \* \*") {
+                  $shouldRun = "true"
+                  Write-Host "⚠️ Moderate mode: Running (6-hourly)"
+                }
+              }
+              "conservative" {
+                # Other private repos: Run daily only
+                if ($cronMinute -match "0 9 \* \* \*") {
+                  $shouldRun = "true"
+                  Write-Host "🔒 Conservative mode: Running (daily)"
+                }
+              }
+            }
+          }
+          
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=$shouldRun"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # JOB 1: Cleanup Email Notifications
+  # ═══════════════════════════════════════════════════════════════════
+  cleanup-notifications:
+    name: 📧 Process Emails
+    needs: check-config
+    if: needs.check-config.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: 🔍 Checkout

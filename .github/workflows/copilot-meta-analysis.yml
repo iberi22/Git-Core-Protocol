@@ -2,20 +2,21 @@ name: "🧠 Copilot Meta-Analysis"
 
 # Triggers when AI bots complete their reviews
 # Assigns Copilot for final meta-analysis using Claude Sonnet 4.5
-# NOTE: Schedule reduced to hourly to comply with GitHub Actions usage policies
+# Schedule DISABLED by default - uses event-based triggers for efficiency
 
 env:
   PROTOCOL_VERSION: "1.3.0"
 
 on:
-  # React to PR comments (bot reviews)
+  # PRIMARY: React to PR comments (bot reviews) - FREE
   issue_comment:
     types: [created]
 
-  # Scheduled check for pending analyses (hourly to avoid rate limits)
-  # Using minute 17 to avoid hourly peak congestion
+  # SECONDARY: Scheduled check (ONLY for public repos to avoid wasting minutes)
   schedule:
-    - cron: "17 * * * *" # Every hour at minute 17
+    # Only runs on public repos or when explicitly needed
+    # Using minute 17 to avoid hourly peak congestion
+    - cron: "17 */6 * * *" # Every 6 hours (reduced from hourly)
 
   # Manual trigger
   workflow_dispatch:
@@ -32,16 +33,54 @@ permissions:
 
 jobs:
   # ═══════════════════════════════════════════════════════════════════
+  # JOB 0: Check if should run scheduled job
+  # ═══════════════════════════════════════════════════════════════════
+  check-schedule:
+    name: "🔧 Check Schedule"
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    if: github.event_name == 'schedule'
+    outputs:
+      should_run: ${{ steps.decide.outputs.should_run }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Detect Repository Type
+        id: detect
+        shell: pwsh
+        run: |
+          ./scripts/detect-repo-config.ps1
+      
+      - name: Decide if should run
+        id: decide
+        shell: pwsh
+        run: |
+          $enableSchedules = "${{ steps.detect.outputs.enable_schedules }}"
+          
+          if ($enableSchedules -eq "true") {
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=true"
+            Write-Host "✅ Scheduled job enabled for this repository"
+          } else {
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=false"
+            Write-Host "🔒 Scheduled job disabled (private repo - use event-based triggers)"
+          }
+
+  # ═══════════════════════════════════════════════════════════════════
   # JOB 1: Detect Bot Reviews Completion
   # ═══════════════════════════════════════════════════════════════════
   detect-completion:
     name: "🔍 Detect Bot Completion"
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [check-schedule]
     if: |
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'schedule' ||
-      (github.event_name == 'issue_comment' &&
-       contains(fromJson('["coderabbitai", "gemini-code-assist", "github-actions"]'), github.event.comment.user.login))
+      always() &&
+      (needs.check-schedule.result == 'skipped' || needs.check-schedule.outputs.should_run == 'true') &&
+      (github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'schedule' ||
+       (github.event_name == 'issue_comment' &&
+        contains(fromJson('["coderabbitai", "gemini-code-assist", "github-actions"]'), github.event.comment.user.login)))
     outputs:
       ready_prs: ${{ steps.check.outputs.ready_prs }}
       has_ready: ${{ steps.check.outputs.has_ready }}

@@ -40,6 +40,7 @@ jobs:
   analyze:
     name: 📊 Analyze Project State
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       current_phase: ${{ steps.roadmap.outputs.current_phase }}
       incomplete_tasks: ${{ steps.status.outputs.incomplete }}
@@ -100,6 +101,7 @@ jobs:
   plan:
     name: 📝 Generate Issues
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: analyze
     if: needs.analyze.outputs.open_issues < 10  # Don't overload backlog
 

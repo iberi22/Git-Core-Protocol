@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  issues: write  # Required to create/update issues
+  pull-requests: read  # Required to read PR status
 
 jobs:
   monitor-repos:

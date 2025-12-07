@@ -444,7 +444,39 @@ complexity: moderate
 
 **Why?** AI agents can read metadata without parsing entire documents. See `docs/agent-docs/README.md` for full spec.
 
-### 9. Extended Commit Messages
+### 9. Non-Blocking Execution (CRITICAL)
+
+**ALWAYS use background execution for long-running commands to avoid blocking chat:**
+
+| Command Type | When | Pattern |
+|--------------|------|---------|
+| **Tests** | `npm test`, `pytest`, `cargo test` | Redirect to file, show summary |
+| **Builds** | `npm build`, `cargo build` | Background + status only |
+| **Git ops** | `git log`, `git diff` (>10 lines) | File + count summary |
+| **CI workflows** | Any validation script | Always background |
+
+**✅ RIGHT - Non-blocking:**
+```powershell
+npm test > test-results.txt 2>&1
+$passed = (Select-String "PASSED" test-results.txt).Count
+Write-Host "✅ Tests: $passed passed. Details: test-results.txt"
+```
+
+**❌ WRONG - Blocks chat:**
+```powershell
+$output = npm test
+Write-Host $output  # Shows 200+ lines, blocks user
+```
+
+**Summary format (max 3 lines in chat):**
+```
+✅ [Task] complete: [metric]
+📄 Full output: [filename]
+```
+
+See: `docs/agent-docs/PROTOCOL_NON_BLOCKING_EXECUTION.md`
+
+### 10. Extended Commit Messages
 
 Use AI-Context section for complex changes:
 

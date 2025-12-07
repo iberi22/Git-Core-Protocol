@@ -600,6 +600,37 @@ AI-Context: dependency | Selected library X over Y due to bundle size
 
 ---
 
+## 🚀 Non-Blocking Execution
+
+**CRITICAL: Prevent blocking chat with long-running commands**
+
+### When to Use Background Execution
+
+| Situation | Action |
+|-----------|--------|
+| Running tests | Redirect to file: `npm test > results.txt 2>&1` |
+| Building project | Background job + status file |
+| Git operations (>10 lines) | Pipe to file, show count only |
+| CI simulations | Always background |
+| Any command >20 lines output | File + 2-line summary |
+
+### Pattern
+
+```powershell
+# Execute without blocking
+command > output.txt 2>&1
+
+# Show concise summary (max 3 lines)
+Write-Host "✅ Task complete: [metric]"
+Write-Host "📄 Details: output.txt"
+```
+
+**NEVER stream full output to chat** - It blocks the user from continuing work.
+
+See: `docs/agent-docs/PROTOCOL_NON_BLOCKING_EXECUTION.md`
+
+---
+
 ## ⚛️ Commits Atómicos (OBLIGATORIO)
 
 **UN commit = UN cambio lógico. NUNCA mezclar concerns.**

@@ -27,11 +27,13 @@ Sistema inteligente que **detecta automáticamente** si el repositorio es públi
 ### 🎯 Problema Resuelto
 
 **Antes:**
+
 - Workflows ejecutándose con alta frecuencia en repos privados
 - Consumo estimado: **18,000 min/mes** (9x el límite Free)
 - Riesgo de agotar cuota en pocos días
 
 **Después:**
+
 - Detección automática de tipo de repo
 - Ajuste dinámico de frecuencias
 - Consumo estimado: **600 min/mes** en privados ✅
@@ -90,6 +92,7 @@ Sistema inteligente que **detecta automáticamente** si el repositorio es públi
 | `scripts/detect-repo-config.sh` | Detector para Linux/macOS/Bash |
 
 **Output:**
+
 ```yaml
 is_public: true/false
 is_main_repo: true/false
@@ -104,11 +107,12 @@ schedule_mode: aggressive/moderate/conservative
 | `.github/workflows/_repo-config.yml` | Workflow reutilizable para detectar config |
 
 **Uso:**
+
 ```yaml
 jobs:
   config:
     uses: ./.github/workflows/_repo-config.yml
-  
+
   my-job:
     needs: config
     if: needs.config.outputs.enable_schedules == 'true'
@@ -133,6 +137,7 @@ jobs:
 **Cuándo:** `visibility: PUBLIC`
 
 **Configuración:**
+
 ```yaml
 schedule:
   - cron: "*/30 * * * *"  # Cada 30 minutos
@@ -144,11 +149,13 @@ strategy:
 ```
 
 **Consumo:**
+
 - ~600 min/día
 - ~18,000 min/mes
 - ✅ **ILIMITADO** (repos públicos)
 
 **Ventajas:**
+
 - Monitoreo en tiempo casi real
 - Multi-repo support
 - Sin restricciones
@@ -160,6 +167,7 @@ strategy:
 **Cuándo:** `visibility: PRIVATE` AND `is_main_repo: true`
 
 **Configuración:**
+
 ```yaml
 schedule:
   - cron: "0 */6 * * *"   # Cada 6 horas
@@ -171,11 +179,13 @@ strategy:
 ```
 
 **Consumo:**
+
 - ~100 min/día
 - ~3,000 min/mes
 - ⚠️ Requiere GitHub Pro ($4/mes)
 
 **Ventajas:**
+
 - Balance entre monitoreo y costo
 - Funcionalidad core mantenida
 - Predecible
@@ -187,6 +197,7 @@ strategy:
 **Cuándo:** `visibility: PRIVATE` AND `is_main_repo: false`
 
 **Configuración:**
+
 ```yaml
 on:
   # NO schedules
@@ -197,11 +208,13 @@ on:
 ```
 
 **Consumo:**
+
 - ~20 min/día
 - ~600 min/mes
 - ✅ Dentro del límite Free (2,000 min/mes)
 
 **Ventajas:**
+
 - Costo $0
 - Funcionalidad event-based completa
 - Eficiente
@@ -237,6 +250,7 @@ cp .github/workflows/_repo-config.yml tu-proyecto/.github/workflows/
 ### Ejemplo: Agregar Detección a un Workflow
 
 **ANTES:**
+
 ```yaml
 name: My Workflow
 
@@ -253,6 +267,7 @@ jobs:
 ```
 
 **DESPUÉS:**
+
 ```yaml
 name: My Workflow
 
@@ -269,30 +284,30 @@ jobs:
     timeout-minutes: 2
     outputs:
       should_run: ${{ steps.decide.outputs.should_run }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Detect Repository Type
         id: detect
         shell: pwsh
         run: ./scripts/detect-repo-config.ps1
-      
+
       - name: Decide if should run
         id: decide
         shell: pwsh
         run: |
           $scheduleMode = "${{ steps.detect.outputs.schedule_mode }}"
           $shouldRun = "false"
-          
+
           if ("${{ github.event_name }}" -eq "workflow_dispatch") {
             $shouldRun = "true"
           } elseif ($scheduleMode -in @("aggressive", "moderate")) {
             $shouldRun = "true"
           }
-          
+
           Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=$shouldRun"
-  
+
   my-job:
     name: 🚀 My Job
     needs: config
@@ -319,6 +334,7 @@ jobs:
 ```
 
 **Output esperado:**
+
 ```
 🔍 Repository Configuration Detection
 
@@ -414,6 +430,7 @@ on:
 **Causa:** Repo privado en modo conservative.
 
 **Solución:**
+
 ```bash
 # Verificar configuración
 ./scripts/detect-repo-config.ps1
@@ -428,6 +445,7 @@ on:
 **Causa:** Repo privado en modo aggressive.
 
 **Solución:** El sistema ya ajusta automáticamente. Si persiste:
+
 ```bash
 # 1. Verificar que los scripts están actualizados
 git pull origin main
@@ -441,6 +459,7 @@ gh workflow run global-self-healing.yml
 **Causa:** Scripts no tienen permisos de ejecución.
 
 **Solución:**
+
 ```bash
 chmod +x scripts/detect-repo-config.sh
 git add scripts/detect-repo-config.sh

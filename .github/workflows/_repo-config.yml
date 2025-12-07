@@ -8,16 +8,16 @@ on:
   workflow_call:
     outputs:
       is_public:
-        description: 'Whether the repository is public'
+        description: "Whether the repository is public"
         value: ${{ jobs.detect.outputs.is_public }}
       enable_schedules:
-        description: 'Whether to enable scheduled workflows'
+        description: "Whether to enable scheduled workflows"
         value: ${{ jobs.detect.outputs.enable_schedules }}
       schedule_mode:
-        description: 'Schedule intensity: aggressive, moderate, conservative'
+        description: "Schedule intensity: aggressive, moderate, conservative"
         value: ${{ jobs.detect.outputs.schedule_mode }}
       is_main_repo:
-        description: 'Whether this is the main protocol repository'
+        description: "Whether this is the main protocol repository"
         value: ${{ jobs.detect.outputs.is_main_repo }}
 
 permissions:
@@ -32,7 +32,7 @@ jobs:
       enable_schedules: ${{ steps.config.outputs.enable_schedules }}
       schedule_mode: ${{ steps.config.outputs.schedule_mode }}
       is_main_repo: ${{ steps.config.outputs.is_main_repo }}
-    
+
     steps:
       - name: Detect Repository Type
         id: config
@@ -40,18 +40,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="${{ github.repository }}"
-          
+
           # Detect if public or private
           VISIBILITY=$(gh repo view "$REPO" --json visibility --jq '.visibility' 2>/dev/null || echo "PRIVATE")
-          
+
           IS_PUBLIC="false"
           if [ "$VISIBILITY" = "PUBLIC" ] || [ "$VISIBILITY" = "public" ]; then
             IS_PUBLIC="true"
           fi
-          
+
           echo "is_public=$IS_PUBLIC" >> $GITHUB_OUTPUT
           echo "📊 Repository visibility: $VISIBILITY (is_public=$IS_PUBLIC)"
-          
+
           # Detect if this is the main protocol repository
           IS_MAIN="false"
           if [[ "$REPO" == *"Git-Core-Protocol"* ]] || [[ "$REPO" == *"git-core"* ]]; then
@@ -59,11 +59,11 @@ jobs:
           fi
           echo "is_main_repo=$IS_MAIN" >> $GITHUB_OUTPUT
           echo "🏠 Is main repository: $IS_MAIN"
-          
+
           # Determine schedule mode based on repository type
           SCHEDULE_MODE="conservative"
           ENABLE_SCHEDULES="false"
-          
+
           if [ "$IS_PUBLIC" = "true" ]; then
             # Public repos: Unlimited Actions minutes
             SCHEDULE_MODE="aggressive"
@@ -80,10 +80,10 @@ jobs:
             ENABLE_SCHEDULES="false"
             echo "🔒 PRIVATE repo: Conservative mode (event-based triggers only)"
           fi
-          
+
           echo "enable_schedules=$ENABLE_SCHEDULES" >> $GITHUB_OUTPUT
           echo "schedule_mode=$SCHEDULE_MODE" >> $GITHUB_OUTPUT
-          
+
           # Summary
           echo "## 🔧 Repository Configuration" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

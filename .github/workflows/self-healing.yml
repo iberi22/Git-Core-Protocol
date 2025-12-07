@@ -29,7 +29,7 @@ jobs:
         run: |
           RUN_ID="${{ github.event.workflow_run.id }}"
           WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
-          
+
           echo "workflow_name=$WORKFLOW_NAME" >> $GITHUB_OUTPUT
           echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
           echo "run_url=https://github.com/${{ github.repository }}/actions/runs/$RUN_ID" >> $GITHUB_OUTPUT
@@ -40,9 +40,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           RUN_ID="${{ steps.info.outputs.run_id }}"
-          
+
           LOGS=$(gh run view $RUN_ID --log 2>&1 || echo "")
-          
+
           if echo "$LOGS" | grep -qiE "ETIMEDOUT|ECONNRESET|429|rate limit"; then
             echo "error_type=transient" >> $GITHUB_OUTPUT
           elif echo "$LOGS" | grep -qiE "npm ERR|yarn error|pip.*failed"; then
@@ -71,14 +71,14 @@ jobs:
           WORKFLOW_NAME="${{ steps.info.outputs.workflow_name }}"
           ERROR_TYPE="${{ steps.classify.outputs.error_type }}"
           RUN_URL="${{ steps.info.outputs.run_url }}"
-          
+
           EXISTING=$(gh issue list \
             --label "bug" \
             --search "in:title $WORKFLOW_NAME" \
             --state open \
             --json number \
             --jq '.[0].number' 2>/dev/null || echo "")
-          
+
           if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
             echo "Updating issue #$EXISTING"
             gh issue comment $EXISTING --body "New failure: $RUN_URL (Type: $ERROR_TYPE)"

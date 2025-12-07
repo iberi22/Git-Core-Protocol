@@ -5,18 +5,18 @@ on:
   workflow_run:
     workflows: ["*"]
     types: [completed]
-  
+
   # SECONDARY: Scheduled check (only for public repos or main repo)
   schedule:
     # Aggressive: Every 30 min (public repos)
     - cron: "*/30 * * * *"
     # Moderate: Every 6 hours (private main repo)
     - cron: "0 */6 * * *"
-  
+
   workflow_dispatch:
     inputs:
       force_mode:
-        description: 'Force schedule mode (aggressive/moderate/conservative)'
+        description: "Force schedule mode (aggressive/moderate/conservative)"
         required: false
         type: choice
         options:
@@ -43,16 +43,16 @@ jobs:
       should_run: ${{ steps.decide.outputs.should_run }}
       schedule_mode: ${{ steps.detect.outputs.schedule_mode }}
       repo_list: ${{ steps.decide.outputs.repo_list }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Detect Repository Type
         id: detect
         shell: pwsh
         run: |
           ./scripts/detect-repo-config.ps1
-      
+
       - name: Decide Execution
         id: decide
         shell: pwsh
@@ -60,15 +60,15 @@ jobs:
           $eventName = "${{ github.event_name }}"
           $scheduleMode = "${{ steps.detect.outputs.schedule_mode }}"
           $forceMode = "${{ inputs.force_mode || 'auto' }}"
-          
+
           # Override if force mode specified
           if ($forceMode -ne "auto") {
             $scheduleMode = $forceMode
           }
-          
+
           $shouldRun = "false"
           $repoList = "[]"
-          
+
           # Always run on workflow_run events (FREE)
           if ($eventName -eq "workflow_run") {
             $shouldRun = "true"
@@ -105,7 +105,7 @@ jobs:
             $repoList = '["${{ github.repository }}"]'
             Write-Host "🎯 Manual dispatch: Running"
           }
-          
+
           Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=$shouldRun"
           Add-Content -Path $env:GITHUB_OUTPUT -Value "repo_list=$repoList"
 

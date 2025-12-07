@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to evaluate'
+        description: "PR number to evaluate"
         required: true
         type: string
 

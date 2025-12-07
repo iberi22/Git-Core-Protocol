@@ -5,7 +5,64 @@ All notable changes to the **Git-Core Protocol** will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-12-06
+## [Unreleased]
+
+## [3.1.0] - 2025-12-07 🎯 "Adaptive Workflows"
+
+### Added
+
+- **🎯 Adaptive Workflow System**: Intelligent resource optimization for GitHub Actions
+  - `scripts/detect-repo-config.ps1` - PowerShell detector for Windows
+  - `scripts/detect-repo-config.sh` - Bash detector for Linux/macOS
+  - `.github/workflows/_repo-config.yml` - Reusable configuration workflow
+  - Automatic detection of repository visibility (public/private)
+  - Three-tier scheduling modes:
+    - **AGGRESSIVE** (public repos): Full schedules, multi-repo monitoring, unlimited
+    - **MODERATE** (private main repo): 6-hourly schedules, ~3,000 min/month
+    - **CONSERVATIVE** (other private): Event-based only, ~600 min/month
+  - Zero-configuration for users - fully automatic adaptation
+  - Cross-platform support (PowerShell + Bash)
+
+### Changed
+
+- **Optimized `global-self-healing.yml`**:
+  - Migrated primary trigger from `schedule` to `workflow_run` (FREE - only runs when needed)
+  - Added adaptive scheduling (every 30min/6h/off based on repo type)
+  - Reduced consumption from 18,000 to 600 min/month for private repos (97% savings)
+  - Smart repository list selection based on schedule mode
+
+- **Optimized `email-cleanup.yml`**:
+  - Variable frequency: hourly (aggressive) / 6-hourly (moderate) / daily (conservative)
+  - Repository type detection before execution
+  - Reduced from 120 to 5 min/day for private repos
+
+- **Optimized `copilot-meta-analysis.yml`**:
+  - Schedule reduced from hourly to 6-hourly
+  - Disabled schedules for private repos (event-based only)
+  - Added pre-flight check to skip unnecessary runs
+
+- **All workflows**:
+  - Added `timeout-minutes` to prevent hanging jobs consuming resources
+  - Repository type detection at job start
+  - Smart skip logic for private repos in conservative mode
+
+### Performance
+
+- **Public repositories**: No change (unlimited Actions minutes) ✅
+- **Private main repository**: 83% reduction (18,000 → 3,000 min/month)
+- **Other private repositories**: 97% reduction (18,000 → 600 min/month) ✅
+- Maintains 100% functionality via intelligent event-based triggers
+
+### Documentation
+
+- Added `docs/ADAPTIVE_WORKFLOWS.md` - Complete guide with:
+  - System architecture and flow diagrams
+  - Schedule mode details and comparisons
+  - Installation instructions for new and existing projects
+  - Troubleshooting guide
+  - Usage examples and best practices
+
+## [3.0.0] - 2025-12-06
 
 ### Added
 

@@ -42,22 +42,22 @@ jobs:
     if: github.event_name == 'schedule'
     outputs:
       should_run: ${{ steps.decide.outputs.should_run }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Detect Repository Type
         id: detect
         shell: pwsh
         run: |
           ./scripts/detect-repo-config.ps1
-      
+
       - name: Decide if should run
         id: decide
         shell: pwsh
         run: |
           $enableSchedules = "${{ steps.detect.outputs.enable_schedules }}"
-          
+
           if ($enableSchedules -eq "true") {
             Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=true"
             Write-Host "✅ Scheduled job enabled for this repository"

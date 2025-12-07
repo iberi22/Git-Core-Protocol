@@ -34,10 +34,10 @@ try {
     $repoInfo = gh repo view $Repository --json visibility,isPrivate,name,owner | ConvertFrom-Json
     $isPublic = -not $repoInfo.isPrivate
     $visibility = if ($isPublic) { "PUBLIC" } else { "PRIVATE" }
-    
+
     Write-Host "📊 Repository: ${Cyan}$Repository${Reset}"
     Write-Host "🔒 Visibility: ${Cyan}$visibility${Reset}"
-    
+
 } catch {
     Write-Host "${Red}❌ Error detecting repository visibility${Reset}"
     Write-Host "${Yellow}⚠️  Defaulting to PRIVATE (conservative mode)${Reset}"

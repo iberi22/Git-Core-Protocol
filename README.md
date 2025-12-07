@@ -3,21 +3,23 @@ title: "Git-Core Protocol - README"
 type: DOCUMENTATION
 id: "doc-readme"
 created: 2025-12-01
-updated: 2025-12-02
+updated: 2025-12-07
 agent: copilot
-model: claude-opus-4.5
+model: claude-sonnet-4
 requested_by: system
 summary: |
   Project overview, quick start guide, and core principles of the Git-Core Protocol.
-  Now includes model-specific agents and workflow orchestration.
-keywords: [git-core, protocol, ai-agent, template, llm, copilot, claude, gemini, grok]
-tags: ["#documentation", "#readme", "#core"]
+  Now includes adaptive workflows for resource optimization.
+keywords: [git-core, protocol, ai-agent, template, llm, copilot, claude, gemini, grok, adaptive-workflows]
+tags: ["#documentation", "#readme", "#core", "#v3.1.0"]
 project: Git-Core-Protocol
+version: 3.1.0
 ---
 
 # 🧠 Git-Core Protocol
 
 [![Use this template](https://img.shields.io/badge/Use%20this-template-blue?style=for-the-badge)](https://github.com/iberi22/Git-Core-Protocol/generate)
+[![Version](https://img.shields.io/badge/Version-3.1.0-green?style=for-the-badge)](https://github.com/iberi22/Git-Core-Protocol/releases/tag/v3.1.0)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![AI Code Review](https://img.shields.io/badge/AI%20Review-CodeRabbit%20%2B%20Gemini-purple?style=for-the-badge)](https://github.com/marketplace/coderabbit)
 
@@ -280,6 +282,51 @@ Continue your work in a new chat window **without losing context**.
 ```
 
 📖 **Full documentation:** [docs/SESSION_EXPORT.md](docs/SESSION_EXPORT.md)
+
+---
+
+## 🆕 v3.1.0 Features: Adaptive Workflows (Resource Optimization)
+
+**New in version 3.1.0**: Intelligent system that automatically detects repository type and optimizes GitHub Actions consumption.
+
+### 🎯 Adaptive Workflow System
+
+The protocol now **automatically adapts** based on whether your repository is public or private:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  DETECTOR  →  IS_PUBLIC?  →  SCHEDULE_MODE              │
+│     ↓              ↓              ↓                       │
+│  gh repo      true/false    aggressive/moderate/         │
+│  view                       conservative                 │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Three Modes:**
+
+| Mode | When | Schedules | Consumption | Cost |
+|------|------|-----------|-------------|------|
+| 🟢 **AGGRESSIVE** | Public repos | Every 30 min | ~18,000 min/month | $0 (unlimited) |
+| 🟡 **MODERATE** | Private main | Every 6 hours | ~3,000 min/month | Requires Pro |
+| 🔴 **CONSERVATIVE** | Other private | Event-based only | ~600 min/month | $0 (Free tier) |
+
+**Key Benefits:**
+- ✅ **Zero-configuration**: Automatic detection and adaptation
+- ✅ **97% savings** on private repositories
+- ✅ **100% functionality** maintained via event-based triggers
+- ✅ **Cross-platform**: PowerShell + Bash support
+
+**Usage:**
+```bash
+# Test detection locally
+./scripts/detect-repo-config.ps1  # Windows
+./scripts/detect-repo-config.sh   # Linux/macOS
+
+# Workflows automatically use the detection
+# No manual configuration needed!
+```
+
+📖 **Full documentation:** [docs/ADAPTIVE_WORKFLOWS.md](docs/ADAPTIVE_WORKFLOWS.md)
 
 ---
 

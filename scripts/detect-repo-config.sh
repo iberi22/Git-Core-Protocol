@@ -28,7 +28,7 @@ if command -v gh &> /dev/null; then
     REPO_JSON=$(gh repo view "$REPOSITORY" --json visibility,isPrivate 2>/dev/null || echo '{"isPrivate":true,"visibility":"PRIVATE"}')
     IS_PRIVATE=$(echo "$REPO_JSON" | jq -r '.isPrivate')
     VISIBILITY=$(echo "$REPO_JSON" | jq -r '.visibility')
-    
+
     if [ "$IS_PRIVATE" = "false" ]; then
         IS_PUBLIC="true"
     else

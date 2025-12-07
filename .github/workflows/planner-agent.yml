@@ -9,24 +9,24 @@ name: 🧠 Planner Agent
 on:
   # Daily planning at 6 AM UTC
   schedule:
-    - cron: '0 6 * * 1-5'  # Weekdays only
+    - cron: "0 6 * * 1-5" # Weekdays only
 
   # Manual trigger with specific objective
   workflow_dispatch:
     inputs:
       objective:
-        description: 'High-level objective to plan (optional)'
+        description: "High-level objective to plan (optional)"
         required: false
         type: string
       max_issues:
-        description: 'Maximum issues to create'
+        description: "Maximum issues to create"
         required: false
-        default: '3'
+        default: "3"
         type: string
       dry_run:
-        description: 'Preview without creating issues'
+        description: "Preview without creating issues"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
 
 permissions:
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: analyze
-    if: needs.analyze.outputs.open_issues < 10  # Don't overload backlog
+    if: needs.analyze.outputs.open_issues < 10 # Don't overload backlog
 
     steps:
       - name: 📋 Checkout

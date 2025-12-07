@@ -8,24 +8,24 @@ on:
   workflow_dispatch:
     inputs:
       strategy:
-        description: 'Distribution strategy'
+        description: "Distribution strategy"
         required: true
-        default: 'round-robin'
+        default: "round-robin"
         type: choice
         options:
-          - round-robin      # Alternate between agents
-          - copilot-only     # Send all to Copilot
-          - jules-only       # Send all to Jules
-          - random           # Random assignment
+          - round-robin # Alternate between agents
+          - copilot-only # Send all to Copilot
+          - jules-only # Send all to Jules
+          - random # Random assignment
       max_issues:
-        description: 'Maximum issues to dispatch (0 = all)'
+        description: "Maximum issues to dispatch (0 = all)"
         required: false
-        default: '5'
+        default: "5"
         type: string
       label_filter:
-        description: 'Only dispatch issues with this label'
+        description: "Only dispatch issues with this label"
         required: false
-        default: 'ai-agent'
+        default: "ai-agent"
         type: string
 
   # Auto-trigger when ai-agent label is added

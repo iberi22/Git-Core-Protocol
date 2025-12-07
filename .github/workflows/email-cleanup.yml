@@ -8,7 +8,7 @@ on:
     - cron: "0 */6 * * *"
     # Conservative: Once daily (fallback)
     - cron: "0 9 * * *"
-  
+
   workflow_dispatch:
     inputs:
       max_emails:
@@ -30,16 +30,16 @@ jobs:
     timeout-minutes: 2
     outputs:
       should_run: ${{ steps.decide.outputs.should_run }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Detect Repository Type
         id: detect
         shell: pwsh
         run: |
           ./scripts/detect-repo-config.ps1
-      
+
       - name: Decide if should run
         id: decide
         shell: pwsh
@@ -47,9 +47,9 @@ jobs:
           $scheduleMode = "${{ steps.detect.outputs.schedule_mode }}"
           $eventName = "${{ github.event_name }}"
           $cronMinute = "${{ github.event.schedule }}"
-          
+
           $shouldRun = "false"
-          
+
           # Manual dispatch: Always run
           if ($eventName -eq "workflow_dispatch") {
             $shouldRun = "true"
@@ -81,7 +81,7 @@ jobs:
               }
             }
           }
-          
+
           Add-Content -Path $env:GITHUB_OUTPUT -Value "should_run=$shouldRun"
 
   # ═══════════════════════════════════════════════════════════════════

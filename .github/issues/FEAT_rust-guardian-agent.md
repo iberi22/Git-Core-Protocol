@@ -128,9 +128,9 @@ regex = "1"
 - [x] Implementar `calculate_risk()` usando risk-map.json
 - [x] Implementar `calculate_confidence()` scoring
 - [x] Agregar CLI subcommand `guardian` a main.rs
-- [x] Escribir unit tests para cada función
-- [ ] Escribir integration tests con mock API
-- [ ] Crear benchmarks comparativos
+- [x] Escribir unit tests para cada función (4 tests - 100% pass)
+- [x] Escribir integration tests con mock API (8 tests - 100% pass)
+- [x] Crear benchmarks comparativos (5 benchmarks - <200ns vs 2-3s PowerShell)
 - [x] Actualizar workflow con fallback logic
 - [ ] Testing en staging branch
 - [ ] Documentar en README de workflow-orchestrator

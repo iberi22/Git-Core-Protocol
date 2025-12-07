@@ -35,7 +35,7 @@ jobs:
       - name: Check Failures
         id: check
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.MULTI_REPO_TOKEN || github.token }}
         run: |
           echo "Checking ${{ matrix.repo }} for failures..."
           
@@ -58,7 +58,7 @@ jobs:
       - name: Create Issue
         if: steps.check.outputs.has_failure == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.MULTI_REPO_TOKEN || github.token }}
         run: |
           RUN_ID="${{ steps.check.outputs.run_id }}"
           REPO="${{ matrix.repo }}"

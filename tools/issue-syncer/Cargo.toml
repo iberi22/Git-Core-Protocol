@@ -41,9 +41,17 @@ criterion = { version = "0.5", features = ["async_tokio"] }
 tempfile = "3.10"
 mockito = "1.5"
 
+[lib]
+name = "issue_syncer"
+path = "src/lib.rs"
+
 [[bin]]
 name = "issue-syncer"
 path = "src/main.rs"
+
+[[bench]]
+name = "syncer_benchmarks"
+harness = false
 
 [profile.release]
 opt-level = 3

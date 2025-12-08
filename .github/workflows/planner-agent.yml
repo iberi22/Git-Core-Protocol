@@ -48,7 +48,7 @@ jobs:
 
     steps:
       - name: 📋 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🗺️ Parse Roadmap from ARCHITECTURE.md
         id: roadmap
@@ -107,7 +107,7 @@ jobs:
 
     steps:
       - name: 📋 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🧠 Generate Issue Plan
         id: generate

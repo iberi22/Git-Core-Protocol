@@ -108,6 +108,12 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to binaries"
           else
+            # Pull latest changes to avoid conflicts
+            git pull --rebase origin main || {
+              echo "Failed to rebase, trying merge..."
+              git pull --no-rebase origin main
+            }
+            
             git commit -m "chore(tools): update pre-built binaries [skip ci]"
             git push
           fi

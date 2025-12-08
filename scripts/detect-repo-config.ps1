@@ -31,9 +31,11 @@ Write-Host "${Cyan}🔍 Repository Configuration Detection${Reset}`n"
 
 # Detect repository visibility
 try {
-    # Redirect stderr to null to avoid false negatives from warnings
-    $ErrorActionPreference = 'Continue'
-    $repoInfo = gh repo view $Repository --json visibility,isPrivate,name,owner 2>$null | ConvertFrom-Json
+    # Redirect stderr to null and suppress errors completely
+    $ErrorActionPreference = 'SilentlyContinue'
+    $warningPreference = 'SilentlyContinue'
+    
+    $repoInfo = gh repo view $Repository --json visibility,isPrivate,name,owner 2>&1 | Where-Object { $_ -is [string] -and $_ -notmatch "GH_TOKEN" } | ConvertFrom-Json
     
     if (-not $repoInfo) {
         throw "No repository information returned"
@@ -50,6 +52,11 @@ try {
     Write-Host "${Yellow}⚠️  Defaulting to PRIVATE (conservative mode)${Reset}"
     $isPublic = $false
     $visibility = "PRIVATE"
+}
+finally {
+    # Reset error preferences
+    $ErrorActionPreference = 'Continue'
+    $warningPreference = 'Continue'
 }
 
 # Detect if main protocol repository

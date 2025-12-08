@@ -33,9 +33,11 @@ pub struct IssueData {
 /// Parse a markdown file with YAML frontmatter
 ///
 /// # Example
-/// ```
+/// ```no_run
+/// # use issue_syncer::parser::parse_issue_file;
 /// let issue = parse_issue_file("issues/FEAT_my-feature.md")?;
 /// println!("Title: {}", issue.title);
+/// # Ok::<(), anyhow::Error>(())
 /// ```
 pub fn parse_issue_file<P: AsRef<Path>>(path: P) -> Result<IssueData> {
     let content = std::fs::read_to_string(path.as_ref())

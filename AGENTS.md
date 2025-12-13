@@ -98,12 +98,12 @@ PRs are auto-merged if ALL conditions are met:
 
 **Implementación avanzada de lógicas "12-Factor Agents", "HumanLayer" y "Agent Control Plane":**
 
-
 ### 1. Context Protocol (Stateless Reducer) ⭐ UPDATED
 
 Los agentes deben persistir su estado en los Issues usando bloques XML `<agent-state>`.
 
 **Campos v2.1:**
+
 | Campo | Descripción |
 |-------|-------------|
 | `<intent>` | Objetivo de alto nivel |
@@ -116,6 +116,7 @@ Los agentes deben persistir su estado en los Issues usando bloques XML `<agent-s
 👉 **Ver especificación completa:** `docs/agent-docs/CONTEXT_PROTOCOL.md`
 
 **Helper Script:**
+
 ```bash
 # Leer estado desde un Issue
 ./scripts/agent-state.ps1 read -IssueNumber 42

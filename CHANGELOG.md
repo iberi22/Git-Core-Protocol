@@ -77,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Humans: Organized by learning needs (4 Diátaxis quadrants)
   - AI Agents: Technical specs in `agent-docs/` unchanged
   - Clear distinction between tutorials, how-tos, reference, and explanations
-  
+
 - **GitHub Wiki Ready**:
   - `wiki/Home.md` with complete navigation structure
   - Quick start guides by role (Developer, AI Agent, Architect, New User)

@@ -1,45 +1,33 @@
-# 🛡️ Dependency Sentinel Workflow
-# The "brain" that orchestrates all dependency decisions following Git-Core Protocol
+# 📦 Dependency Manager Workflow
+# Unified workflow that replaces: dependency-quarantine.yml, dependency-sentinel.yml, post-quarantine-analysis.yml
 #
-# This workflow:
-# 1. WATCHES all Dependabot PRs and their lifecycle
-# 2. ENFORCES the 14-day quarantine rule
-# 3. VALIDATES against ARCHITECTURE.md before any adoption
-# 4. COORDINATES between AI agents (Gemini, CodeRabbit, Copilot)
-# 5. TAKES DECISIONS autonomously when safe, escalates when not
+# Features:
+# 1. Watches all Dependabot PRs and lifecycle
+# 2. Enforces 14-day quarantine rule
+# 3. Validates against ARCHITECTURE.md before adoption
+# 4. Coordinates AI agents (Gemini, CodeRabbit, Copilot)
+# 5. Takes autonomous decisions when safe, escalates when not
+# 6. Generates weekly reports
 
-name: 🛡️ Dependency Sentinel
+name: 📦 Dependency Manager
 
 on:
   # React to all PR events for Dependabot
   pull_request:
     types: [opened, closed, labeled, unlabeled, synchronize]
 
-  # React to workflow completions
-  workflow_run:
-    workflows:
-      - "🔬 Dependency Quarantine"
-      - "🔓 Post-Quarantine Analysis"
-      - "🌐 Living Context Protocol"
-    types: [completed]
-
-  # Daily sentinel check
+  # Daily dependency check
   schedule:
     - cron: '0 9 * * *'  # 9am UTC daily
 
-  # Manual trigger for debugging
+  # Manual trigger
   workflow_dispatch:
     inputs:
       action:
-        description: 'Sentinel action'
+        description: 'Action to perform'
         required: true
         type: choice
-        options:
-          - full-audit
-          - check-quarantine
-          - check-architecture-conflicts
-          - force-graduate-all-ready
-          - generate-report
+        options: [full-audit, check-quarantine, check-architecture, graduate-ready, generate-report]
 
 permissions:
   contents: write

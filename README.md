@@ -30,6 +30,7 @@ version: 3.2.1
 <div style="flex: 1; min-width: 500px;">
 
 ### ⚡ Performance-First AI Development
+
 **Git-Core Protocol** is a living standard for AI-assisted development, now powered by **Rust-native agents** for 10-30x speedup. It provides a structured workflow where **Human ↔ AI Agent ↔ GitHub** communicate seamlessly.
 
 - **How it helps:** Eliminates context loss, enforces architectural consistency, and automates documentation at blazing speed.
@@ -111,7 +112,9 @@ Then execute: ./scripts/init_project.sh
 This protocol now includes a dynamic system to "equip" your AI agent with specific roles on demand. **Agents can now self-inject these roles** when they detect the need.
 
 ### Available Recipes (Auto-Downloaded)
+
 The system automatically downloads the latest "recipes" for:
+
 - 🏗️ **Software Engineering** (Patterns, Clean Code)
 - 🔬 **Research** (Academic, Technical)
 - 🛡️ **Cybersecurity** (Auditing, Hardening)
@@ -311,12 +314,14 @@ The protocol now **automatically adapts** based on whether your repository is pu
 | 🔴 **CONSERVATIVE** | Other private | Event-based only | ~600 min/month | $0 (Free tier) |
 
 **Key Benefits:**
+
 - ✅ **Zero-configuration**: Automatic detection and adaptation
 - ✅ **97% savings** on private repositories
 - ✅ **100% functionality** maintained via event-based triggers
 - ✅ **Cross-platform**: PowerShell + Bash support
 
 **Usage:**
+
 ```bash
 # Test detection locally
 ./scripts/detect-repo-config.ps1  # Windows
@@ -337,6 +342,7 @@ The latest version integrates advanced patterns from **[12-Factor Agents](https:
 ### 🧠 Context Protocol (Stateless Reducer)
 
 Agents persist state in GitHub Issues using structured XML blocks. This enables:
+
 - **Pausable/Resumable workflows**: Any agent can pick up where another left off
 - **Dynamic Planning**: `<plan>` field with items marked `done`/`in_progress`/`pending`
 - **Human-as-Tool**: `<input_request>` for structured data requests (not just approvals)
@@ -383,6 +389,7 @@ MEDIR → ANALIZAR → PROPONER → IMPLEMENTAR → VALIDAR → ↺
 ```
 
 **Features:**
+
 - **3-Order Metrics Taxonomy**: Operational (daily), Quality (weekly), Evolution (monthly)
 - **Automated Pattern Detection**: Identifies "death loops", low adoption, high friction
 - **Weekly Reports**: Auto-generated GitHub Issues with insights
@@ -410,6 +417,7 @@ Projects using Git-Core Protocol can **send anonymized metrics back** to the off
 ```
 
 **Usage:**
+
 ```powershell
 # Preview what would be sent
 ./scripts/send-telemetry.ps1 -DryRun
@@ -419,6 +427,7 @@ Projects using Git-Core Protocol can **send anonymized metrics back** to the off
 ```
 
 **Privacy:**
+
 - ✅ Anonymous by default (project names hashed)
 - ✅ Only numbers (no code, no content)
 - ✅ Opt-in only (you choose when to send)
@@ -432,6 +441,7 @@ Projects using Git-Core Protocol can **send anonymized metrics back** to the off
 We are building the standard for AI-Human collaboration. **Your feedback shapes this protocol.**
 
 ### 🛣️ Milestones
+
 - [x] **v1.4.0**: ✅ Model-Specific Agents, Session Export, AI Reports
 - [x] **v2.1 (Context Protocol)**: ✅ XML Agent State, Micro-Agents, HumanLayer
 - [x] **v1.5.0**: ✅ Evolution Protocol, Federated Telemetry
@@ -439,8 +449,10 @@ We are building the standard for AI-Human collaboration. **Your feedback shapes 
 - [ ] **v2.3**: Multi-Agent Swarm Protocol (Coordinator + Workers)
 - [ ] **v3.0**: Native IDE Integration (VS Code Extension)
 
-### 🤝 We Need Your Feedback!
+### 🤝 We Need Your Feedback
+
 This protocol is in **active automated evolution**. We need you to test it and report:
+
 1. **Friction points:** Where did the agent get stuck?
 2. **Missing recipes:** What role did you need that wasn't there?
 3. **Workflow bugs:** Did the state get out of sync?
@@ -637,6 +649,5 @@ This protocol is inspired by and builds upon the excellent work of:
 - **[Git](https://git-scm.com/)**: To be free to use.
 - **[GitHub](https://github.com/)**: for shered the infrastructure, and all his community of developers.
 - **[anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents/)**:
-
 
 We acknowledge their contributions to the field of AI-assisted development.

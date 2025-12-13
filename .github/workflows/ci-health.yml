@@ -1,4 +1,8 @@
-name: Global Self-Healing Monitor
+# 🏥 CI Health Monitor
+# Unified workflow that replaces: self-healing.yml + global-self-healing.yml
+# Features: Error classification, auto-retry for transient errors, multi-repo monitoring
+
+name: 🏥 CI Health Monitor
 
 on:
   # PRIMARY: React to workflow failures (FREE - only runs when needed)
@@ -6,30 +10,28 @@ on:
     workflows: ["*"]
     types: [completed]
 
-  # SECONDARY: Scheduled check (only for public repos or main repo)
+  # SECONDARY: Scheduled check (adaptive based on repo type)
   schedule:
-    # Aggressive: Every 30 min (public repos)
-    - cron: "*/30 * * * *"
-    # Moderate: Every 6 hours (private main repo)
-    - cron: "0 */6 * * *"
+    - cron: "0 */6 * * *"  # Every 6 hours (moderate)
 
   workflow_dispatch:
     inputs:
       force_mode:
-        description: "Force schedule mode (aggressive/moderate/conservative)"
+        description: "Force schedule mode"
         required: false
         type: choice
-        options:
-          - auto
-          - aggressive
-          - moderate
-          - conservative
+        options: [auto, aggressive, moderate, conservative]
         default: auto
+      retry_run_id:
+        description: "Specific run ID to retry (optional)"
+        required: false
+        type: string
 
 permissions:
   contents: read
   issues: write
   pull-requests: read
+  actions: write
 
 jobs:
   # ═══════════════════════════════════════════════════════════════════
@@ -149,7 +151,30 @@ jobs:
             echo "Found failure: Run ID $RUN_ID"
             echo "has_failure=true" >> $GITHUB_OUTPUT
             echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+            # Classify error type (from self-healing.yml logic)
+            LOGS=$(gh run view $RUN_ID --repo ${{ matrix.repo }} --log 2>&1 || echo "")
+
+            if echo "$LOGS" | grep -qiE "ETIMEDOUT|ECONNRESET|429|rate limit|timeout"; then
+              echo "error_type=transient" >> $GITHUB_OUTPUT
+            elif echo "$LOGS" | grep -qiE "npm ERR|yarn error|pip.*failed|cargo.*failed"; then
+              echo "error_type=dependency" >> $GITHUB_OUTPUT
+            elif echo "$LOGS" | grep -qiE "lint|prettier|eslint|clippy"; then
+              echo "error_type=lint" >> $GITHUB_OUTPUT
+            elif echo "$LOGS" | grep -qiE "test.*failed|FAIL|AssertionError"; then
+              echo "error_type=test" >> $GITHUB_OUTPUT
+            else
+              echo "error_type=code" >> $GITHUB_OUTPUT
+            fi
           fi
+
+      - name: Auto-Retry Transient Errors
+        if: steps.check.outputs.error_type == 'transient'
+        env:
+          GH_TOKEN: ${{ secrets.MULTI_REPO_TOKEN || github.token }}
+        run: |
+          echo "🔄 Retrying transient error..."
+          gh run rerun ${{ steps.check.outputs.run_id }} --repo ${{ matrix.repo }} --failed || echo "Could not rerun"
 
       - name: Create Issue
         if: steps.check.outputs.has_failure == 'true'

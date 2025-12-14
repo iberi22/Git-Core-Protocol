@@ -203,7 +203,7 @@ jobs:
           echo "data=$(cat /tmp/analysis_data.json | jq -c .)" >> $GITHUB_OUTPUT
 
       - name: Upload Analysis Data
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ai-reviews-data
           path: /tmp/analysis_data.json

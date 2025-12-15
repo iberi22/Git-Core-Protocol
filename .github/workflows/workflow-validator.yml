@@ -92,7 +92,7 @@ jobs:
           cargo build --release
 
       - name: Upload Binary
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: workflow-orchestrator
           path: tools/workflow-orchestrator/target/release/workflow-orchestrator

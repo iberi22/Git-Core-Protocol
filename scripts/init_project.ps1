@@ -17,6 +17,8 @@ param(
     [switch]$Private
 )
 
+Write-Warning "⚠️  DEPRECATION NOTICE: This script is deprecated. Please use 'gc init' instead."
+
 $ErrorActionPreference = "Stop"
 
 # Function to organize existing files
@@ -325,7 +327,7 @@ if (Test-Path ".git") {
     if (-not (Test-Path $gitHooksDir)) {
         New-Item -ItemType Directory -Force -Path $gitHooksDir | Out-Null
     }
-    
+
     # Create the pre-commit wrapper
     $hookContent = @'
 #!/bin/bash
@@ -348,10 +350,10 @@ else
     exit 0
 fi
 '@
-    
+
     $preCommitPath = Join-Path $gitHooksDir "pre-commit"
     Set-Content -Path $preCommitPath -Value $hookContent -Encoding UTF8 -NoNewline
-    
+
     # Copy example config if .git-atomize.yml doesn't exist
     $configExample = Join-Path (Get-Location) ".git-atomize.yml.example"
     $configFile = Join-Path (Get-Location) ".git-atomize.yml"
@@ -359,7 +361,7 @@ fi
         Copy-Item $configExample $configFile
         Write-Host "✓ Created .git-atomize.yml from example" -ForegroundColor Green
     }
-    
+
     Write-Host "✓ Pre-commit hooks installed" -ForegroundColor Green
 } else {
     Write-Host "⚠️  Could not install hooks (no .git directory)" -ForegroundColor Yellow

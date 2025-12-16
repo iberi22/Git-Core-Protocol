@@ -28,19 +28,20 @@ $Cyan = "`e[36m"
 $Reset = "`e[0m"
 
 Write-Host "${Cyan}🔍 Repository Configuration Detection${Reset}`n"
+Write-Warning "⚠️ DEPRECATION NOTICE: This script is deprecated. Use 'gc ci-detect' instead."
 
 # Detect repository visibility
 try {
     # Redirect stderr to null and suppress errors completely
     $ErrorActionPreference = 'SilentlyContinue'
     $warningPreference = 'SilentlyContinue'
-    
+
     $repoInfo = gh repo view $Repository --json visibility,isPrivate,name,owner 2>&1 | Where-Object { $_ -is [string] -and $_ -notmatch "GH_TOKEN" } | ConvertFrom-Json
-    
+
     if (-not $repoInfo) {
         throw "No repository information returned"
     }
-    
+
     $isPublic = -not $repoInfo.isPrivate
     $visibility = if ($isPublic) { "PUBLIC" } else { "PRIVATE" }
 

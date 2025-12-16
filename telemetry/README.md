@@ -47,16 +47,16 @@ This directory manages the **federated telemetry system** that collects anonymiz
 
 ### Send Telemetry (For Protocol Users)
 
-```powershell
-# Preview what would be sent
-./scripts/send-telemetry.ps1 -DryRun
+ ```bash
+ # Preview what would be sent
+ gc telemetry --dry-run
 
-# Send anonymized metrics (creates a Discussion)
-./scripts/send-telemetry.ps1
+ # Send anonymized metrics (creates a Discussion)
+ gc telemetry
 
-# Include detected patterns
-./scripts/send-telemetry.ps1 -IncludePatterns
-```
+ # Include detected patterns
+ gc telemetry --include-patterns
+ ```
 
 ### Aggregate Metrics (Automatic)
 
@@ -140,10 +140,14 @@ To stop sending telemetry:
 | File | Purpose |
 |------|---------|
 | `README.md` | This documentation |
-| `../scripts/send-telemetry.ps1` | Script to send metrics |
+| `gc telemetry` | CLI command to send metrics |
 | `../.github/workflows/aggregate-telemetry.yml` | Weekly aggregation |
 
 ## Changelog
+
+### v2.1 (Rust Migration)
+- 🚀 Migrated client-side submission to `gc telemetry`
+- Unified with Git-Core CLI
 
 ### v2.0 (2025-12-06)
 - 🔄 **Breaking:** Switched from PRs to Discussions

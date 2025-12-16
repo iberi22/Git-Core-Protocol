@@ -38,6 +38,8 @@ param(
     [switch]$DryRun
 )
 
+Write-Warning "⚠️  DEPRECATION NOTICE: This script is deprecated. Please use 'gc report' instead."
+
 $ErrorActionPreference = "Stop"
 
 # Colores

@@ -1,0 +1,9 @@
+[package]
+name = "gc-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+async-trait = "0.1"
+serde.workspace = true

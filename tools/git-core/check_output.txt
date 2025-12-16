@@ -1,0 +1,139 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   E:\scripts-python\Git-Core Protocol\tools\git-core\crates\gc-validator\Cargo.toml
+workspace: E:\scripts-python\Git-Core Protocol\tools\git-core\Cargo.toml
+warning: unused variable: `private`
+  --> crates\gc-adapter-github\src\lib.rs:30:45
+   |
+30 |     async fn create_repo(&self, name: &str, private: bool) -> Result<()> {
+   |                                             ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_private`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `org`
+  --> crates\gc-adapter-github\src\lib.rs:31:13
+   |
+31 | ...   let org = self.client.orgs("iberi22"); // Defaulting to iberi22 for this project?...
+   |           ^^^ help: if this is intentional, prefix it with an underscore: `_org`
+
+warning: unused variable: `name`
+  --> crates\gc-adapter-github\src\lib.rs:30:33
+   |
+30 |     async fn create_repo(&self, name: &str, private: bool) -> Result<()> {
+   |                                 ^^^^ help: if this is intentional, prefix it with an underscore: `_name`
+
+warning: unused variable: `name`
+  --> crates\gc-adapter-github\src\lib.rs:45:34
+   |
+45 |     async fn create_label(&self, name: &str, color: &str, desc: &str) -> Result<()> {
+   |                                  ^^^^ help: if this is intentional, prefix it with an underscore: `_name`
+
+warning: unused variable: `color`
+  --> crates\gc-adapter-github\src\lib.rs:45:46
+   |
+45 |     async fn create_label(&self, name: &str, color: &str, desc: &str) -> Result<()> {
+   |                                              ^^^^^ help: if this is intentional, prefix it with an underscore: `_color`
+
+warning: unused variable: `desc`
+  --> crates\gc-adapter-github\src\lib.rs:45:59
+   |
+45 |     async fn create_label(&self, name: &str, color: &str, desc: &str) -> Result<()> {
+   |                                                           ^^^^ help: if this is intentional, prefix it with an underscore: `_desc`
+
+warning: `gc-adapter-github` (lib) generated 6 warnings (run `cargo fix --lib -p gc-adapter-github` to apply 6 suggestions)
+warning: unused import: `std::collections::HashMap`
+  --> crates\gc-validator\src\dispatcher_core.rs:58:5
+   |
+58 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `warn`
+  --> crates\gc-validator\src\dispatcher_core.rs:59:28
+   |
+59 | use tracing::{debug, info, warn};
+   |                            ^^^^
+
+warning: unused import: `Context`
+ --> crates\gc-validator\src\github.rs:3:22
+  |
+3 | use anyhow::{Result, Context};
+  |                      ^^^^^^^
+
+warning: unused import: `warn`
+ --> crates\gc-validator\src\github.rs:9:28
+  |
+9 | use tracing::{info, debug, warn};
+  |                            ^^^^
+
+warning: unused import: `futures::future::join_all`
+ --> crates\gc-validator\src\analyzer.rs:5:5
+  |
+5 | use futures::future::join_all;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `warn`
+ --> crates\gc-validator\src\analyzer.rs:7:21
+  |
+7 | use tracing::{info, warn};
+  |                     ^^^^
+
+warning: unused import: `WorkflowRun`
+ --> crates\gc-validator\src\reporter.rs:3:35
+  |
+3 | use crate::github::{GitHubClient, WorkflowRun};
+  |                                   ^^^^^^^^^^^
+
+warning: unused import: `futures::future::join_all`
+ --> crates\gc-validator\src\reporter.rs:6:5
+  |
+6 | use futures::future::join_all;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `BoxFuture`
+ --> crates\gc-validator\src\parallel.rs:3:33
+  |
+3 | use futures::future::{join_all, BoxFuture};
+  |                                 ^^^^^^^^^
+
+warning: unused variable: `risk_score`
+   --> crates\gc-validator\src\dispatcher_core.rs:301:64
+    |
+301 |     fn select_agent(&self, strategy: Strategy, _issue: &Issue, risk_score: u8) -> Agent {
+    |                                                                ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_risk_score`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `analysis_types`
+   --> crates\gc-validator\src\analyzer.rs:167:5
+    |
+167 |     analysis_types: &[String],
+    |     ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_analysis_types`
+
+warning: variable does not need to be mutable
+   --> crates\gc-validator\src\validator.rs:156:13
+    |
+156 |         let mut warnings = analysis.warnings.clone();
+    |             ----^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `reliability_score`
+   --> crates\gc-validator\src\validator.rs:218:13
+    |
+218 |         let reliability_score = ((total_jobs - failed_jobs) as f64 / total_jobs as f64...
+    |             ^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_reliability_score`
+
+warning: `gc-validator` (lib) generated 13 warnings (run `cargo fix --lib -p gc-validator` to apply 13 suggestions)
+    Checking gc-cli v0.1.0 (E:\scripts-python\Git-Core Protocol\tools\git-core\crates\gc-cli)
+crates\gc-cli\src\commands\telemetry.rs:4:5: warning: unused import: `std::collections::HashMap`
+crates\gc-cli\src\commands\telemetry.rs:87:59: error[E0308]: mismatched types: expected `String`, found `&str`
+crates\gc-cli\src\commands\telemetry.rs:210:14: error[E0282]: type annotations needed: cannot infer type of the type parameter `E` declared on the enum `Result`
+crates\gc-cli\src\commands\telemetry.rs:210:14: error[E0283]: type annotations needed: cannot infer type of the type parameter `E` declared on the enum `Result`
+crates\gc-cli\src\commands\telemetry.rs:281:9: error[E0282]: type annotations needed: cannot infer type of the type parameter `E` declared on the enum `Result`
+crates\gc-cli\src\commands\telemetry.rs:281:9: error[E0283]: type annotations needed: cannot infer type of the type parameter `E` declared on the enum `Result`
+crates\gc-cli\src\main.rs:57:17: warning: unused variable: `fs`: help: if this is intentional, prefix it with an underscore: `_fs`
+warning: `gc-cli` (bin "gc-cli") generated 2 warnings
+error: could not compile `gc-cli` (bin "gc-cli") due to 9 previous errors; 2 warnings emitted

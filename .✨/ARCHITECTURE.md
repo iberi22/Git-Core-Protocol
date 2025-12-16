@@ -52,6 +52,18 @@ project: Git-Core-Protocol
 - **Decision:** What was decided
 - **Consequences:** Impact and trade-offs
 
+### Decision 2: Telemetry Migration to Rust
+- **Date:** 2025-12-16
+- **Context:** Telemetry logic was isolated in PowerShell, causing fragmentation and platform dependencies.
+- **Decision:** Migrated client-side telemetry to `gc telemetry` command in Rust.
+- **Consequences:** Unified toolchain in `gc-cli`, removed PowerShell dependency for telemetry submission. Legacy script `send-telemetry.ps1` is deprecated.
+
+### Decision 3: CLI Unification
+- **Date:** 2025-12-16
+- **Context:** Multiple PowerShell scripts (`init_project.ps1`, `equip-agent.ps1`, `ai-report.ps1`) created maintenance overhead and platform lock-in.
+- **Decision:** Consolidated all core workflows into `gc-cli` Rust binary (`gc init`, `gc context`, `gc report`, `gc ci-detect`).
+- **Consequences:** All legacy PowerShell scripts are deprecated. Future development focuses solely on `gc-cli`.
+
 ## Project Structure
 ```
 /

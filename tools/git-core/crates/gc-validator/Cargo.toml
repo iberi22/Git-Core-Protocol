@@ -1,5 +1,5 @@
 [package]
-name = "workflow-orchestrator"
+name = "gc-validator"
 version = "0.1.0"
 edition = "2021"
 description = "High-performance workflow orchestrator for Git-Core Protocol"

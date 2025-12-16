@@ -55,7 +55,7 @@
 use anyhow::{Result, Context};
 use octocrab::Octocrab;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+
 use tracing::{debug, info, warn};
 use rand::Rng;
 

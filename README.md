@@ -74,17 +74,19 @@ version: 3.3.0
 
 > **Copy this prompt to your AI coding agent (Copilot, Cursor, Claude, etc.) to auto-setup:**
 
-```
 Initialize this project with Git-Core Protocol.
 
-# Method 1: Shell Scripts (Recommended)
+# Method 1: Rust CLI (Recommended)
+ cargo install --path . # If local
+ # OR
+ gc init
+
+# Method 2: Shell Scripts (Legacy)
 # Linux/macOS
 curl -fsSL https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.sh | bash
 
 # Windows
 irm https://raw.githubusercontent.com/iberi22/Git-Core-Protocol/main/install.ps1 | iex
-
-# Note: The Rust CLI (git-core) is deprecated. Please use the scripts above.
 
 After setup, read .✨/ARCHITECTURE.md and start with: gh issue list
 ```
@@ -318,10 +320,10 @@ git-core migrate
 
 | Method | Trust Level | Speed | Features |
 |--------|-------------|-------|----------|
+| **Rust CLI** | ⭐⭐⭐⭐ (compiled) | **Fastest** | **Integrated** |
 | Shell Scripts | ⭐⭐⭐⭐⭐ (visible code) | Fast | Basic |
 | Cargo install | ⭐⭐⭐⭐ (compiles locally) | Medium | Full |
 | Build from source | ⭐⭐⭐⭐⭐ (maximum control) | Slow | Full |
-| Pre-built binary | ⭐⭐⭐ (verify checksum) | Very Fast | Full |
 
 </div>
 

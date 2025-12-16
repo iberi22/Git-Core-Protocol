@@ -57,6 +57,7 @@ $TELEMETRY_CATEGORY_NAME = "Telemetry Submissions"
 $INTERNAL_LABEL = "telemetry-internal"
 
 $mode = if ($Internal) { "Internal (Issues)" } else { "Public (Discussions)" }
+Write-Warning "⚠️ DEPRECATION NOTICE: This script is deprecated. Please use 'gc telemetry' instead."
 Write-Host "📡 Git-Core Protocol - Federated Telemetry System v2.1" -ForegroundColor Cyan
 Write-Host "   Mode: $mode" -ForegroundColor $(if ($Internal) { "Yellow" } else { "Gray" })
 Write-Host "   Destination: github.com/$OFFICIAL_REPO_OWNER/$OFFICIAL_REPO_NAME" -ForegroundColor Gray

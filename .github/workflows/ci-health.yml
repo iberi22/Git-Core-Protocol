@@ -51,11 +51,11 @@ jobs:
 
       - name: Detect Repository Type
         id: detect
-        shell: pwsh
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          ./scripts/detect-repo-config.ps1
+          cargo run -q -p gc-cli -- ci-detect
 
       - name: Decide Execution
         id: decide

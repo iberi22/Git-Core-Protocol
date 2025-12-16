@@ -23,6 +23,8 @@ param (
     [string]$Role
 )
 
+Write-Warning "⚠️  DEPRECATION NOTICE: This script is deprecated. Please use 'gc context equip' instead."
+
 $RepoBaseUrl = "https://raw.githubusercontent.com/iberi22/agents-flows-recipes/main"
 $ConfigDir = ".✨"
 $ContextFile = "$ConfigDir\CURRENT_CONTEXT.md"

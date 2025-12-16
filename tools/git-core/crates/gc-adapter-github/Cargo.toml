@@ -1,0 +1,13 @@
+[package]
+name = "gc-adapter-github"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+gc-core.workspace = true
+octocrab.workspace = true
+tokio.workspace = true
+async-trait = "0.1"
+thiserror.workspace = true
+serde.workspace = true
+base64 = "0.22.1"

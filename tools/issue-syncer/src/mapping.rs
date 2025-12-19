@@ -13,7 +13,7 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// Bidirectional mapping between files and issue numbers
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

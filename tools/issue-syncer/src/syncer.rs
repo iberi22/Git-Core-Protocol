@@ -3,13 +3,13 @@
 //! Bidirectional sync between `.github/issues/*.md` files and GitHub Issues.
 
 use anyhow::{Context, Result};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use tracing::{info, warn};
 use walkdir::WalkDir;
 
 use crate::github::GitHubClient;
 use crate::mapping::IssueMapping;
-use crate::parser::{parse_issue_file, IssueData};
+use crate::parser::parse_issue_file;
 
 /// Sync report with statistics
 #[derive(Debug, Default)]
@@ -64,6 +64,10 @@ impl IssueSyncer {
     pub fn with_dry_run(mut self, dry_run: bool) -> Self {
         self.dry_run = dry_run;
         self
+    }
+
+    pub fn github(&self) -> &GitHubClient {
+        &self.github
     }
 
     /// Sync all: push local changes + pull closed issues

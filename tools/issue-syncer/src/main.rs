@@ -2,6 +2,7 @@
 //!
 //! High-performance Rust tool replacing sync-issues.ps1
 
+mod commands;
 mod github;
 mod mapping;
 mod parser;
@@ -13,6 +14,7 @@ use std::path::PathBuf;
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
+use crate::commands::issue::IssueArgs;
 use crate::github::GitHubClient;
 use crate::syncer::IssueSyncer;
 
@@ -58,6 +60,9 @@ enum Commands {
 
     /// Show current mapping statistics
     Status,
+
+    /// Manage issues
+    Issue(IssueArgs),
 }
 
 #[tokio::main]
@@ -108,7 +113,7 @@ async fn main() -> Result<()> {
     let mapping_file = issues_dir.join(".issue-mapping.json");
 
     // Create syncer
-    let mut syncer = IssueSyncer::new(github, issues_dir, mapping_file)?
+    let mut syncer = IssueSyncer::new(github, issues_dir.clone(), mapping_file)?
         .with_dry_run(cli.dry_run);
 
     // Execute command
@@ -135,12 +140,15 @@ async fn main() -> Result<()> {
             println!("  Files: {:?}", mapping.files());
             println!("  Issues: {:?}", mapping.issues());
         }
+        Commands::Issue(args) => {
+            commands::issue::handle_issue_command(args, syncer, issues_dir).await?;
+        }
     }
 
     Ok(())
 }
 
-fn print_report(report: &syncer::SyncReport) {
+pub fn print_report(report: &syncer::SyncReport) {
     println!("\n✅ Sync Complete");
     println!("  Created:  {}", report.created);
     println!("  Updated:  {}", report.updated);

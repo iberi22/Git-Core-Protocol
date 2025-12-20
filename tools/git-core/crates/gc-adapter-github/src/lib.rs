@@ -1,6 +1,8 @@
 use async_trait::async_trait;
 use gc_core::ports::{GitHubPort, Result, CoreError};
+use gc_core::{Issue, PullRequest};
 use octocrab::Octocrab;
+use octocrab::params::issues::Filter;
 
 pub struct OctocrabGitHub {
     client: Octocrab,
@@ -89,5 +91,66 @@ impl GitHubPort for OctocrabGitHub {
             .await
             .map_err(|e| CoreError::GitHub(e.to_string()))?;
         Ok(())
+    }
+
+    async fn list_issues(&self, owner: &str, repo: &str, state: Option<&str>, assignee: Option<&str>) -> Result<Vec<Issue>> {
+        let state = match state {
+            Some("closed") => octocrab::params::State::Closed,
+            Some("all") => octocrab::params::State::All,
+            _ => octocrab::params::State::Open,
+        };
+
+        let issues_handler = self.client.issues(owner, repo);
+        let mut builder = issues_handler
+            .list()
+            .state(state);
+
+        if let Some(a) = assignee {
+            builder = builder.assignee(Filter::Matches(a));
+        }
+
+        let page = builder
+            .send()
+            .await
+            .map_err(|e| CoreError::GitHub(e.to_string()))?;
+
+        let issues = page.items.into_iter().map(|i| Issue {
+            number: i.number,
+            title: i.title,
+            body: i.body,
+            state: format!("{:?}", i.state),
+            html_url: i.html_url.to_string(),
+            assignees: i.assignees.into_iter().map(|u| u.login).collect(),
+            labels: i.labels.into_iter().map(|l| l.name).collect(),
+        }).collect();
+
+        Ok(issues)
+    }
+
+    async fn list_prs(&self, owner: &str, repo: &str, state: Option<&str>) -> Result<Vec<PullRequest>> {
+        let state = match state {
+            Some("closed") => octocrab::params::State::Closed,
+            Some("all") => octocrab::params::State::All,
+            _ => octocrab::params::State::Open,
+        };
+
+        let page = self.client.pulls(owner, repo)
+            .list()
+            .state(state)
+            .send()
+            .await
+            .map_err(|e| CoreError::GitHub(e.to_string()))?;
+
+        let prs = page.items.into_iter().map(|pr| PullRequest {
+            number: pr.number,
+            title: pr.title.unwrap_or_default(),
+            body: pr.body,
+            state: format!("{:?}", pr.state.unwrap_or(octocrab::models::IssueState::Open)),
+            html_url: pr.html_url.map(|u| u.to_string()).unwrap_or_default(),
+            head_ref: pr.head.ref_field,
+            base_ref: pr.base.ref_field,
+        }).collect();
+
+        Ok(prs)
     }
 }

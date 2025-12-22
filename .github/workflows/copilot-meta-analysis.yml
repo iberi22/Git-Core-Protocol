@@ -226,7 +226,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download Analysis Data
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ai-reviews-data
           path: ./data

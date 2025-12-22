@@ -47,7 +47,7 @@ jobs:
       repo_list: ${{ steps.decide.outputs.repo_list }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Detect Repository Type
         id: detect
